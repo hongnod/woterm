@@ -23,7 +23,7 @@
 #include <QMainWindow>
 #include <QMenuBar>
 
-#include "qtermwidget.h"
+#include "qwotermwidget.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,40 +31,14 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
     QMainWindow *mainWindow = new QMainWindow();
-
-    QTermWidget *console = new QTermWidget();
-
+    QWoTermWidget *console = new QWoTermWidget();
 
     QMenuBar *menuBar = new QMenuBar(mainWindow);
     QMenu *actionsMenu = new QMenu("Actions", menuBar);
     menuBar->addMenu(actionsMenu);
-    actionsMenu->addAction("Find...", console, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
+    actionsMenu->addAction("Find...", console, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
     actionsMenu->addAction("About Qt", &app, SLOT(aboutQt()));
     mainWindow->setMenuBar(menuBar);
-
-    QFont font = QApplication::font();
-#ifdef Q_OS_MACOS
-    font.setFamily("Monaco");
-#elif defined(Q_WS_QWS)
-    font.setFamily("fixed");
-#else
-    font.setFamily("Monospace");
-#endif
-    font.setPointSize(12);
-
-    console->setTerminalFont(font);
-
-   // console->setColorScheme(COLOR_SCHEME_BLACK_ON_LIGHT_YELLOW);
-    console->setScrollBarPosition(QTermWidget::ScrollBarRight);
-
-    const auto arguments = QApplication::arguments();
-    for (const QString& arg : arguments)
-    {
-        if (console->availableColorSchemes().contains(arg))
-            console->setColorScheme(arg);
-        if (console->availableKeyBindings().contains(arg))
-            console->setKeyBindings(arg);
-    }
 
     mainWindow->setCentralWidget(console);
     mainWindow->resize(600, 400);

@@ -5,4 +5,8 @@ TEMPLATE=app
 include(../qtermwidget/qtermwidget.pri)
 DESTDIR = $$PROJECT_BINDIR
 unix:QMAKE_RPATHDIR+=$$PROJECT_LIBDIR
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    qwotermwidget.cpp
+
+HEADERS += \
+    qwotermwidget.h
