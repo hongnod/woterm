@@ -206,7 +206,7 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
         }
 
         //handle whitespace
-        if (std::iswspace(ch))
+        if (QChar::isSpace(ch))
             spaceCount++;
         else
             spaceCount = 0;

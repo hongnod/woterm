@@ -39,7 +39,6 @@
 
 // Standard
 #include <stdio.h>
-#include <unistd.h>
 
 // Qt
 #include <QEvent>
