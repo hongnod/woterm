@@ -279,6 +279,8 @@ void QTermWidget::init(int startnow)
         qDebug() << "Trying to load translation file from dir" << dir;
         QLocale local = QLocale::system();
         qDebug() << local;
+        QDir d(dir);
+        bool ok = d.exists(dir);
         if (m_translator->load(local, QLatin1String("qtermwidget"), QLatin1String(QLatin1String("_")), dir)) {
             qApp->installTranslator(m_translator);
             qDebug() << "Translations found in" << dir;
