@@ -7,4 +7,9 @@ class QWoTermWidget : public QTermWidget
     Q_OBJECT
 public:
     explicit QWoTermWidget(QWidget *parent=nullptr);
+
+private
+slots:
+    void onTimeout();
+
 };

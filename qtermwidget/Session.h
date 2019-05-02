@@ -30,7 +30,6 @@
 
 #include "Emulation.h"
 
-class KProcess;
 
 namespace Konsole {
 
@@ -177,24 +176,10 @@ public:
     /** Returns the program name of the shell process started when run() is called. */
     QString program() const;
 
-    /**
-     * Sets the command line arguments which the session's program will be passed when
-     * run() is called.
-     */
-    void setArguments(const QStringList & arguments);
-    /** Sets the program to be executed when run() is called. */
-    void setProgram(const QString & program);
-
     /** Returns the session's current working directory. */
     QString initialWorkingDirectory() {
         return _initialWorkingDir;
     }
-
-    /**
-     * Sets the initial working directory for the session when it is run
-     * This has no effect once the session has been started.
-     */
-    void setInitialWorkingDirectory( const QString & dir );
 
     /**
      * Sets the type of history store used by this session.

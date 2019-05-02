@@ -1,6 +1,7 @@
 #include "qwotermwidget.h"
 
 #include <QApplication>
+#include <QDebug>
 
 QWoTermWidget::QWoTermWidget(QWidget *parent)
     :QTermWidget (parent)
@@ -29,4 +30,13 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
             setKeyBindings(arg);
         }
     }
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    timer->start(5000);
+}
+
+void QWoTermWidget::onTimeout()
+{
+    qDebug() << "onTimeout()";
+    sendText("ddddd");
 }

@@ -75,21 +75,7 @@ Session *TermWidgetImpl::createSession(QWidget* parent)
 
     session->setTitle(Session::NameRole, QLatin1String("QTermWidget"));
 
-    /* Thats a freaking bad idea!!!!
-     * /bin/bash is not there on every system
-     * better set it to the current $SHELL
-     * Maybe you can also make a list available and then let the widget-owner decide what to use.
-     * By setting it to $SHELL right away we actually make the first filecheck obsolete.
-     * But as iam not sure if you want to do anything else ill just let both checks in and set this to $SHELL anyway.
-     */
-    //session->setProgram("/bin/bash");
-
-    session->setProgram(QString::fromLocal8Bit(qgetenv("SHELL")));
-
-
-
     QStringList args = QStringList(QString());
-    session->setArguments(args);
     session->setAutoClose(true);
 
     session->setCodec(QTextCodec::codecForName("UTF-8"));
@@ -282,20 +268,18 @@ void QTermWidget::init(int startnow)
     setLayout(m_layout);
 
     // translations
-    // First check $XDG_DATA_DIRS. This follows the implementation in libqtxdg
-    QString d = QFile::decodeName(qgetenv("XDG_DATA_DIRS"));
-    QStringList dirs = d.split(QLatin1Char(':'), QString::SkipEmptyParts);
-    if (dirs.isEmpty()) {
-        dirs.append(QString::fromLatin1("/usr/local/share"));
-        dirs.append(QString::fromLatin1("/usr/share"));
-    }
-    dirs.append(QFile::decodeName(TRANSLATIONS_DIR));
+    QString binPath = QCoreApplication::applicationDirPath();
+    QString transPath = QDir::cleanPath(binPath + "/" + TRANSLATIONS_DIR);
+    QStringList dirs;
+    dirs.append(transPath);
 
     m_translator = new QTranslator(this);
 
     for (const QString& dir : dirs) {
         qDebug() << "Trying to load translation file from dir" << dir;
-        if (m_translator->load(QLocale::system(), QLatin1String("qtermwidget"), QLatin1String(QLatin1String("_")), dir)) {
+        QLocale local = QLocale::system();
+        qDebug() << local;
+        if (m_translator->load(local, QLatin1String("qtermwidget"), QLatin1String(QLatin1String("_")), dir)) {
             qApp->installTranslator(m_translator);
             qDebug() << "Translations found in" << dir;
             break;
@@ -399,14 +383,12 @@ void QTermWidget::setShellProgram(const QString &progname)
 {
     if (!m_impl->m_session)
         return;
-    m_impl->m_session->setProgram(progname);
 }
 
 void QTermWidget::setWorkingDirectory(const QString& dir)
 {
     if (!m_impl->m_session)
         return;
-    m_impl->m_session->setInitialWorkingDirectory(dir);
 }
 
 QString QTermWidget::workingDirectory()
@@ -436,7 +418,6 @@ void QTermWidget::setArgs(const QStringList &args)
 {
     if (!m_impl->m_session)
         return;
-    m_impl->m_session->setArguments(args);
 }
 
 void QTermWidget::setTextCodec(QTextCodec *codec)

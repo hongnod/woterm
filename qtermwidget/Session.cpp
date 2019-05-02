@@ -38,9 +38,7 @@
 #include <QFile>
 #include <QtDebug>
 
-//#include "kptyprocess.h"
 #include "TerminalDisplay.h"
-#include "ShellCommand.h"
 #include "Vt102Emulation.h"
 
 using namespace Konsole;
@@ -70,13 +68,7 @@ Session::Session(QObject* parent) :
 //   , _zmodemProgress(0)
         , _hasDarkBackground(false)
 {
-    //prepare DBus communication
-//    new SessionAdaptor(this);
     _sessionId = ++lastSessionId;
-//    QDBusConnection::sessionBus().registerObject(QLatin1String("/Sessions/")+QString::number(_sessionId), this);
-
-
-
     //create emulation backend
     _emulation = new Vt102Emulation();    
 
@@ -130,6 +122,7 @@ void Session::setDarkBackground(bool darkBackground)
 {
     _hasDarkBackground = darkBackground;
 }
+
 bool Session::hasDarkBackground() const
 {
     return _hasDarkBackground;
@@ -138,25 +131,11 @@ bool Session::hasDarkBackground() const
 bool Session::isRunning() const
 {
     return true;
-//    return _shellProcess->state() == QProcess::Running;
 }
 
 void Session::setCodec(QTextCodec * codec)
 {
     emulation()->setCodec(codec);
-}
-
-void Session::setProgram(const QString & program)
-{
-    _program = ShellCommand::expand(program);
-}
-void Session::setInitialWorkingDirectory(const QString & dir)
-{
-    _initialWorkingDir = ShellCommand::expand(dir);
-}
-void Session::setArguments(const QStringList & arguments)
-{
-    _arguments = ShellCommand::expand(arguments);
 }
 
 QList<TerminalDisplay *> Session::views() const
@@ -172,22 +151,17 @@ void Session::addView(TerminalDisplay * widget)
 
     if ( _emulation != 0 ) {
         // connect emulation - view signals and slots
-        connect( widget , SIGNAL(keyPressedSignal(QKeyEvent *)) , _emulation ,
-                 SLOT(sendKeyEvent(QKeyEvent *)) );
-        connect( widget , SIGNAL(mouseSignal(int,int,int,int)) , _emulation ,
-                 SLOT(sendMouseEvent(int,int,int,int)) );
-        connect( widget , SIGNAL(sendStringToEmu(const char *)) , _emulation ,
-                 SLOT(sendString(const char *)) );
+        connect( widget , SIGNAL(keyPressedSignal(QKeyEvent *)) , _emulation, SLOT(sendKeyEvent(QKeyEvent *)) );
+        connect( widget , SIGNAL(mouseSignal(int,int,int,int)) , _emulation, SLOT(sendMouseEvent(int,int,int,int)) );
+        connect( widget , SIGNAL(sendStringToEmu(const char *)) , _emulation, SLOT(sendString(const char *)) );
 
         // allow emulation to notify view when the foreground process
         // indicates whether or not it is interested in mouse signals
-        connect( _emulation , SIGNAL(programUsesMouseChanged(bool)) , widget ,
-                 SLOT(setUsesMouse(bool)) );
+        connect( _emulation , SIGNAL(programUsesMouseChanged(bool)), widget, SLOT(setUsesMouse(bool)) );
 
         widget->setUsesMouse( _emulation->programUsesMouse() );
 
-        connect( _emulation , SIGNAL(programBracketedPasteModeChanged(bool)) ,
-                 widget , SLOT(setBracketedPasteMode(bool)) );
+        connect( _emulation , SIGNAL(programBracketedPasteModeChanged(bool)), widget , SLOT(setBracketedPasteMode(bool)) );
 
         widget->setBracketedPasteMode(_emulation->programBracketedPasteMode());
 
@@ -198,9 +172,8 @@ void Session::addView(TerminalDisplay * widget)
     QObject::connect( widget ,SIGNAL(changedContentSizeSignal(int,int)),this,
                       SLOT(onViewSizeChange(int,int)));
 
-    QObject::connect( widget ,SIGNAL(destroyed(QObject *)) , this ,
-                      SLOT(viewDestroyed(QObject *)) );
-//slot for close
+    QObject::connect( widget ,SIGNAL(destroyed(QObject *)) , this , SLOT(viewDestroyed(QObject *)) );
+
     QObject::connect(this, SIGNAL(finished()), widget, SLOT(close()));
 
 }
@@ -208,9 +181,7 @@ void Session::addView(TerminalDisplay * widget)
 void Session::viewDestroyed(QObject * view)
 {
     TerminalDisplay * display = (TerminalDisplay *)view;
-
     Q_ASSERT( _views.contains(display) );
-
     removeView(display);
 }
 
@@ -221,14 +192,7 @@ void Session::removeView(TerminalDisplay * widget)
     disconnect(widget,0,this,0);
 
     if ( _emulation != 0 ) {
-        // disconnect
-        //  - key presses signals from widget
-        //  - mouse activity signals from widget
-        //  - string sending signals from widget
-        //
-        //  ... and any other signals connected in addView()
         disconnect( widget, 0, _emulation, 0);
-
         // disconnect state change signals emitted by emulation
         disconnect( _emulation , 0 , widget , 0);
     }
@@ -407,6 +371,7 @@ QString Session::userTitle() const
 {
     return _userTitle;
 }
+
 void Session::setTabTitleFormat(TabTitleContext context , const QString & format)
 {
     if ( context == LocalTabTitle ) {
@@ -415,6 +380,7 @@ void Session::setTabTitleFormat(TabTitleContext context , const QString & format
         _remoteTabTitleFormat = format;
     }
 }
+
 QString Session::tabTitleFormat(TabTitleContext context) const
 {
     if ( context == LocalTabTitle ) {
@@ -513,7 +479,6 @@ void Session::updateTerminalSize()
     // backend emulation must have a _terminal of at least 1 column x 1 line in size
     if ( minLines > 0 && minColumns > 0 ) {
         _emulation->setImageSize( minLines , minColumns );
-//        _shellProcess->setWindowSize( minLines , minColumns );
     }
 }
 

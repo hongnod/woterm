@@ -10,7 +10,6 @@ include(../common.pri)
     HEADERS += ./Emulation.h \
         ./Filter.h \
         ./HistorySearch.h \
-        ./kprocess.h \
         ./wcwidth.h \
         ./qtermwidget.h \
         ./History.h \
@@ -28,13 +27,11 @@ include(../common.pri)
         ./HistorySearch.cpp \
         ./KeyboardTranslator.cpp \
         ./wcwidth.cpp \
-        ./kprocess.cpp \
         ./qtermwidget.cpp \
         ./Screen.cpp \
         ./ScreenWindow.cpp \
         ./SearchBar.cpp \
         ./Session.cpp \
-        ./ShellCommand.cpp \
         ./TerminalCharacterDecoder.cpp \
         ./TerminalDisplay.cpp \
         ./tools.cpp \

@@ -209,14 +209,15 @@ void Emulation::receiveChar(wchar_t c)
 
 void Emulation::sendKeyEvent( QKeyEvent* ev )
 {
-  emit stateSet(NOTIFYNORMAL);
+    emit stateSet(NOTIFYNORMAL);
 
-  if (!ev->text().isEmpty())
-  { // A block of text
-    // Note that the text is proper unicode.
-    // We should do a conversion here
-    emit sendData(ev->text().toUtf8().constData(),ev->text().length());
-  }
+    if (!ev->text().isEmpty())
+    {
+        // A block of text
+        // Note that the text is proper unicode.
+        // We should do a conversion here
+        emit sendData(ev->text().toUtf8().constData(),ev->text().length());
+    }
 }
 
 void Emulation::sendString(const char*,int)
