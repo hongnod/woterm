@@ -91,7 +91,6 @@ Session *TermWidgetImpl::createSession(QWidget* parent)
 
 TerminalDisplay *TermWidgetImpl::createTerminalDisplay(Session *session, QWidget* parent)
 {
-//    TerminalDisplay* display = new TerminalDisplay(this);
     TerminalDisplay* display = new TerminalDisplay(parent);
 
     display->setBellMode(TerminalDisplay::NotifyBell);
@@ -247,18 +246,6 @@ void QTermWidget::startShellProgram()
     m_impl->m_session->run();
 }
 
-void QTermWidget::startTerminalTeletype()
-{
-    if ( m_impl->m_session->isRunning() ) {
-        return;
-    }
-
-    m_impl->m_session->runEmptyPTY();
-    // redirect data from TTY to external recipient
-    connect( m_impl->m_session->emulation(), SIGNAL(sendData(const char *,int)),
-             this, SIGNAL(sendData(const char *,int)) );
-}
-
 #define TRANSLATIONS_DIR "./translations"
 
 void QTermWidget::init(int startnow)
@@ -321,15 +308,11 @@ void QTermWidget::init(int startnow)
     m_impl->m_terminalDisplay->resize(this->size());
 
     this->setFocusProxy(m_impl->m_terminalDisplay);
-    connect(m_impl->m_terminalDisplay, SIGNAL(copyAvailable(bool)),
-            this, SLOT(selectionChanged(bool)));
-    connect(m_impl->m_terminalDisplay, SIGNAL(termGetFocus()),
-            this, SIGNAL(termGetFocus()));
-    connect(m_impl->m_terminalDisplay, SIGNAL(termLostFocus()),
-            this, SIGNAL(termLostFocus()));
-    connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent *)),
-            this, SIGNAL(termKeyPressed(QKeyEvent *)));
-//    m_impl->m_terminalDisplay->setSize(80, 40);
+    connect(m_impl->m_terminalDisplay, SIGNAL(copyAvailable(bool)), this, SLOT(selectionChanged(bool)));
+    connect(m_impl->m_terminalDisplay, SIGNAL(termGetFocus()), this, SIGNAL(termGetFocus()));
+    connect(m_impl->m_terminalDisplay, SIGNAL(termLostFocus()), this, SIGNAL(termLostFocus()));
+    connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent *)), this, SIGNAL(termKeyPressed(QKeyEvent *)));
+    //m_impl->m_terminalDisplay->setSize(80, 40);
 
     QFont font = QApplication::font();
     font.setFamily(QLatin1String(DEFAULT_FONT_FAMILY));
@@ -345,8 +328,8 @@ void QTermWidget::init(int startnow)
 
     connect(m_impl->m_session, SIGNAL(resizeRequest(QSize)), this, SLOT(setSize(QSize)));
     connect(m_impl->m_session, SIGNAL(finished()), this, SLOT(sessionFinished()));
-    connect(m_impl->m_session, &Session::titleChanged, this, &QTermWidget::titleChanged);
-    connect(m_impl->m_session, &Session::cursorChanged, this, &QTermWidget::cursorChanged);
+    connect(m_impl->m_session, SIGNAL(titleChanged()), this, SIGNAL(titleChanged()));
+    connect(m_impl->m_session, SIGNAL(cursorChanged()), this, SLOT(cursorChanged()));
 
     setFocusPolicy(Qt::StrongFocus);
     bool ok = QObject::connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent*)), this, SLOT(onKeyPressedSignal(QKeyEvent*)));

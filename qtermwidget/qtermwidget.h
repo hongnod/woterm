@@ -73,13 +73,6 @@ public:
     //start shell program if it was not started in constructor
     void startShellProgram();
 
-    /**
-     * Start terminal teletype as is
-     * and redirect data for external recipient.
-     * It can be used for display and control a remote terminal.
-     */
-    void startTerminalTeletype();
-
     int getShellPID();
 
     void changeDir(const QString & dir);
