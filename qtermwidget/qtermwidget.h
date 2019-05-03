@@ -22,6 +22,7 @@
 
 #include <QTranslator>
 #include <QWidget>
+
 #include "Emulation.h"
 #include "Filter.h"
 
@@ -29,6 +30,7 @@ class QVBoxLayout;
 struct TermWidgetImpl;
 class SearchBar;
 class QUrl;
+class QProcess;
 
 //定义两个宏，把对象导出
 #if defined(QTERMWIDGET_BUILD)
@@ -70,15 +72,6 @@ public:
     void setTerminalSizeHint(bool on);
     bool terminalSizeHint();
 
-    //start shell program if it was not started in constructor
-    void startShellProgram();
-
-    int getShellPID();
-
-    void changeDir(const QString & dir);
-
-    //look-n-feel, if you don`t like defaults
-
     //  Terminal font
     // Default is application font with family Monospace, size 10
     // Beware of a performance penalty and display/alignment issues when using a proportional font.
@@ -86,19 +79,6 @@ public:
     QFont getTerminalFont();
     void setTerminalOpacity(qreal level);
     void setTerminalBackgroundImage(QString backgroundImage);
-
-    //environment
-    void setEnvironment(const QStringList & environment);
-
-    //  Shell program, default is /bin/bash
-    void setShellProgram(const QString & progname);
-
-    //working directory
-    void setWorkingDirectory(const QString & dir);
-    QString workingDirectory();
-
-    // Shell program args, default is none
-    void setArgs(const QStringList & args);
 
     //Text codec, default is UTF-8
     void setTextCodec(QTextCodec * codec);
@@ -186,13 +166,6 @@ public:
      * Proxy for TerminalDisplay::filterActions
      * */
     QList<QAction*> filterActions(const QPoint& position);
-
-    /**
-     * Returns a pty slave file descriptor.
-     * This can be used for display and control
-     * a remote terminal.
-     */
-    int getPtySlaveFd() const;
 
     /**
      * Sets the shape of the keyboard cursor.  This is the cursor drawn

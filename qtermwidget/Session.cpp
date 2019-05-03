@@ -37,6 +37,8 @@
 #include <QStringList>
 #include <QFile>
 #include <QtDebug>
+#include <QObject>
+#include <QProcess>
 
 #include "TerminalDisplay.h"
 #include "Vt102Emulation.h"
@@ -47,30 +49,32 @@ int Session::lastSessionId = 0;
 
 Session::Session(QObject* parent) :
     QObject(parent)
-        , _emulation(0)
-        , _monitorActivity(false)
-        , _monitorSilence(false)
-        , _notifiedActivity(false)
-        , _autoClose(true)
-        , _wantedClose(false)
-        , _silenceSeconds(10)
-        , _isTitleChanged(false)
-        , _addToUtmp(false)  // disabled by default because of a bug encountered on certain systems
-        // which caused Konsole to hang when closing a tab and then opening a new
-        // one.  A 'QProcess destroyed while still running' warning was being
-        // printed to the terminal.  Likely a problem in KPty::logout()
-        // or KPty::login() which uses a QProcess to start /usr/bin/utempter
-        , _flowControl(true)
-        , _fullScripting(false)
-        , _sessionId(0)
-//   , _zmodemBusy(false)
-//   , _zmodemProc(0)
-//   , _zmodemProgress(0)
-        , _hasDarkBackground(false)
+    , _emulation(0)
+    , _monitorActivity(false)
+    , _monitorSilence(false)
+    , _notifiedActivity(false)
+    , _autoClose(true)
+    , _wantedClose(false)
+    , _silenceSeconds(10)
+    , _isTitleChanged(false)
+    , _addToUtmp(false)  // disabled by default because of a bug encountered on certain systems
+    // which caused Konsole to hang when closing a tab and then opening a new
+    // one.  A 'QProcess destroyed while still running' warning was being
+    // printed to the terminal.  Likely a problem in KPty::logout()
+    // or KPty::login() which uses a QProcess to start /usr/bin/utempter
+    , _flowControl(true)
+    , _fullScripting(false)
+    , _sessionId(0)
+    //   , _zmodemBusy(false)
+    //   , _zmodemProc(0)
+    //   , _zmodemProgress(0)
+    , _hasDarkBackground(false)
+    , m_pProcess(nullptr)
 {
     _sessionId = ++lastSessionId;
     //create emulation backend
-    _emulation = new Vt102Emulation();    
+    _emulation = new Vt102Emulation();
+
 
     connect( _emulation, SIGNAL( titleChanged( int, const QString & ) ), this, SLOT( setUserTitle( int, const QString & ) ) );
     connect( _emulation, SIGNAL( stateSet(int) ), this, SLOT( activityStateSet(int) ) );
@@ -82,18 +86,7 @@ Session::Session(QObject* parent) :
     connect(_emulation, SIGNAL(imageSizeChanged(int, int)), this, SLOT(onViewSizeChange(int, int)));
     connect(_emulation, SIGNAL(cursorChanged()), this, SIGNAL(cursorChanged()));
 
-//    //connect teletype to emulation backend
-//    //_shellProcess->setUtf8Mode(_emulation->utf8());
-//
-//    connect( _shellProcess,SIGNAL(receivedData(const char *,int)),this,
-//             SLOT(onReceiveBlock(const char *,int)) );
-//    connect( _emulation,SIGNAL(sendData(const char *,int)),_shellProcess,
-//             SLOT(sendData(const char *,int)) );
-//    connect( _emulation,SIGNAL(lockPtyRequest(bool)),_shellProcess,SLOT(lockPty(bool)) );
-//    connect( _emulation,SIGNAL(useUtf8Request(bool)),_shellProcess,SLOT(setUtf8Mode(bool)) );
-//
-//    connect( _shellProcess,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(done(int)) );
-//    // not in kprocess anymore connect( _shellProcess,SIGNAL(done(int)), this, SLOT(done(int)) );
+    connect(_emulation, SIGNAL(sendData(const char *,int)), SLOT(onReceiveBlock(const char *,int)));
 
     //setup timer for monitoring session activity
     _monitorTimer = new QTimer(this);
@@ -161,8 +154,7 @@ void Session::addView(TerminalDisplay * widget)
     }
 
     //connect view signals and slots
-    QObject::connect( widget ,SIGNAL(changedContentSizeSignal(int,int)),this,
-                      SLOT(onViewSizeChange(int,int)));
+    QObject::connect( widget ,SIGNAL(changedContentSizeSignal(int,int)),this, SLOT(onViewSizeChange(int,int)));
 
     QObject::connect( widget ,SIGNAL(destroyed(QObject *)) , this , SLOT(viewDestroyed(QObject *)) );
 
@@ -495,16 +487,6 @@ QString Session::keyBindings() const
     return _emulation->keyBindings();
 }
 
-QStringList Session::environment() const
-{
-    return _environment;
-}
-
-void Session::setEnvironment(const QStringList & environment)
-{
-    _environment = environment;
-}
-
 int Session::sessionId() const
 {
     return _sessionId;
@@ -581,16 +563,6 @@ const HistoryType & Session::historyType() const
 void Session::clearHistory()
 {
     _emulation->clearHistory();
-}
-
-QStringList Session::arguments() const
-{
-    return _arguments;
-}
-
-QString Session::program() const
-{
-    return _program;
 }
 
 // unused currently
@@ -774,10 +746,6 @@ void Session::zmodemFinished()
 */
 void Session::onReceiveBlock( const char * buf, int len )
 {
-//    if(buf[0] == 'l') {
-//        QByteArray dat("\033[31mHello\033[0m World");
-//        _emulation->receiveData(dat.data(), dat.length());
-//    }
     _emulation->receiveData( buf, len );
     emit receivedData( QString::fromLatin1( buf, len ) );
 }
@@ -795,177 +763,3 @@ void Session::setSize(const QSize & size)
 
     emit resizeRequest(size);
 }
-
-int Session::foregroundProcessId() const
-{
-    return 0;
-//    return _shellProcess->foregroundProcessGroup();
-}
-
-int Session::processId() const
-{
-    return 0;
-//    return _shellProcess->pid();
-}
-
-int Session::getPtySlaveFd() const
-{
-    return ptySlaveFd;
-}
-
-void Session::onParse(const QByteArray& buf)
-{
-    static bool isok = true;
-
-    _emulation->receiveData(buf.data(), buf.length());
-    return;
-    {
-             QByteArray buf("jEh你好abc");
-             _emulation->receiveData(buf.data(), buf.length());
-     }
-     {
-             QByteArray buf("\033[31mHello\033[0m World");
-             _emulation->receiveData(buf.data(), buf.length());
-     }
-    if (isok) {
-             QByteArray buf("\x1B[?3l");
-             _emulation->receiveData(buf.data(), buf.length());
-     } else  {
-             QByteArray buf("\x1B[?3h");
-             _emulation->receiveData(buf.data(), buf.length());
-     }
-    isok = !isok;
-     {
-         char tt[] = { 0x0d, 0x0a, 0x1b, 0x5b, 0x30, 0x6d, 0x1b, 0x5b, 0x30, 0x31, 0x3b, 0x33, 0x34, 0x6d, 0x63, 0x6f, 0x6e, 0x66, 0x1b, 0x5b, 0x30, 0x6d, 0x20,
-             0x20, 0x1b, 0x5b, 0x30, 0x31, 0x3b, 0x33, 0x34, 0x6d, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x1b, 0x5b, 0x30, 0x6d, 0x0d, 0x0a, 0x1b, 0x5d,
-             0x30, 0x3b, 0x61, 0x62, 0x63, 0x40, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x68, 0x6f, 0x73, 0x74, 0x3a, 0x7e, 0x07, 0x5b, 0x61, 0x62, 0x63, 0x40,
-             0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x68, 0x6f, 0x73, 0x74, 0x20, 0x7e, 0x5d, 0x24, 0x20, 0x00};
-         QByteArray buf(tt);
-         _emulation->receiveData(buf.data(), buf.length());
-     }
-}
-
-SessionGroup::SessionGroup()
-        : _masterMode(0)
-{
-}
-SessionGroup::~SessionGroup()
-{
-    // disconnect all
-    connectAll(false);
-}
-int SessionGroup::masterMode() const
-{
-    return _masterMode;
-}
-QList<Session *> SessionGroup::sessions() const
-{
-    return _sessions.keys();
-}
-bool SessionGroup::masterStatus(Session * session) const
-{
-    return _sessions[session];
-}
-
-void SessionGroup::addSession(Session * session)
-{
-    _sessions.insert(session,false);
-
-    QListIterator<Session *> masterIter(masters());
-
-    while ( masterIter.hasNext() ) {
-        connectPair(masterIter.next(),session);
-    }
-}
-void SessionGroup::removeSession(Session * session)
-{
-    setMasterStatus(session,false);
-
-    QListIterator<Session *> masterIter(masters());
-
-    while ( masterIter.hasNext() ) {
-        disconnectPair(masterIter.next(),session);
-    }
-
-    _sessions.remove(session);
-}
-void SessionGroup::setMasterMode(int mode)
-{
-    _masterMode = mode;
-
-    connectAll(false);
-    connectAll(true);
-}
-QList<Session *> SessionGroup::masters() const
-{
-    return _sessions.keys(true);
-}
-void SessionGroup::connectAll(bool connect)
-{
-    QListIterator<Session *> masterIter(masters());
-
-    while ( masterIter.hasNext() ) {
-        Session * master = masterIter.next();
-
-        QListIterator<Session *> otherIter(_sessions.keys());
-        while ( otherIter.hasNext() ) {
-            Session * other = otherIter.next();
-
-            if ( other != master ) {
-                if ( connect ) {
-                    connectPair(master,other);
-                } else {
-                    disconnectPair(master,other);
-                }
-            }
-        }
-    }
-}
-void SessionGroup::setMasterStatus(Session * session, bool master)
-{
-    bool wasMaster = _sessions[session];
-    _sessions[session] = master;
-
-    if ((!wasMaster && !master)
-            || (wasMaster && master)) {
-        return;
-    }
-
-    QListIterator<Session *> iter(_sessions.keys());
-    while (iter.hasNext()) {
-        Session * other = iter.next();
-
-        if (other != session) {
-            if (master) {
-                connectPair(session, other);
-            } else {
-                disconnectPair(session, other);
-            }
-        }
-    }
-}
-
-void SessionGroup::connectPair(Session * master , Session * other)
-{
-//    qDebug() << k_funcinfo;
-
-    if ( _masterMode & CopyInputToAll ) {
-        qDebug() << "Connection session " << master->nameTitle() << "to" << other->nameTitle();
-
-        connect( master->emulation() , SIGNAL(sendData(const char *,int)) , other->emulation() ,
-                 SLOT(sendString(const char *,int)) );
-    }
-}
-void SessionGroup::disconnectPair(Session * master , Session * other)
-{
-//    qDebug() << k_funcinfo;
-
-    if ( _masterMode & CopyInputToAll ) {
-        qDebug() << "Disconnecting session " << master->nameTitle() << "from" << other->nameTitle();
-
-        disconnect( master->emulation() , SIGNAL(sendData(const char *,int)) , other->emulation() ,
-                    SLOT(sendString(const char *,int)) );
-    }
-}
-
-//#include "moc_Session.cpp"

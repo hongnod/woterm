@@ -27,15 +27,16 @@
 
 #include <QStringList>
 #include <QWidget>
-
 #include "Emulation.h"
 
+class QProcess;
 
 namespace Konsole {
 
 class Emulation;
 class Pty;
 class TerminalDisplay;
+
 //class ZModemDialog;
 
 /**
@@ -54,7 +55,6 @@ class Session : public QObject {
 
 public:
     Q_PROPERTY(QString name READ nameTitle)
-    Q_PROPERTY(int processId READ processId)
     Q_PROPERTY(QString keyBindings READ keyBindings WRITE setKeyBindings)
     Q_PROPERTY(QSize size READ size WRITE setSize)
 
@@ -77,6 +77,7 @@ public:
      * after run() has been called successfully.
      */
     bool isRunning() const;
+
 
     /**
      * Sets the profile associated with this session.
@@ -123,18 +124,6 @@ public:
      */
     Emulation * emulation() const;
 
-    /**
-     * Returns the environment of this session as a list of strings like
-     * VARIABLE=VALUE
-     */
-    QStringList environment() const;
-    /**
-     * Sets the environment for this session.
-     * @p environment should be a list of strings like
-     * VARIABLE=VALUE
-     */
-    void setEnvironment(const QStringList & environment);
-
     /** Returns the unique ID for this session. */
     int sessionId() const;
 
@@ -169,17 +158,6 @@ public:
     void setTabTitleFormat(TabTitleContext context , const QString & format);
     /** Returns the format used by this session for tab titles. */
     QString tabTitleFormat(TabTitleContext context) const;
-
-
-    /** Returns the arguments passed to the shell process when run() is called. */
-    QStringList arguments() const;
-    /** Returns the program name of the shell process started when run() is called. */
-    QString program() const;
-
-    /** Returns the session's current working directory. */
-    QString initialWorkingDirectory() {
-        return _initialWorkingDir;
-    }
 
     /**
      * Sets the type of history store used by this session.
@@ -298,18 +276,6 @@ public:
      */
     void sendText(const QString & text) const;
 
-    /**
-     * Returns the process id of the terminal process.
-     * This is the id used by the system API to refer to the process.
-     */
-    int processId() const;
-
-    /**
-     * Returns the process id of the terminal's foreground process.
-     * This is initially the same as processId() but can change
-     * as the user starts other programs inside the terminal.
-     */
-    int foregroundProcessId() const;
 
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();
@@ -358,8 +324,6 @@ public:
     int getPtySlaveFd() const;
 
 public slots:
-
-    void onParse(const QByteArray& buf);
 
     /**
      * Starts the terminal session.
@@ -545,82 +509,8 @@ private:
 
     static int lastSessionId;
 
-    int ptySlaveFd;
-
+    QProcess *m_pProcess;
 };
-
-/**
- * Provides a group of sessions which is divided into master and slave sessions.
- * Activity in master sessions can be propagated to all sessions within the group.
- * The type of activity which is propagated and method of propagation is controlled
- * by the masterMode() flags.
- */
-class SessionGroup : public QObject {
-    Q_OBJECT
-
-public:
-    /** Constructs an empty session group. */
-    SessionGroup();
-    /** Destroys the session group and removes all connections between master and slave sessions. */
-    ~SessionGroup();
-
-    /** Adds a session to the group. */
-    void addSession( Session * session );
-    /** Removes a session from the group. */
-    void removeSession( Session * session );
-
-    /** Returns the list of sessions currently in the group. */
-    QList<Session *> sessions() const;
-
-    /**
-     * Sets whether a particular session is a master within the group.
-     * Changes or activity in the group's master sessions may be propagated
-     * to all the sessions in the group, depending on the current masterMode()
-     *
-     * @param session The session whoose master status should be changed.
-     * @param master True to make this session a master or false otherwise
-     */
-    void setMasterStatus( Session * session , bool master );
-    /** Returns the master status of a session.  See setMasterStatus() */
-    bool masterStatus( Session * session ) const;
-
-    /**
-     * This enum describes the options for propagating certain activity or
-     * changes in the group's master sessions to all sessions in the group.
-     */
-    enum MasterMode {
-        /**
-         * Any input key presses in the master sessions are sent to all
-         * sessions in the group.
-         */
-        CopyInputToAll = 1
-    };
-
-    /**
-     * Specifies which activity in the group's master sessions is propagated
-     * to all sessions in the group.
-     *
-     * @param mode A bitwise OR of MasterMode flags.
-     */
-    void setMasterMode( int mode );
-    /**
-     * Returns a bitwise OR of the active MasterMode flags for this group.
-     * See setMasterMode()
-     */
-    int masterMode() const;
-
-private:
-    void connectPair(Session * master , Session * other);
-    void disconnectPair(Session * master , Session * other);
-    void connectAll(bool connect);
-    QList<Session *> masters() const;
-
-    // maps sessions to their master status
-    QHash<Session *,bool> _sessions;
-
-    int _masterMode;
-};
-
 }
 
 #endif
