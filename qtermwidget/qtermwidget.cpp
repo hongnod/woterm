@@ -264,11 +264,7 @@ void QTermWidget::init(int startnow)
 
     for (const QString& dir : dirs) {
         qDebug() << "Trying to load translation file from dir" << dir;
-        QLocale local = QLocale::system();
-        qDebug() << local;
-        QDir d(dir);
-        bool ok = d.exists(dir);
-        if (m_translator->load(local, QLatin1String("qtermwidget"), QLatin1String(QLatin1String("_")), dir)) {
+        if (m_translator->load(QLocale::system(), QLatin1String("qtermwidget"), QLatin1String(QLatin1String("_")), dir)) {
             qApp->installTranslator(m_translator);
             qDebug() << "Translations found in" << dir;
             break;
@@ -332,8 +328,7 @@ void QTermWidget::init(int startnow)
     connect(m_impl->m_session, SIGNAL(cursorChanged()), this, SLOT(cursorChanged()));
 
     setFocusPolicy(Qt::StrongFocus);
-    bool ok = QObject::connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent*)), this, SLOT(onKeyPressedSignal(QKeyEvent*)));
-    qDebug() << "connect" << ok;
+    QObject::connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent*)), this, SLOT(onKeyPressedSignal(QKeyEvent*)));
 }
 
 

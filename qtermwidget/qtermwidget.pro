@@ -17,6 +17,8 @@ CONFIG += debug_and_release build_all
 FORMS += ./SearchBar.ui
 RESOURCES += qtermwidget.qrc
 
+TRANSLATIONS += $$[PROJECT_BINDIR]/translations/qtermwidget.ts
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
