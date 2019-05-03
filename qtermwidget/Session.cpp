@@ -421,16 +421,18 @@ void Session::close()
 {
     _autoClose = true;
     _wantedClose = true;
-//    if (!_shellProcess->isRunning() || !sendSignal(SIGHUP)) {
-//        // Forced close.
-//        QTimer::singleShot(1, this, SIGNAL(finished()));
-//    }
 }
 
 void Session::sendText(const QString & text) const
 {
     _emulation->sendText(text);
 }
+
+void Session::sendString(const QByteArray &buf) const
+{
+    _emulation->sendString(buf.data(), buf.length());
+}
+
 
 Session::~Session()
 {

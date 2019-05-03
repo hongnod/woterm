@@ -38,5 +38,5 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
 void QWoTermWidget::onTimeout()
 {
     qDebug() << "onTimeout()";
-    sendText("ddddd");
+    sendString("ddddd");
 }

@@ -861,10 +861,11 @@ void Vt102Emulation::clearScreenAndSetColumns(int columnCount)
 
 void Vt102Emulation::sendString(const char* s , int length)
 {
-  if ( length >= 0 )
+  if ( length >= 0 ){
     emit sendData(s,length);
-  else
-    emit sendData(s,strlen(s));
+  } else {
+    emit sendData(s, strlen(s));
+  }
 }
 
 void Vt102Emulation::reportCursorPosition()
@@ -1040,7 +1041,7 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
     // lookup key binding
     if ( _keyTranslator )
     {
-    KeyboardTranslator::Entry entry = _keyTranslator->findEntry(
+        KeyboardTranslator::Entry entry = _keyTranslator->findEntry(
                                                 event->key() ,
                                                 modifiers,
                                                 states );

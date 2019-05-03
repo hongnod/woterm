@@ -417,6 +417,11 @@ void QTermWidget::sendText(const QString &text)
     m_impl->m_session->sendText(text);
 }
 
+void QTermWidget::sendString(const QByteArray &data)
+{
+    m_impl->m_session->sendString(data);
+}
+
 void QTermWidget::resizeEvent(QResizeEvent*)
 {
 //qDebug("global window resizing...with %d %d", this->size().width(), this->size().height());

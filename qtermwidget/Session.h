@@ -276,6 +276,8 @@ public:
      */
     void sendText(const QString & text) const;
 
+    void sendString(const QByteArray& buf) const;
+
 
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();

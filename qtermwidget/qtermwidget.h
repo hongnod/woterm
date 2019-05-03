@@ -104,6 +104,8 @@ public:
     // Send some text to terminal
     void sendText(const QString & text);
 
+    void sendString(const QByteArray& data);
+
     // Sets whether flow control is enabled
     void setFlowControlEnabled(bool enabled);
 
