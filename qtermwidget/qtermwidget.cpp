@@ -39,6 +39,8 @@
 #ifdef Q_OS_MACOS
 // Qt does not support fontconfig on macOS, so we need to use a "real" font name.
 #define DEFAULT_FONT_FAMILY                   "Menlo"
+#elif defined(Q_OS_WIN)
+#define DEFAULT_FONT_FAMILY                   "Courier New"
 #else
 #define DEFAULT_FONT_FAMILY                   "Monospace"
 #endif
