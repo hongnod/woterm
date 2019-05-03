@@ -72,23 +72,15 @@ Session::Session(QObject* parent) :
     //create emulation backend
     _emulation = new Vt102Emulation();    
 
-    connect( _emulation, SIGNAL( titleChanged( int, const QString & ) ),
-             this, SLOT( setUserTitle( int, const QString & ) ) );
-    connect( _emulation, SIGNAL( stateSet(int) ),
-             this, SLOT( activityStateSet(int) ) );
-//    connect( _emulation, SIGNAL( zmodemDetected() ), this ,
-//            SLOT( fireZModemDetected() ) );
-    connect( _emulation, SIGNAL( changeTabTextColorRequest( int ) ),
-             this, SIGNAL( changeTabTextColorRequest( int ) ) );
-    connect( _emulation, SIGNAL(profileChangeCommandReceived(const QString &)),
-             this, SIGNAL( profileChangeCommandReceived(const QString &)) );
+    connect( _emulation, SIGNAL( titleChanged( int, const QString & ) ), this, SLOT( setUserTitle( int, const QString & ) ) );
+    connect( _emulation, SIGNAL( stateSet(int) ), this, SLOT( activityStateSet(int) ) );
+//  connect( _emulation, SIGNAL( zmodemDetected() ), this, SLOT( fireZModemDetected() ) );
+    connect( _emulation, SIGNAL( changeTabTextColorRequest( int ) ), this, SIGNAL( changeTabTextColorRequest( int ) ) );
+    connect( _emulation, SIGNAL(profileChangeCommandReceived(const QString &)), this, SIGNAL( profileChangeCommandReceived(const QString &)) );
 
-    connect(_emulation, SIGNAL(imageResizeRequest(QSize)),
-            this, SLOT(onEmulationSizeChange(QSize)));
-    connect(_emulation, SIGNAL(imageSizeChanged(int, int)),
-            this, SLOT(onViewSizeChange(int, int)));
-    connect(_emulation, &Vt102Emulation::cursorChanged,
-            this, &Session::cursorChanged);
+    connect(_emulation, SIGNAL(imageResizeRequest(QSize)), this, SLOT(onEmulationSizeChange(QSize)));
+    connect(_emulation, SIGNAL(imageSizeChanged(int, int)), this, SLOT(onViewSizeChange(int, int)));
+    connect(_emulation, SIGNAL(cursorChanged()), this, SIGNAL(cursorChanged()));
 
 //    //connect teletype to emulation backend
 //    //_shellProcess->setUtf8Mode(_emulation->utf8());
