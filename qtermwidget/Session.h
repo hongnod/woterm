@@ -73,27 +73,6 @@ public:
     virtual ~Session();
 
     /**
-     * Returns true if the session is currently running.  This will be true
-     * after run() has been called successfully.
-     */
-    bool isRunning() const;
-
-
-    /**
-     * Sets the profile associated with this session.
-     *
-     * @param profileKey A key which can be used to obtain the current
-     * profile settings from the SessionManager
-     */
-    void setProfileKey(const QString & profileKey);
-    /**
-     * Returns the profile key associated with this session.
-     * This can be passed to the SessionManager to obtain the current
-     * profile settings.
-     */
-    QString profileKey() const;
-
-    /**
      * Adds a new view for this session.
      *
      * The viewing widget will display the output from the terminal and
@@ -307,23 +286,9 @@ public:
      */
     bool hasDarkBackground() const;
 
-    /**
-     * Attempts to get the shell program to redraw the current display area.
-     * This can be used after clearing the screen, for example, to get the
-     * shell to redraw the prompt line.
-     */
-    void refresh();
-
 //  void startZModem(const QString &rz, const QString &dir, const QStringList &list);
 //  void cancelZModem();
 //  bool isZModemBusy() { return _zmodemBusy; }
-
-    /**
-     * Returns a pty slave file descriptor.
-     * This can be used for display and control
-     * a remote terminal.
-     */
-    int getPtySlaveFd() const;
 
 public slots:
 

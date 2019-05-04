@@ -260,7 +260,6 @@ public slots:
     void clear();
 
     void toggleShowSearchBar();
-    void parse(const QByteArray &buf);
 
 protected:
     virtual void resizeEvent(QResizeEvent *);

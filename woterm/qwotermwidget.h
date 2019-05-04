@@ -2,6 +2,8 @@
 
 #include <qtermwidget.h>
 
+class QProcess;
+
 class QWoTermWidget : public QTermWidget
 {
     Q_OBJECT
@@ -11,5 +13,10 @@ public:
 private
 slots:
     void onTimeout();
+    void onReadyReadStandardOutput();
+    void onReadyReadStandardError();
+    void onFinish(int code);
 
+private:
+    QProcess *m_pProcess;
 };

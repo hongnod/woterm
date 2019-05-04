@@ -113,11 +113,6 @@ bool Session::hasDarkBackground() const
     return _hasDarkBackground;
 }
 
-bool Session::isRunning() const
-{
-    return true;
-}
-
 void Session::setCodec(QTextCodec * codec)
 {
     emulation()->setCodec(codec);
@@ -382,27 +377,6 @@ void Session::updateTerminalSize()
     }
 }
 
-void Session::refresh()
-{
-    // attempt to get the shell process to redraw the display
-    //
-    // this requires the program running in the shell
-    // to cooperate by sending an update in response to
-    // a window size change
-    //
-    // the window size is changed twice, first made slightly larger and then
-    // resized back to its normal size so that there is actually a change
-    // in the window size (some shells do nothing if the
-    // new and old sizes are the same)
-    //
-    // if there is a more 'correct' way to do this, please
-    // send an email with method or patches to konsole-devel@kde.org
-
-//    const QSize existingSize = _shellProcess->windowSize();
-//    _shellProcess->setWindowSize(existingSize.height(),existingSize.width()+1);
-//    _shellProcess->setWindowSize(existingSize.height(),existingSize.width());
-}
-
 bool Session::sendSignal(int signal)
 {
     return false;
@@ -439,16 +413,6 @@ Session::~Session()
     delete _emulation;
 //    delete _shellProcess;
 //  delete _zmodemProc;
-}
-
-void Session::setProfileKey(const QString & key)
-{
-    _profileKey = key;
-    emit profileChanged(key);
-}
-QString Session::profileKey() const
-{
-    return _profileKey;
 }
 
 void Session::done(int exitStatus)

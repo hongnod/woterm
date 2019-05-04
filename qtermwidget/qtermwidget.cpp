@@ -38,7 +38,6 @@
 
 
 #ifdef Q_OS_MACOS
-// Qt does not support fontconfig on macOS, so we need to use a "real" font name.
 #define DEFAULT_FONT_FAMILY                   "Menlo"
 #elif defined(Q_OS_WIN)
 #define DEFAULT_FONT_FAMILY                   "Courier New"
@@ -132,8 +131,8 @@ void QTermWidget::onKeyPressedSignal(QKeyEvent *e)
         data.push_back(char(8));
         break;
     case Qt::Key_F1:
-        //parse("\x1B[2J\x1B[3g\x1B[1;1H\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[1;4H\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[1;7H\x1B[1g\x1B[2g\x1B[1;1H\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\x1B[2;2H     *     *     *     *     *     *     *     *     *     *     *     *     *\x1B[4;1HTest of TAB setting/resetting. These two lines\r\nshould look the same. Push <RETURN>");
-        parse("\x1B[?5h\x1B[?3h\x1B[2J\x1B[1;1H\x1B[3g\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[1;1H12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901\x1B[3;3HThis is 132 column mode, light background.\x1B[4;4HThis is 132 column mode, light background.\x1B[5;5HThis is 132 column mode, light background.\x1B[6;6HThis is 132 column mode, light background.\x1B[7;7HThis is 132 column mode, light background.\x1B[8;8HThis is 132 column mode, light background.\x1B[9;9HThis is 132 column mode, light background.\x1B[10;10HThis is 132 column mode, light background.\x1B[11;11HThis is 132 column mode, light background.\x1B[12;12HThis is 132 column mode, light background.\x1B[13;13HThis is 132 column mode, light background.\x1B[14;14HThis is 132 column mode, light background.\x1B[15;15HThis is 132 column mode, light background.\x1B[16;16HThis is 132 column mode, light background.\x1B[17;17HThis is 132 column mode, light background.\x1B[18;18HThis is 132 column mode, light background.\x1B[19;19HThis is 132 column mode, light background.\x1B[20;20HThis is 132 column mode, light background.Push <RETURN>");
+        //sendString("\x1B[2J\x1B[3g\x1B[1;1H\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[3C\x1BH\x1B[1;4H\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[0g\x1B[6C\x1B[1;7H\x1B[1g\x1B[2g\x1B[1;1H\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\t*\x1B[2;2H     *     *     *     *     *     *     *     *     *     *     *     *     *\x1B[4;1HTest of TAB setting/resetting. These two lines\r\nshould look the same. Push <RETURN>");
+       // sendString("\x1B[?5h\x1B[?3h\x1B[2J\x1B[1;1H\x1B[3g\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[8C\x1BH\x1B[1;1H12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901\x1B[3;3HThis is 132 column mode, light background.\x1B[4;4HThis is 132 column mode, light background.\x1B[5;5HThis is 132 column mode, light background.\x1B[6;6HThis is 132 column mode, light background.\x1B[7;7HThis is 132 column mode, light background.\x1B[8;8HThis is 132 column mode, light background.\x1B[9;9HThis is 132 column mode, light background.\x1B[10;10HThis is 132 column mode, light background.\x1B[11;11HThis is 132 column mode, light background.\x1B[12;12HThis is 132 column mode, light background.\x1B[13;13HThis is 132 column mode, light background.\x1B[14;14HThis is 132 column mode, light background.\x1B[15;15HThis is 132 column mode, light background.\x1B[16;16HThis is 132 column mode, light background.\x1B[17;17HThis is 132 column mode, light background.\x1B[18;18HThis is 132 column mode, light background.\x1B[19;19HThis is 132 column mode, light background.\x1B[20;20HThis is 132 column mode, light background.Push <RETURN>");
         break;
     }
 }
@@ -428,11 +427,6 @@ void QTermWidget::resizeEvent(QResizeEvent*)
     m_impl->m_terminalDisplay->resize(this->size());
 }
 
-void QTermWidget::parse(const QByteArray &buf)
-{
-    QMetaObject::invokeMethod(m_impl->m_session, "onParse", Qt::QueuedConnection, Q_ARG(QByteArray, buf));
-}
-
 void QTermWidget::sessionFinished()
 {
     emit finished();
@@ -484,7 +478,6 @@ void QTermWidget::setKeyBindings(const QString & kb)
 void QTermWidget::clear()
 {
     m_impl->m_session->emulation()->reset();
-    m_impl->m_session->refresh();
     m_impl->m_session->clearHistory();
 }
 
