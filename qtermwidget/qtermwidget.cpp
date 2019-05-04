@@ -409,9 +409,31 @@ bool QTermWidget::eventFilter(QObject *obj, QEvent *ev)
     QEvent::Type t = ev->type();
     if (t == QEvent::KeyPress) {
         QKeyEvent* e = (QKeyEvent*)ev;
+        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
         QString keyTxt = e->text();
+        int key = e->key();
         if(!keyTxt.isEmpty()) {
             QByteArray data = keyTxt.toUtf8();
+            emit sendData(data);
+        }else if(key == Qt::Key_Down){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            data.append("\x1B[B");
+            emit sendData(data);
+        }else if(key == Qt::Key_Up){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            data.append("\x1B[A");
+            emit sendData(data);
+        }else if(key == Qt::Key_Left){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            data.append("\x1B[D");
+            emit sendData(data);
+        }else if(key == Qt::Key_Right){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            data.append("\x1B[C");
             emit sendData(data);
         }
         return true;
