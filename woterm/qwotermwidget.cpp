@@ -32,14 +32,17 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
         }
     }
 
+#if 0
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start(5000);
+#endif
 
     m_pProcess = new QProcess(this);
     QObject::connect(m_pProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_pProcess, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
     QObject::connect(m_pProcess, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
+    QObject::connect(this, SIGNAL(termKeyPressed(QKeyEvent *)), this, SLOT(onTermKeyPressed(QKeyEvent *)));
 
 
     m_pProcess->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\sshproxy.exe");
@@ -80,4 +83,46 @@ void QWoTermWidget::onReadyReadStandardError()
 void QWoTermWidget::onFinish(int code)
 {
     qDebug() << "exitcode" << code;
+}
+
+void QWoTermWidget::onTermKeyPressed(QKeyEvent *e)
+{
+    qDebug() << "key:" << e->key() << "modifiers:" << e->modifiers() << e->nativeVirtualKey() << e->nativeScanCode() << "text:" << e->text();
+    if (e->modifiers() == Qt::CTRL) {
+        if (e->matches(QKeySequence::Cut)) {
+            e->accept();
+        }
+        return;
+    }
+    if((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_C)) {
+        //copy();
+        e->accept();
+        return;
+    }
+    QByteArray data;
+    switch (e->key()) {
+    case Qt::Key_Backspace:
+        data.push_back(char(8));
+        m_pProcess->write(data.data(), data.length());
+        break;
+    case Qt::Key_Tab:
+        break;
+    case Qt::Key_Enter:
+        data.push_back(char(8));
+        m_pProcess->write(data.data(), data.length());
+        break;
+    case Qt::Key_Return:
+        data.push_back('\n');
+        m_pProcess->write(data.data(), data.length());
+        break;
+    default:
+        QString szkey = e->text();
+        if (!szkey.isEmpty()) {
+            e->accept();
+            data.push_back(szkey.toUtf8());
+            m_pProcess->write(data.data(), data.length());
+            return;
+        }
+    }
+    QWidget::keyPressEvent(e);
 }

@@ -2510,8 +2510,9 @@ void TerminalDisplay::wheelEvent( QWheelEvent* ev )
 
         QKeyEvent keyScrollEvent(QEvent::KeyPress,key,Qt::NoModifier);
 
-        for (int i=0;i<linesToScroll;i++)
+        for (int i=0;i<linesToScroll;i++) {
             emit keyPressedSignal(&keyScrollEvent);
+        }
     }
   }
   else
@@ -2729,7 +2730,12 @@ int TerminalDisplay::motionAfterPasting()
     return mMotionAfterPasting;
 }
 
-void TerminalDisplay::keyPressEvent( QKeyEvent* event )
+void TerminalDisplay::keyPressEvent( QKeyEvent* e )
+{
+    emit keyPressedSignal(e);
+}
+
+void TerminalDisplay::keyPressEvent2( QKeyEvent* event )
 {
     bool emitKeyPressSignal = true;
 
@@ -2818,16 +2824,16 @@ void TerminalDisplay::keyPressEvent( QKeyEvent* event )
     event->accept();
 }
 
-void TerminalDisplay::inputMethodEvent( QInputMethodEvent* event )
+void TerminalDisplay::inputMethodEvent( QInputMethodEvent* e )
 {
-    QKeyEvent keyEvent(QEvent::KeyPress,0,Qt::NoModifier,event->commitString());
-    emit keyPressedSignal(&keyEvent);
-
-    _inputMethodData.preeditString = event->preeditString().toStdWString();
+    QKeyEvent keyEvent(QEvent::KeyPress, 0, Qt::NoModifier,e->commitString());
+    //emit keyPressedSignal(&keyEvent);
+    _inputMethodData.preeditString = e->preeditString().toStdWString();
     update(preeditRect() | _inputMethodData.previousPreeditRect);
 
-    event->accept();
+    e->accept();
 }
+
 QVariant TerminalDisplay::inputMethodQuery( Qt::InputMethodQuery query ) const
 {
     const QPoint cursorPos = _screenWindow ? _screenWindow->cursorPosition() : QPoint(0,0);

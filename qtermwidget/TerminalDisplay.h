@@ -567,7 +567,8 @@ protected:
     virtual void fontChange(const QFont &font);
     virtual void focusInEvent(QFocusEvent* event);
     virtual void focusOutEvent(QFocusEvent* event);
-    virtual void keyPressEvent(QKeyEvent* event);
+    virtual void keyPressEvent(QKeyEvent* e);
+    virtual void keyPressEvent2(QKeyEvent* event);
     virtual void mouseDoubleClickEvent(QMouseEvent* ev);
     virtual void mousePressEvent( QMouseEvent* );
     virtual void mouseReleaseEvent( QMouseEvent* );

@@ -267,7 +267,6 @@ protected:
 protected slots:
     void sessionFinished();
     void selectionChanged(bool textSelected);
-    void onKeyPressedSignal(QKeyEvent *e);
 
 private slots:
     void find();

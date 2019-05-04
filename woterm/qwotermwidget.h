@@ -16,6 +16,7 @@ slots:
     void onReadyReadStandardOutput();
     void onReadyReadStandardError();
     void onFinish(int code);
+    void onTermKeyPressed(QKeyEvent *e);
 
 private:
     QProcess *m_pProcess;
