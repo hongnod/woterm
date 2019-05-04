@@ -69,8 +69,8 @@ Character Screen::defaultChar = Character(' ',
 
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
-    Screen::Screen(int l, int c)
-: lines(l),
+Screen::Screen(int l, int c)
+    : lines(l),
     columns(c),
     screenLines(new ImageLine[lines+1] ),
     _scrolledLines(0),
@@ -85,8 +85,9 @@ Character Screen::defaultChar = Character(' ',
     lastPos(-1)
 {
     lineProperties.resize(lines+1);
-    for (int i=0;i<lines+1;i++)
+    for (int i=0;i<lines+1;i++){
         lineProperties[i]=LINE_DEFAULT;
+    }
 
     initTabStops();
     clearSelection();

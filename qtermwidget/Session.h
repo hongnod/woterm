@@ -255,8 +255,7 @@ public:
      */
     void sendText(const QString & text) const;
 
-    void sendString(const QByteArray& buf) const;
-
+    void parseSequenceText(const QByteArray& buf) const;
 
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();
@@ -293,13 +292,6 @@ public:
 public slots:
 
     /**
-     * Starts the terminal session.
-     *
-     * This creates the terminal process and connects the teletype to it.
-     */
-    void run();
-
-    /**
      * Closes the terminal session.  This sends a hangup signal
      * (SIGHUP) to the terminal process and causes the done(Session*)
      * signal to be emitted.
@@ -322,11 +314,6 @@ signals:
      * Emitted when the terminal process exits.
      */
     void finished();
-
-    /**
-     * Emitted when output is received from the terminal process.
-     */
-    void receivedData( const QString & text );
 
     /** Emitted when the session's title has changed. */
     void titleChanged();
@@ -401,7 +388,6 @@ private slots:
 
 //  void fireZModemDetected();
 
-    void onReceiveBlock( const char * buffer, int len );
     void monitorTimerDone();
 
     void onViewSizeChange(int height, int width);

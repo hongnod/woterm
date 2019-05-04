@@ -862,9 +862,9 @@ void Vt102Emulation::clearScreenAndSetColumns(int columnCount)
 void Vt102Emulation::sendString(const char* s , int length)
 {
   if ( length >= 0 ){
-    emit sendData(s,length);
+    emit sendData(QByteArray(s,length));
   } else {
-    emit sendData(s, strlen(s));
+    emit sendData(QByteArray(s));
   }
 }
 
@@ -1011,6 +1011,7 @@ void Vt102Emulation::sendText( const QString& text )
     sendKeyEvent(&event); // expose as a big fat keypress event
   }
 }
+
 void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
 {
     Qt::KeyboardModifiers modifiers = event->modifiers();
@@ -1096,7 +1097,7 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
             textToSend += _codec->fromUnicode(event->text());
         }
 
-        sendData( textToSend.constData() , textToSend.length() );
+        sendData(textToSend);
     }
     else
     {

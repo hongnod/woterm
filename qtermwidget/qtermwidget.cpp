@@ -234,8 +234,8 @@ void QTermWidget::init(int startnow)
 
     connect(m_impl->m_session, SIGNAL(activity()), this, SIGNAL(activity()));
     connect(m_impl->m_session, SIGNAL(silence()), this, SIGNAL(silence()));
-    connect(m_impl->m_session, &Session::profileChangeCommandReceived, this, &QTermWidget::profileChanged);
-    connect(m_impl->m_session, &Session::receivedData, this, &QTermWidget::receivedData);
+    connect(m_impl->m_session, SIGNAL(profileChangeCommandReceived()), this, SLOT(profileChanged()));
+    connect(m_impl->m_session, SIGNAL(sendData(const QByteArray& buf)), this, SIGNAL(sendData(const QByteArray& buf)));
 
     // That's OK, FilterChain's dtor takes care of UrlFilter.
     UrlFilter *urlFilter = new UrlFilter();
@@ -250,10 +250,6 @@ void QTermWidget::init(int startnow)
     m_layout->addWidget(m_searchBar);
     m_searchBar->hide();
 
-    if (startnow && m_impl->m_session) {
-        m_impl->m_session->run();
-    }
-
     this->setFocus( Qt::OtherFocusReason );
     this->setFocusPolicy( Qt::WheelFocus );
     m_impl->m_terminalDisplay->resize(this->size());
@@ -263,7 +259,8 @@ void QTermWidget::init(int startnow)
     connect(m_impl->m_terminalDisplay, SIGNAL(termGetFocus()), this, SIGNAL(termGetFocus()));
     connect(m_impl->m_terminalDisplay, SIGNAL(termLostFocus()), this, SIGNAL(termLostFocus()));
     connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent *)), this, SIGNAL(termKeyPressed(QKeyEvent *)));
-    //m_impl->m_terminalDisplay->setSize(80, 40);
+
+    m_impl->m_terminalDisplay->installEventFilter(this);
 
     QFont font = QApplication::font();
     font.setFamily(QLatin1String(DEFAULT_FONT_FAMILY));
@@ -397,20 +394,29 @@ void QTermWidget::scrollToEnd()
     m_impl->m_terminalDisplay->scrollToEnd();
 }
 
-void QTermWidget::sendText(const QString &text)
+void QTermWidget::parseSequenceText(const QByteArray &data)
 {
-    m_impl->m_session->sendText(text);
-}
-
-void QTermWidget::sendString(const QByteArray &data)
-{
-    m_impl->m_session->sendString(data);
+    m_impl->m_session->parseSequenceText(data);
 }
 
 void QTermWidget::resizeEvent(QResizeEvent*)
 {
-//qDebug("global window resizing...with %d %d", this->size().width(), this->size().height());
     m_impl->m_terminalDisplay->resize(this->size());
+}
+
+bool QTermWidget::eventFilter(QObject *obj, QEvent *ev)
+{
+    QEvent::Type t = ev->type();
+    if (t == QEvent::KeyPress) {
+        QKeyEvent* e = (QKeyEvent*)ev;
+        QString keyTxt = e->text();
+        if(!keyTxt.isEmpty()) {
+            QByteArray data = keyTxt.toUtf8();
+            emit sendData(data);
+        }
+        return true;
+    }
+    return false;
 }
 
 void QTermWidget::sessionFinished()

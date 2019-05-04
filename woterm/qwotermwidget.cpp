@@ -42,8 +42,7 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
     QObject::connect(m_pProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_pProcess, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
     QObject::connect(m_pProcess, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
-    QObject::connect(this, SIGNAL(termKeyPressed(QKeyEvent *)), this, SLOT(onTermKeyPressed(QKeyEvent *)));
-
+    QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
 
     m_pProcess->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\sshproxy.exe");
     QStringList args;
@@ -56,28 +55,28 @@ void QWoTermWidget::onTimeout()
 {
     qDebug() << "onTimeout()";
 
-    sendString("\x1B[?3l");
-    sendString("\x1B[?3h");
-    sendString("jEh你好abc");
-    sendString("\033[31mHello\033[0m World");
-    sendString("error");
+    parseSequenceText("\x1B[?3l");
+    parseSequenceText("\x1B[?3h");
+    parseSequenceText("jEh你好abc");
+    parseSequenceText("\033[31mHello\033[0m World");
+    parseSequenceText("error");
     char buf[] = { 0x0d, 0x0a, 0x1b, 0x5b, 0x30, 0x6d, 0x1b, 0x5b, 0x30, 0x31, 0x3b, 0x33, 0x34, 0x6d, 0x63, 0x6f, 0x6e, 0x66, 0x1b, 0x5b, 0x30, 0x6d, 0x20,
                    0x20, 0x1b, 0x5b, 0x30, 0x31, 0x3b, 0x33, 0x34, 0x6d, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x1b, 0x5b, 0x30, 0x6d, 0x0d, 0x0a, 0x1b, 0x5d,
                    0x30, 0x3b, 0x61, 0x62, 0x63, 0x40, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x68, 0x6f, 0x73, 0x74, 0x3a, 0x7e, 0x07, 0x5b, 0x61, 0x62, 0x63, 0x40,
                    0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x68, 0x6f, 0x73, 0x74, 0x20, 0x7e, 0x5d, 0x24, 0x20, 0x00};
-    sendString(buf);
+    parseSequenceText(buf);
 }
 
 void QWoTermWidget::onReadyReadStandardOutput()
 {
     QByteArray out = m_pProcess->readAllStandardOutput();
-    sendString(out);
+    parseSequenceText(out);
 }
 
 void QWoTermWidget::onReadyReadStandardError()
 {
     QByteArray err = m_pProcess->readAllStandardError();
-    sendString(err);
+    parseSequenceText(err);
 }
 
 void QWoTermWidget::onFinish(int code)
@@ -85,44 +84,7 @@ void QWoTermWidget::onFinish(int code)
     qDebug() << "exitcode" << code;
 }
 
-void QWoTermWidget::onTermKeyPressed(QKeyEvent *e)
+void QWoTermWidget::onSendData(const QByteArray &buf)
 {
-    qDebug() << "key:" << e->key() << "modifiers:" << e->modifiers() << e->nativeVirtualKey() << e->nativeScanCode() << "text:" << e->text();
-    if (e->modifiers() == Qt::CTRL) {
-        if (e->matches(QKeySequence::Cut)) {
-            e->accept();
-        }
-        return;
-    }
-    if((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_C)) {
-        //copy();
-        e->accept();
-        return;
-    }
-    QByteArray data;
-    switch (e->key()) {
-    case Qt::Key_Backspace:
-        data.push_back(char(8));
-        m_pProcess->write(data.data(), data.length());
-        break;
-    case Qt::Key_Tab:
-        break;
-    case Qt::Key_Enter:
-        data.push_back(char(8));
-        m_pProcess->write(data.data(), data.length());
-        break;
-    case Qt::Key_Return:
-        data.push_back('\n');
-        m_pProcess->write(data.data(), data.length());
-        break;
-    default:
-        QString szkey = e->text();
-        if (!szkey.isEmpty()) {
-            e->accept();
-            data.push_back(szkey.toUtf8());
-            m_pProcess->write(data.data(), data.length());
-            return;
-        }
-    }
-    QWidget::keyPressEvent(e);
+    m_pProcess->write(buf.data(), buf.length());
 }

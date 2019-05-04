@@ -133,8 +133,9 @@ void Emulation::setScreen(int n)
   if (_currentScreen != old)
   {
      // tell all windows onto this emulation to switch to the newly active screen
-     for(ScreenWindow* window : const_cast<const QList<ScreenWindow*>&>(_windows))
+     for(ScreenWindow* window : const_cast<const QList<ScreenWindow*>&>(_windows)){
          window->setScreen(_currentScreen);
+     }
   }
 }
 
@@ -215,7 +216,7 @@ void Emulation::sendKeyEvent( QKeyEvent* ev )
         // A block of text
         // Note that the text is proper unicode.
         // We should do a conversion here
-        emit sendData(ev->text().toUtf8().constData(),ev->text().length());
+        emit sendData(ev->text().toUtf8());
     }
 }
 

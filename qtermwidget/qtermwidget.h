@@ -101,10 +101,7 @@ public:
     // Wrapped, scroll to end.
     void scrollToEnd();
 
-    // Send some text to terminal
-    void sendText(const QString & text);
-
-    void sendString(const QByteArray& data);
+    void parseSequenceText(const QByteArray& data);
 
     // Sets whether flow control is enabled
     void setFlowControlEnabled(bool enabled);
@@ -222,7 +219,7 @@ signals:
      * (redirected for external recipient). It can be used for
      * control and display the remote terminal.
      */
-    void sendData(const char *,int);
+    void sendData(const QByteArray& buf);
 
     void profileChanged(const QString & profile);
 
@@ -263,6 +260,7 @@ public slots:
 
 protected:
     virtual void resizeEvent(QResizeEvent *);
+    virtual bool eventFilter(QObject *obj, QEvent *ev);
 
 protected slots:
     void sessionFinished();

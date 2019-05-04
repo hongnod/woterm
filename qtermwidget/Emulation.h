@@ -295,7 +295,7 @@ signals:
    * @param data The buffer of data ready to be sent
    * @param len The length of @p data in bytes
    */
-  void sendData(const char* data,int len);
+  void sendData(const QByteArray& buf);
 
   /**
    * Requests that sending of input to the emulation
