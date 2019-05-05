@@ -306,6 +306,8 @@ public slots:
     void setUserTitle( int, const QString & caption );
 
 signals:
+    // sendData;
+    void sendData(const QByteArray& buf);
 
     /** Emitted when the terminal process starts. */
     void started();

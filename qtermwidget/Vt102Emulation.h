@@ -104,6 +104,9 @@ protected:
   virtual void resetMode(int mode);
   virtual void receiveChar(wchar_t cc);
 
+private:
+  virtual bool eventFilter(QObject *obj, QEvent *ev);
+
 private slots:
   //causes changeTitle() to be emitted for each (int,QString) pair in pendingTitleUpdates
   //used to buffer multiple title updates

@@ -86,6 +86,8 @@ Session::Session(QObject* parent) :
     connect(_emulation, SIGNAL(imageSizeChanged(int, int)), this, SLOT(onViewSizeChange(int, int)));
     connect(_emulation, SIGNAL(cursorChanged()), this, SIGNAL(cursorChanged()));
 
+    connect(_emulation, SIGNAL(sendData(const QByteArray&)), this, SIGNAL(sendData(const QByteArray&)));
+
     //setup timer for monitoring session activity
     _monitorTimer = new QTimer(this);
     _monitorTimer->setSingleShot(true);
@@ -152,6 +154,7 @@ void Session::addView(TerminalDisplay * widget)
 
     QObject::connect(this, SIGNAL(finished()), widget, SLOT(close()));
 
+    widget->installEventFilter(_emulation);
 }
 
 void Session::viewDestroyed(QObject * view)

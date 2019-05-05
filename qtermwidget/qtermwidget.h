@@ -260,7 +260,6 @@ public slots:
 
 protected:
     virtual void resizeEvent(QResizeEvent *);
-    virtual bool eventFilter(QObject *obj, QEvent *ev);
 
 protected slots:
     void sessionFinished();

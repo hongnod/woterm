@@ -44,10 +44,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QByteRef>
-
-// KDE
-//#include <kdebug.h>
-//#include <klocale.h>
+#include <QDebug>
 
 // Konsole
 #include "KeyboardTranslator.h"
@@ -393,6 +390,62 @@ void Vt102Emulation::receiveChar(wchar_t cc)
     return;
   }
 }
+
+bool Vt102Emulation::eventFilter(QObject *obj, QEvent *ev)
+{
+    QEvent::Type t = ev->type();
+    if (t == QEvent::KeyPress) {
+        QKeyEvent* e = (QKeyEvent*)ev;
+        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
+        QString keyTxt = e->text();
+        int key = e->key();
+        bool appck = getMode(MODE_AppCuKeys);
+        if(!keyTxt.isEmpty()) {
+            QByteArray data = keyTxt.toUtf8();
+            emit sendData(data);
+        }else if(key == Qt::Key_Down){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            if(appck) {
+                data.append("\x1BOB");
+            }else {
+                data.append("\x1B[B");
+            }
+
+            emit sendData(data);
+        }else if(key == Qt::Key_Up){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            if(appck) {
+                data.append("\x1BOA");
+            }else {
+                data.append("\x1B[A");
+            }
+            emit sendData(data);
+        }else if(key == Qt::Key_Left){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            if(appck) {
+                data.append("\x1BOD");
+            }else {
+                data.append("\x1B[D");
+            }
+            emit sendData(data);
+        }else if(key == Qt::Key_Right){
+            QChar ch(e->nativeVirtualKey());
+            QByteArray data;
+            if(appck) {
+                data.append("\x1BOC");
+            }else {
+                data.append("\x1B[C");
+            }
+            emit sendData(data);
+        }
+        return true;
+    }
+    return false;
+}
+
 void Vt102Emulation::processWindowAttributeChange()
 {
   // Describes the window or terminal session attribute to change

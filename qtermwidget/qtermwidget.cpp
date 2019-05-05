@@ -235,7 +235,7 @@ void QTermWidget::init(int startnow)
     connect(m_impl->m_session, SIGNAL(activity()), this, SIGNAL(activity()));
     connect(m_impl->m_session, SIGNAL(silence()), this, SIGNAL(silence()));
     connect(m_impl->m_session, SIGNAL(profileChangeCommandReceived()), this, SLOT(profileChanged()));
-    connect(m_impl->m_session, SIGNAL(sendData(const QByteArray& buf)), this, SIGNAL(sendData(const QByteArray& buf)));
+    connect(m_impl->m_session, SIGNAL(sendData(const QByteArray&)), this, SIGNAL(sendData(const QByteArray&)));
 
     // That's OK, FilterChain's dtor takes care of UrlFilter.
     UrlFilter *urlFilter = new UrlFilter();
@@ -259,8 +259,6 @@ void QTermWidget::init(int startnow)
     connect(m_impl->m_terminalDisplay, SIGNAL(termGetFocus()), this, SIGNAL(termGetFocus()));
     connect(m_impl->m_terminalDisplay, SIGNAL(termLostFocus()), this, SIGNAL(termLostFocus()));
     connect(m_impl->m_terminalDisplay, SIGNAL(keyPressedSignal(QKeyEvent *)), this, SIGNAL(termKeyPressed(QKeyEvent *)));
-
-    m_impl->m_terminalDisplay->installEventFilter(this);
 
     QFont font = QApplication::font();
     font.setFamily(QLatin1String(DEFAULT_FONT_FAMILY));
@@ -402,43 +400,6 @@ void QTermWidget::parseSequenceText(const QByteArray &data)
 void QTermWidget::resizeEvent(QResizeEvent*)
 {
     m_impl->m_terminalDisplay->resize(this->size());
-}
-
-bool QTermWidget::eventFilter(QObject *obj, QEvent *ev)
-{
-    QEvent::Type t = ev->type();
-    if (t == QEvent::KeyPress) {
-        QKeyEvent* e = (QKeyEvent*)ev;
-        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
-        QString keyTxt = e->text();
-        int key = e->key();
-        if(!keyTxt.isEmpty()) {
-            QByteArray data = keyTxt.toUtf8();
-            emit sendData(data);
-        }else if(key == Qt::Key_Down){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            data.append("\x1B[B");
-            emit sendData(data);
-        }else if(key == Qt::Key_Up){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            data.append("\x1B[A");
-            emit sendData(data);
-        }else if(key == Qt::Key_Left){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            data.append("\x1B[D");
-            emit sendData(data);
-        }else if(key == Qt::Key_Right){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            data.append("\x1B[C");
-            emit sendData(data);
-        }
-        return true;
-    }
-    return false;
 }
 
 void QTermWidget::sessionFinished()
