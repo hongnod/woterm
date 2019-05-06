@@ -662,18 +662,6 @@ bool ColorSchemeManager::loadKDE3ColorScheme(const QString& filePath)
 
     return true;
 }
-#if 0
-void ColorSchemeManager::addColorScheme(ColorScheme* scheme)
-{
-    _colorSchemes.insert(scheme->name(),scheme);
-
-    // save changes to disk
-    QString path = KGlobal::dirs()->saveLocation("data","konsole/") + scheme->name() + ".colorscheme";
-    KConfig config(path , KConfig::NoGlobals);
-
-    scheme->write(config);
-}
-#endif
 
 bool ColorSchemeManager::loadCustomColorScheme(const QString& path)
 {
