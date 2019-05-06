@@ -630,6 +630,7 @@ QList<const ColorScheme*> ColorSchemeManager::allColorSchemes()
 
     return _colorSchemes.values();
 }
+
 bool ColorSchemeManager::loadKDE3ColorScheme(const QString& filePath)
 {
     QFile file(filePath);
@@ -726,7 +727,8 @@ bool ColorSchemeManager::loadColorScheme(const QString& filePath)
 QList<QString> ColorSchemeManager::listKDE3ColorSchemes()
 {
     QList<QString> ret;
-    for (const QString &scheme_dir : get_color_schemes_dirs())
+    QString scheme_dir = get_color_schemes_dir();
+    if(!scheme_dir.isEmpty())
     {
         const QString dname(scheme_dir);
         QDir dir(dname);
@@ -734,19 +736,18 @@ QList<QString> ColorSchemeManager::listKDE3ColorSchemes()
         filters << QLatin1String("*.schema");
         dir.setNameFilters(filters);
         QStringList list = dir.entryList(filters);
-        for (const QString &i : list)
+        for (const QString &i : list) {
             ret << dname + QLatin1Char('/') + i;
+        }
     }
     return ret;
-    //return KGlobal::dirs()->findAllResources("data",
-    //                                         "konsole/*.schema",
-    //                                          KStandardDirs::NoDuplicates);
-    //
 }
+
 QList<QString> ColorSchemeManager::listColorSchemes()
 {
     QList<QString> ret;
-    for (const QString &scheme_dir : get_color_schemes_dirs())
+    QString scheme_dir = get_color_schemes_dir();
+    if(!scheme_dir.isEmpty())
     {
         const QString dname(scheme_dir);
         QDir dir(dname);
@@ -754,19 +755,19 @@ QList<QString> ColorSchemeManager::listColorSchemes()
         filters << QLatin1String("*.colorscheme");
         dir.setNameFilters(filters);
         QStringList list = dir.entryList(filters);
-        for (const QString &i : list)
+        for (const QString &i : list){
             ret << dname + QLatin1Char('/') + i;
+        }
     }
     return ret;
-//    return KGlobal::dirs()->findAllResources("data",
-//                                             "konsole/*.colorscheme",
-//                                             KStandardDirs::NoDuplicates);
 }
+
 const ColorScheme ColorSchemeManager::_defaultColorScheme;
 const ColorScheme* ColorSchemeManager::defaultColorScheme() const
 {
     return &_defaultColorScheme;
 }
+
 bool ColorSchemeManager::deleteColorScheme(const QString& name)
 {
     Q_ASSERT( _colorSchemes.contains(name) );
@@ -784,23 +785,23 @@ bool ColorSchemeManager::deleteColorScheme(const QString& name)
         return false;
     }
 }
+
 QString ColorSchemeManager::findColorSchemePath(const QString& name) const
 {
-//    QString path = KStandardDirs::locate("data","konsole/"+name+".colorscheme");
-    const QStringList dirs = get_color_schemes_dirs();
-    if ( dirs.isEmpty() )
+    const QString dir = get_color_schemes_dir();
+    if(dir.isEmpty()) {
         return QString();
+    }
 
-    const QString dir = dirs.first();
     QString path(dir + QLatin1Char('/')+ name + QLatin1String(".colorscheme"));
     if ( !path.isEmpty() )
         return path;
 
-    //path = KStandardDirs::locate("data","konsole/"+name+".schema");
     path = dir + QLatin1Char('/')+ name + QLatin1String(".schema");
 
     return path;
 }
+
 const ColorScheme* ColorSchemeManager::findColorScheme(const QString& name)
 {
     if ( name.isEmpty() )

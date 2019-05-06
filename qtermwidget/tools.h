@@ -6,6 +6,6 @@
 
 QString get_kb_layout_dir();
 void add_custom_color_scheme_dir(const QString& custom_dir);
-const QStringList get_color_schemes_dirs();
+QString get_color_schemes_dir();
 
 #endif

@@ -42,49 +42,14 @@ But in some cases (apple bundle) there can be more locations).
 
 #define COLORSCHEMES_DIR "/color-schemes"
 
-const QStringList get_color_schemes_dirs()
+QString get_color_schemes_dir()
 {
-//    qDebug() << __FILE__ << __FUNCTION__;
-
-    QStringList rval;
-    QString k(QLatin1String(COLORSCHEMES_DIR));
-    QDir d(k);
-
-    qDebug() << "default COLORSCHEMES_DIR: " << k;
-
-    if (d.exists())
-        rval << k.append(QLatin1Char('/'));
-
-    // subdir in the app location
-    d.setPath(QCoreApplication::applicationDirPath() + QLatin1String("/color-schemes/"));
-    //qDebug() << d.path();
-    if (d.exists())
-    {
-        if (!rval.isEmpty())
-            rval.clear();
-        rval << (QCoreApplication::applicationDirPath() + QLatin1String("/color-schemes/"));
+    QString binPath = QCoreApplication::applicationDirPath();
+    QString path = QDir::cleanPath(binPath +"/" + COLORSCHEMES_DIR);
+    qDebug() << "default COLORSCHEMES_DIR: " << path;
+    QDir d(path);
+    if (d.exists()) {
+        return path;
     }
-#ifdef Q_WS_MAC
-    d.setPath(QCoreApplication::applicationDirPath() + "/../Resources/color-schemes/");
-    if (d.exists())
-    {
-        if (!rval.isEmpty())
-            rval.clear();
-        rval << (QCoreApplication::applicationDirPath() + "/../Resources/color-schemes/");
-    }
-#endif
-    for (const QString& custom_dir : const_cast<const QStringList&>(custom_color_schemes_dirs))
-    {
-        d.setPath(custom_dir);
-        if (d.exists())
-            rval << custom_dir;
-    }
-#ifdef QT_DEBUG
-    if(!rval.isEmpty()) {
-        qDebug() << "Using color-schemes: " << rval;
-    } else {
-        qDebug() << "Cannot find color-schemes in any location!";
-    }
-#endif
-    return rval;
+    return QString();
 }

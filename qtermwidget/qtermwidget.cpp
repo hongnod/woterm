@@ -359,7 +359,6 @@ QStringList QTermWidget::availableColorSchemes()
     const auto allColorSchemes = ColorSchemeManager::instance()->allColorSchemes();
     for (const ColorScheme* cs : allColorSchemes) {
         ret.append(cs->name());
-        qDebug() << "name:" << cs->name();
     }
     return ret;
 }

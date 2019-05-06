@@ -37,3 +37,6 @@ include(../common.pri)
         ./tools.cpp \
         ./Vt102Emulation.cpp
 }
+
+HEADERS += \
+    $$PWD/tools.h

@@ -20,6 +20,8 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
     font.setPointSize(12);
     setTerminalFont(font);
     setScrollBarPosition(QTermWidget::ScrollBarRight);
+    setColorScheme("Linux");
+    setKeyBindings("linux");
 
     const auto arguments = QApplication::arguments();
     for (const QString& arg : arguments)
