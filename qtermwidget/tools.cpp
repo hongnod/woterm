@@ -13,31 +13,14 @@ But in some cases (apple bundle) there can be more locations).
 #define KB_LAYOUT_DIR "./kb-layouts"
 QString get_kb_layout_dir()
 {
-//    qDebug() << __FILE__ << __FUNCTION__;
-
     QString rval = QString();
-    QString k(QLatin1String(KB_LAYOUT_DIR));
-    QDir d(k);
-
-    qDebug() << "default KB_LAYOUT_DIR: " << k;
-
-    if (d.exists())
-    {
-        rval = k.append(QLatin1Char('/'));
-        return rval;
+    QString binPath = QCoreApplication::applicationDirPath();
+    QString path = QDir::cleanPath(binPath +"/" + KB_LAYOUT_DIR);
+    qDebug() << "default KB_LAYOUT_DIR: " << path;
+    QDir d(path);
+    if (d.exists()) {
+        return path;
     }
-
-    // subdir in the app location
-    d.setPath(QCoreApplication::applicationDirPath() + QLatin1String("/kb-layouts/"));
-    //qDebug() << d.path();
-    if (d.exists())
-        return QCoreApplication::applicationDirPath() + QLatin1String("/kb-layouts/");
-#ifdef Q_WS_MAC
-    d.setPath(QCoreApplication::applicationDirPath() + "/../Resources/kb-layouts/");
-    if (d.exists())
-        return QCoreApplication::applicationDirPath() + "/../Resources/kb-layouts/";
-#endif
-    qDebug() << "Cannot find KB_LAYOUT_DIR. Default:" << k;
     return QString();
 }
 
