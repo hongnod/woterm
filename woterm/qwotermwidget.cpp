@@ -95,12 +95,19 @@ void QWoTermWidget::onSendData(const QByteArray &buf)
 
 void QWoTermWidget::onCopyToClipboard()
 {
-
+    QClipboard *clip = QGuiApplication::clipboard();
+    QString selTxt = selectedText();
+    if(!selTxt.isEmpty()) {
+        clip->setText(selTxt);
+    }
 }
 
 void QWoTermWidget::onPasteFromClipboard()
 {
-    qDebug() << "ddd";
+    QClipboard *clip = QGuiApplication::clipboard();
+    QString clipTxt = clip->text();
+    QByteArray buf = clipTxt.toUtf8();
+    m_process->write(buf.data(), buf.length());
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
