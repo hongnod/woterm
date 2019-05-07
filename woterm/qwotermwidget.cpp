@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QDebug>
 #include <QProcess>
+#include <QMenu>
+#include <QClipboard>
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_FONT_FAMILY                   "Menlo"
@@ -40,17 +42,17 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
     timer->start(5000);
 #endif
 
-    m_pProcess = new QProcess(this);
-    QObject::connect(m_pProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
-    QObject::connect(m_pProcess, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
-    QObject::connect(m_pProcess, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
+    m_process = new QProcess(this);
+    QObject::connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
+    QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
+    QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
 
-    m_pProcess->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\sshproxy.exe");
+    m_process->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\sshproxy.exe");
     QStringList args;
     args << "-F" << "D:\\config" << "jump";
-    m_pProcess->setArguments(args);
-    m_pProcess->start();
+    m_process->setArguments(args);
+    m_process->start();
 }
 
 void QWoTermWidget::onTimeout()
@@ -71,13 +73,13 @@ void QWoTermWidget::onTimeout()
 
 void QWoTermWidget::onReadyReadStandardOutput()
 {
-    QByteArray out = m_pProcess->readAllStandardOutput();
+    QByteArray out = m_process->readAllStandardOutput();
     parseSequenceText(out);
 }
 
 void QWoTermWidget::onReadyReadStandardError()
 {
-    QByteArray err = m_pProcess->readAllStandardError();
+    QByteArray err = m_process->readAllStandardError();
     parseSequenceText(err);
 }
 
@@ -88,5 +90,34 @@ void QWoTermWidget::onFinish(int code)
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
 {
-    m_pProcess->write(buf.data(), buf.length());
+    m_process->write(buf.data(), buf.length());
+}
+
+void QWoTermWidget::onCopyToClipboard()
+{
+
+}
+
+void QWoTermWidget::onPasteFromClipboard()
+{
+    qDebug() << "ddd";
+}
+
+void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
+{
+    if(m_menu == nullptr) {
+        m_menu = new QMenu(this);
+        m_copy = m_menu->addAction(tr("Copy"));
+        QObject::connect(m_copy, SIGNAL(triggered()), this, SLOT(onCopyToClipboard()));
+        m_paste = m_menu->addAction(tr("Paste"));
+        QObject::connect(m_paste, SIGNAL(triggered()), this, SLOT(onPasteFromClipboard()));
+    }
+
+    QString selTxt = selectedText();
+    m_copy->setDisabled(selTxt.isEmpty());
+    QClipboard *clip = QGuiApplication::clipboard();
+    QString clipTxt = clip->text();
+    m_paste->setDisabled(clipTxt.isEmpty());
+
+    m_menu->exec(QCursor::pos());
 }

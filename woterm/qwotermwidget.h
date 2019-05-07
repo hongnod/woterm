@@ -2,7 +2,10 @@
 
 #include <qtermwidget.h>
 
+#include <QPointer>
+
 class QProcess;
+class QMenu;
 
 class QWoTermWidget : public QTermWidget
 {
@@ -17,7 +20,16 @@ slots:
     void onReadyReadStandardError();
     void onFinish(int code);
     void onSendData(const QByteArray& buf);
+    void onCopyToClipboard();
+    void onPasteFromClipboard();
 
 private:
-    QProcess *m_pProcess;
+    void contextMenuEvent(QContextMenuEvent *event);
+
+
+private:
+    QPointer<QProcess> m_process;
+    QPointer<QMenu> m_menu;
+    QPointer<QAction> m_copy;
+    QPointer<QAction> m_paste;
 };
