@@ -1,8 +1,8 @@
 #include "qwotermwidget.h"
+#include "qwoprocess.h"
 
 #include <QApplication>
 #include <QDebug>
-#include <QProcess>
 #include <QMenu>
 #include <QClipboard>
 
@@ -14,9 +14,12 @@
 #define DEFAULT_FONT_FAMILY                   "Monospace"
 #endif
 
-QWoTermWidget::QWoTermWidget(QWidget *parent)
-    :QTermWidget (parent)
+QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
+    : QTermWidget (parent)
+    , m_process(process)
 {
+    m_process->setTermWidget(this);
+
     QFont font = QApplication::font();
     font.setFamily(DEFAULT_FONT_FAMILY);
     font.setPointSize(12);
@@ -42,17 +45,10 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
     timer->start(5000);
 #endif
 
-    m_process = new QProcess(this);
     QObject::connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
     QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
-
-    m_process->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
-    QStringList args;
-    args << "-F" << "D:\\config" << "jump";
-    m_process->setArguments(args);
-    m_process->start();
 }
 
 void QWoTermWidget::onTimeout()

@@ -4,15 +4,14 @@
 
 #include <QPointer>
 
-class QProcess;
+class QWoProcess;
 class QMenu;
 
 class QWoTermWidget : public QTermWidget
 {
     Q_OBJECT
 public:
-    explicit QWoTermWidget(QWidget *parent=nullptr);
-
+    explicit QWoTermWidget(QWoProcess *process, QWidget *parent=nullptr);
 private
 slots:
     void onTimeout();
@@ -26,9 +25,8 @@ slots:
 private:
     void contextMenuEvent(QContextMenuEvent *event);
 
-
 private:
-    QPointer<QProcess> m_process;
+    QPointer<QWoProcess> m_process;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;
     QPointer<QAction> m_paste;

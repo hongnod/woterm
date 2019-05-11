@@ -22,8 +22,10 @@
 #include <QIcon>
 #include <QMainWindow>
 #include <QMenuBar>
+#include <QProcess>
 
 #include "qwotermwidget.h"
+#include "qwosshprocess.h"
 
 int main(int argc, char *argv[])
 {
@@ -31,7 +33,9 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
     QMainWindow *mainWindow = new QMainWindow();
-    QWoTermWidget *console = new QWoTermWidget();
+    QWoSshProcess process;
+    QWoTermWidget *console = new QWoTermWidget(&process);
+    process.start();
 
     QMenuBar *menuBar = new QMenuBar(mainWindow);
     QMenu *actionsMenu = new QMenu("Actions", menuBar);
