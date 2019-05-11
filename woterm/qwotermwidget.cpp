@@ -48,7 +48,7 @@ QWoTermWidget::QWoTermWidget(QWidget *parent)
     QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
 
-    m_process->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\sshproxy.exe");
+    m_process->setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
     QStringList args;
     args << "-F" << "D:\\config" << "jump";
     m_process->setArguments(args);
