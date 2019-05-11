@@ -4,10 +4,9 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QProcess>
 #include <QMenu>
 #include <QClipboard>
-
+#include <QLocalServer>
 
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
@@ -16,4 +15,13 @@ QWoSshProcess::QWoSshProcess()
     QStringList args;
     args << "-F" << "D:\\config" << "jump";
     setArguments(args);
+
+    QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
+    m_serer = new QLocalServer(this);
+    m_serer->listen(name);
+    QString fullName = m_serer->serverName();
+    QStringList env;
+    env << "TERM_MSG_CHANNEL="+name;
+    setEnvironment(env);
+    qDebug() << fullName;
 }
