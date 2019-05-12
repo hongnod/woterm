@@ -21,7 +21,11 @@ private slots:
     void onClientDisconnected();
     void onClientReadyRead();
 private:
-    void read(char *buf, int len);
+    Q_INVOKABLE void updateTermSize();
+private:
+    virtual bool eventFilter(QObject *obj, QEvent *ev);
+    virtual void setTermWidget(QTermWidget *widget);
+
 private:
     QPointer<QLocalServer> m_server;
     QPointer<QLocalSocket> m_client;
