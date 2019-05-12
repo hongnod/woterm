@@ -35,6 +35,7 @@ void QWoSshProcess::onNewConnection()
     QObject::connect(m_client, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
     QObject::connect(m_client, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
 
+    m_client->setReadBufferSize(4096);
     updateTermSize();
 }
 
@@ -79,6 +80,7 @@ void QWoSshProcess::updateTermSize()
     int column = m_term->screenColumnsCount();
     QString fun = QString("setwinsize(%1,%2)").arg(column).arg(linecnt);
     QByteArray cmd = QString("%1%2").arg(fun.size(), 3, 10, QChar('0')).arg(fun).toUtf8();
+    qDebug() << "length:" << cmd.length() << "cmd:" << cmd.data();
     m_client->write(cmd);
 }
 
