@@ -31,6 +31,7 @@ QWoSshProcess::QWoSshProcess()
 void QWoSshProcess::onNewConnection()
 {
     QLocalSocket* local = m_server->nextPendingConnection();
+    local->setTextModeEnabled(true);
     QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
     QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
     QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
@@ -62,7 +63,6 @@ void QWoSshProcess::onClientReadyRead()
     buf[len] = '\0';
     local->read(buf, len);
     QString data(buf);
-    qDebug() << data;
     if(data.startsWith("isread")) {
         local->setObjectName("reader");
         m_reader = local;
