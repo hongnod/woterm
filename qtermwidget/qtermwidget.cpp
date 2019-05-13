@@ -211,7 +211,7 @@ void QTermWidget::init(int startnow)
 
     // translations
     QString binPath = QCoreApplication::applicationDirPath();
-    QString transPath = QDir::cleanPath(binPath + "/" + TRANSLATIONS_DIR);
+    QString transPath = QDir::cleanPath(binPath + "/" + TRANSLATIONS_DIR + "/");
     QStringList dirs;
     dirs.append(transPath);
 

@@ -67,7 +67,7 @@ KeyboardTranslatorManager::~KeyboardTranslatorManager()
 }
 QString KeyboardTranslatorManager::findTranslatorPath(const QString& name)
 {
-    return QString(get_kb_layout_dir() + name + QLatin1String(".keytab"));
+    return QString(get_kb_layout_dir() + "/" + name + QLatin1String(".keytab"));
     //return KGlobal::dirs()->findResource("data","konsole/"+name+".keytab");
 }
 

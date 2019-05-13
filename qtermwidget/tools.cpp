@@ -15,7 +15,7 @@ QString get_kb_layout_dir()
 {
     QString rval = QString();
     QString binPath = QCoreApplication::applicationDirPath();
-    QString path = QDir::cleanPath(binPath +"/" + KB_LAYOUT_DIR);
+    QString path = QDir::cleanPath(binPath +"/" + KB_LAYOUT_DIR+"/");
     qDebug() << "default KB_LAYOUT_DIR: " << path;
     QDir d(path);
     if (d.exists()) {
