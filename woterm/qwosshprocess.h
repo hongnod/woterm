@@ -28,5 +28,6 @@ private:
 
 private:
     QPointer<QLocalServer> m_server;
-    QPointer<QLocalSocket> m_client;
+    QPointer<QLocalSocket> m_reader;
+    QPointer<QLocalSocket> m_writer;
 };

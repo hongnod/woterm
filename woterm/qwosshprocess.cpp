@@ -30,50 +30,54 @@ QWoSshProcess::QWoSshProcess()
 
 void QWoSshProcess::onNewConnection()
 {
-    m_client = m_server->nextPendingConnection();
-    QObject::connect(m_client, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
-    QObject::connect(m_client, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
-    QObject::connect(m_client, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
-
-    m_client->setReadBufferSize(4096);
-    updateTermSize();
+    QLocalSocket* local = m_server->nextPendingConnection();
+    QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
+    QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
+    QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
 }
 
 void QWoSshProcess::onClientError(QLocalSocket::LocalSocketError socketError)
 {
-    if(m_client) {
-        m_client->deleteLater();
+    QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
+    if(local) {
+        local->deleteLater();
     }
 }
 
 void QWoSshProcess::onClientDisconnected()
 {
-    if(m_client) {
-        m_client->deleteLater();
+    QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
+    if(local) {
+        local->deleteLater();
     }
 }
 
 void QWoSshProcess::onClientReadyRead()
 {
+    QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     char buf[512];
-    if(m_client == nullptr) {
-        return;
-    }
     buf[3] = '\0';
-    m_client->read(buf, 3);
+    local->read(buf, 3);
     int len = QString(buf).toInt();
     buf[len] = '\0';
-    m_client->read(buf, len);
+    local->read(buf, len);
     QString data(buf);
     qDebug() << data;
-    if(data.startsWith("getwinsize")) {
+    if(data.startsWith("isread")) {
+        local->setObjectName("reader");
+        m_reader = local;
+    }else if (data.startsWith("iswrite")) {
+        local->setObjectName("writer");
+        m_writer = local;
+        updateTermSize();
+    }else if (data.startsWith("getwinsize")) {
         updateTermSize();
     }
 }
 
 void QWoSshProcess::updateTermSize()
 {
-    if(m_client == nullptr) {
+    if(m_writer == nullptr) {
         return;
     }
     int linecnt = m_term->screenLinesCount();
@@ -81,7 +85,7 @@ void QWoSshProcess::updateTermSize()
     QString fun = QString("setwinsize(%1,%2)").arg(column).arg(linecnt);
     QByteArray cmd = QString("%1%2").arg(fun.size(), 3, 10, QChar('0')).arg(fun).toUtf8();
     qDebug() << "length:" << cmd.length() << "cmd:" << cmd.data();
-    m_client->write(cmd);
+    m_writer->write(cmd);
 }
 
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
