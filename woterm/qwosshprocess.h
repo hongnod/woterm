@@ -25,7 +25,9 @@ private slots:
     void onZmodemSend();
     void onZmodemRecv();
     void onZmodemAbort();
-    void onFileDialogFinish(int result);
+    void onZmodemFinish(int code);
+    void onZmodemReadyReadStandardOutput();
+    void onZmodemReadyReadStandardError();
     void onFileDialogFilesSelected(const QStringList& files);
 private:
     Q_INVOKABLE void updateTermSize();
