@@ -13,6 +13,8 @@
 
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
+    , m_exeSend("d:/woterm/sz.exe")
+    , m_exeRecv("d:/woterm/rz.exe")
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
     QStringList args;
@@ -89,9 +91,13 @@ void QWoSshProcess::onClientReadyRead()
 
 void QWoSshProcess::onZmodemSend()
 {
-    QStringList files = QFileDialog::getOpenFileNames(m_term,
-                                                      "Select one or more files to open");
-    qDebug() << files;
+    if(m_fileDialog == nullptr) {
+        m_fileDialog = new QFileDialog(m_term);
+        m_fileDialog->setFileMode(QFileDialog::ExistingFiles);
+        QObject::connect(m_fileDialog, SIGNAL(finished(int)), this, SLOT(onFileDialogFinish(int)));
+        QObject::connect(m_fileDialog, SIGNAL(filesSelected(const QStringList&)), this, SLOT(onFileDialogFilesSelected(const QStringList&)));
+    }
+    m_fileDialog->open();
 }
 
 void QWoSshProcess::onZmodemRecv()
@@ -102,6 +108,27 @@ void QWoSshProcess::onZmodemRecv()
 void QWoSshProcess::onZmodemAbort()
 {
 
+}
+
+void QWoSshProcess::onFileDialogFinish(int result)
+{
+
+}
+
+void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
+{
+    QStringList fmts;
+    for(int i = 0; i < files.length(); i++) {
+        fmts.push_back("\""+files.at(i)+"\"");
+    }
+    QString params = fmts.join(" ");
+    qDebug() << params;
+
+    m_zmodem = new QProcess(this);
+    m_zmodem->setProgram(m_exeSend);
+    QStringList args;
+    args << params;
+    m_zmodem->setArguments(args);
 }
 
 void QWoSshProcess::updateTermSize()
@@ -143,4 +170,14 @@ void QWoSshProcess::prepareContextMenu(QMenu *menu)
         QObject::connect(m_zmodemRecv, SIGNAL(triggered()), this, SLOT(onZmodemRecv()));
         QObject::connect(m_zmodemAbort, SIGNAL(triggered()), this, SLOT(onZmodemAbort()));
     }
+}
+
+qint64 QWoSshProcess::readData(char *data, qint64 maxlen)
+{
+    return QWoProcess::readData(data, maxlen);
+}
+
+qint64 QWoSshProcess::writeData(const char *data, qint64 len)
+{
+    return QWoProcess::writeData(data, len);
 }

@@ -9,6 +9,7 @@ class QTermWidget;
 class QLocalServer;
 class QLocalSocket;
 class QAction;
+class QFileDialog;
 
 class QWoSshProcess : public QWoProcess
 {
@@ -24,12 +25,18 @@ private slots:
     void onZmodemSend();
     void onZmodemRecv();
     void onZmodemAbort();
+    void onFileDialogFinish(int result);
+    void onFileDialogFilesSelected(const QStringList& files);
 private:
     Q_INVOKABLE void updateTermSize();
 private:
     virtual bool eventFilter(QObject *obj, QEvent *ev);
     virtual void setTermWidget(QTermWidget *widget);
     virtual void prepareContextMenu(QMenu *menu);
+
+    virtual qint64 readData(char *data, qint64 maxlen);
+    virtual qint64 writeData(const char *data, qint64 len);
+
 
 private:
     void zmodemSend(const QStringList& files);
@@ -41,4 +48,9 @@ private:
     QPointer<QAction> m_zmodemSend;
     QPointer<QAction> m_zmodemRecv;
     QPointer<QAction> m_zmodemAbort;
+    QPointer<QFileDialog> m_fileDialog;
+
+    QPointer<QProcess> m_zmodem;
+    QString m_exeSend;
+    QString m_exeRecv;
 };
