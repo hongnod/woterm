@@ -82,6 +82,7 @@ void QWoTermWidget::onReadyReadStandardError()
 void QWoTermWidget::onFinish(int code)
 {
     qDebug() << "exitcode" << code;
+    QApplication::exit(code);
 }
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
@@ -121,6 +122,8 @@ void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
     QClipboard *clip = QGuiApplication::clipboard();
     QString clipTxt = clip->text();
     m_paste->setDisabled(clipTxt.isEmpty());
+
+    m_process->prepareContextMenu(m_menu);
 
     m_menu->exec(QCursor::pos());
 }

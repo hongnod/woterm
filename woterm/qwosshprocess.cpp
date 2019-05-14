@@ -5,6 +5,8 @@
 #include <QApplication>
 #include <QDebug>
 #include <QMenu>
+#include <QAction>
+#include <QFileDialog>
 #include <QClipboard>
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -14,7 +16,7 @@ QWoSshProcess::QWoSshProcess()
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
     QStringList args;
-    args << "-F" << "D:\\config" << "jump";
+    args << "-F" << "D:\\config" << "target";
     setArguments(args);
 
     QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
@@ -26,6 +28,16 @@ QWoSshProcess::QWoSshProcess()
     setEnvironment(env);
 
     QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+}
+
+void QWoSshProcess::zmodemSend(const QStringList &files)
+{
+
+}
+
+void QWoSshProcess::zmodemRecv()
+{
+
 }
 
 void QWoSshProcess::onNewConnection()
@@ -75,6 +87,23 @@ void QWoSshProcess::onClientReadyRead()
     }
 }
 
+void QWoSshProcess::onZmodemSend()
+{
+    QStringList files = QFileDialog::getOpenFileNames(m_term,
+                                                      "Select one or more files to open");
+    qDebug() << files;
+}
+
+void QWoSshProcess::onZmodemRecv()
+{
+
+}
+
+void QWoSshProcess::onZmodemAbort()
+{
+
+}
+
 void QWoSshProcess::updateTermSize()
 {
     if(m_writer == nullptr) {
@@ -101,4 +130,17 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
 {
     QWoProcess::setTermWidget(widget);
     widget->installEventFilter(this);
+}
+
+void QWoSshProcess::prepareContextMenu(QMenu *menu)
+{
+    if(m_zmodemSend == nullptr) {
+        m_zmodemSend = menu->addAction(tr("Zmodem Upload"));
+        m_zmodemRecv = menu->addAction(tr("Zmodem Receive"));
+        m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"));
+
+        QObject::connect(m_zmodemSend, SIGNAL(triggered()), this, SLOT(onZmodemSend()));
+        QObject::connect(m_zmodemRecv, SIGNAL(triggered()), this, SLOT(onZmodemRecv()));
+        QObject::connect(m_zmodemAbort, SIGNAL(triggered()), this, SLOT(onZmodemAbort()));
+    }
 }

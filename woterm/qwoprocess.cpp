@@ -18,3 +18,8 @@ void QWoProcess::setTermWidget(QTermWidget *widget)
 {
     m_term = widget;
 }
+
+void QWoProcess::prepareContextMenu(QMenu *menu)
+{
+
+}
