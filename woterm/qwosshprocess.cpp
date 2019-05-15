@@ -16,7 +16,6 @@ QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
     , m_exeSend("d:\\vterm\\rzsz\\sbin\\x64\\Debug\\sz.exe")
     , m_exeRecv("d:/woterm/rz.exe")
-    , m_thread(new QThread())
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
     QStringList args;
@@ -36,7 +35,6 @@ QWoSshProcess::QWoSshProcess()
 
 QWoSshProcess::~QWoSshProcess()
 {
-    delete m_thread;
 }
 
 void QWoSshProcess::zmodemSend(const QStringList &files)
@@ -134,7 +132,6 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
         args.push_back("\""+path+"\"");
     }
     m_zmodem = new QProcess(this);
-    m_zmodem->moveToThread(m_thread);
    // m_zmodem->setInputChannelMode(QProcess::ForwardedInputChannel);
     m_zmodem->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *cpa){
         cpa->flags = CREATE_NEW_CONSOLE;

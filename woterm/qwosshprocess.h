@@ -57,5 +57,4 @@ private:
     QPointer<QProcess> m_zmodem;
     QString m_exeSend;
     QString m_exeRecv;
-    QPointer<QThread> m_thread;
 };
