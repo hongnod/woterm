@@ -10,12 +10,14 @@ class QLocalServer;
 class QLocalSocket;
 class QAction;
 class QFileDialog;
+class QThread;
 
 class QWoSshProcess : public QWoProcess
 {
     Q_OBJECT
 public:
     explicit QWoSshProcess();
+    virtual ~QWoSshProcess();
 
 private slots:
     void onNewConnection();
@@ -55,4 +57,5 @@ private:
     QPointer<QProcess> m_zmodem;
     QString m_exeSend;
     QString m_exeRecv;
+    QPointer<QThread> m_thread;
 };

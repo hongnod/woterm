@@ -8,9 +8,11 @@ unix:QMAKE_RPATHDIR+=$$PROJECT_LIBDIR
 SOURCES += main.cpp \
     qwotermwidget.cpp \
     qwoprocess.cpp \
-    qwosshprocess.cpp
+    qwosshprocess.cpp \
+    qwoworker.cpp
 
 HEADERS += \
     qwotermwidget.h \
     qwoprocess.h \
-    qwosshprocess.h
+    qwosshprocess.h \
+    qwoworker.h
