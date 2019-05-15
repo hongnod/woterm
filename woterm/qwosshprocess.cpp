@@ -14,7 +14,7 @@
 
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
-    , m_exeSend("d:\\vterm\\rzsz\\sbin\\x64\\Debug\\sz.exe")
+    , m_exeSend("D:\\vterm\\vterm\\sbin\\x64\\Debug\\sz.exe")
     , m_exeRecv("d:/woterm/rz.exe")
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
@@ -128,11 +128,10 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
     QStringList args;
     for(int i = 0; i < files.length(); i++) {
         QString path = files.at(i);
-        path.replace('/', '\\');
-        args.push_back("\""+path+"\"");
+        //path.replace('/', '\\');
+        args.push_back(path);
     }
     m_zmodem = new QProcess(this);
-   // m_zmodem->setInputChannelMode(QProcess::ForwardedInputChannel);
     m_zmodem->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *cpa){
         cpa->flags = CREATE_NEW_CONSOLE;
         cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
