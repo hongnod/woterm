@@ -17,7 +17,7 @@ slots:
     void onTimeout();
     void onReadyReadStandardOutput();
     void onReadyReadStandardError();
-    void onFinish(int code);
+    void onFinished(int code);
     void onSendData(const QByteArray& buf);
     void onCopyToClipboard();
     void onPasteFromClipboard();

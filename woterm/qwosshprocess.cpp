@@ -13,7 +13,7 @@
 
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
-    , m_exeSend("d:/woterm/sz.exe")
+    , m_exeSend("d:\\vterm\\rzsz\\sbin\\x64\\Debug\\sz.exe")
     , m_exeRecv("d:/woterm/rz.exe")
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
@@ -116,6 +116,8 @@ void QWoSshProcess::onZmodemAbort()
     }
 }
 
+#include <Windows.h>
+
 void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 {
     QStringList args;
@@ -125,15 +127,21 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
         args.push_back("\""+path+"\"");
     }
     m_zmodem = new QProcess(this);
+    m_zmodem->setInputChannelMode(QProcess::ForwardedInputChannel);
+    m_zmodem->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *cpa){
+        cpa->flags = CREATE_NEW_CONSOLE;
+        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+        cpa->startupInfo->wShowWindow = SW_SHOW;
+    });
     QObject::connect(m_zmodem, SIGNAL(readyReadStandardOutput()), this, SLOT(onZmodemReadyReadStandardOutput()));
     QObject::connect(m_zmodem, SIGNAL(readyReadStandardError()), this, SLOT(onZmodemReadyReadStandardError()));
-    QObject::connect(m_zmodem, SIGNAL(finish(int)), this, SLOT(onZmodemFinish(int)));
+    QObject::connect(m_zmodem, SIGNAL(finished(int)), this, SLOT(onZmodemFinished(int)));
     m_zmodem->setProgram(m_exeSend);
     m_zmodem->setArguments(args);
     m_zmodem->start();
 }
 
-void QWoSshProcess::onZmodemFinish(int code)
+void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
     m_zmodem->deleteLater();

@@ -47,7 +47,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
     QObject::connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
-    QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinish(int)));
+    QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
 }
 
@@ -79,7 +79,7 @@ void QWoTermWidget::onReadyReadStandardError()
     parseSequenceText(err);
 }
 
-void QWoTermWidget::onFinish(int code)
+void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
     QApplication::exit(code);
