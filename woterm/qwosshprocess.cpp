@@ -14,7 +14,7 @@
 
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
-    , m_exeSend("D:\\vterm\\vterm\\sbin\\x64\\Debug\\sz.exe")
+    , m_exeSend("D:\\woterm\\lszrz\\sbin\\x64\\Debug\\sz.exe")
     , m_exeRecv("d:/woterm/rz.exe")
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
@@ -127,8 +127,7 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 {
     QStringList args;
     for(int i = 0; i < files.length(); i++) {
-        QString path = files.at(i);
-        //path.replace('/', '\\');
+        QString path = files.at(i);s
         args.push_back(path);
     }
     m_zmodem = new QProcess(this);
