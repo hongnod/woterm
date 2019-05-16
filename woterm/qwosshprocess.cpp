@@ -127,7 +127,7 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 {
     QStringList args;
     for(int i = 0; i < files.length(); i++) {
-        QString path = files.at(i);s
+        QString path = files.at(i);
         args.push_back(path);
     }
     m_zmodem = new QProcess(this);
