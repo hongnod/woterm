@@ -38,8 +38,8 @@ private:
     virtual void setTermWidget(QTermWidget *widget);
     virtual void prepareContextMenu(QMenu *menu);
 
-    virtual qint64 readData(char *data, qint64 maxlen);
-    virtual qint64 writeData(const char *data, qint64 len);
+//    virtual qint64 readData(char *data, qint64 maxlen);
+//    virtual qint64 writeData(const char *data, qint64 len);
 
 
 private:

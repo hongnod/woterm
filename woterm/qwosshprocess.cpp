@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QThread>
+#include <QProcess>
 #include <QFileDialog>
 #include <QClipboard>
 #include <QLocalServer>
@@ -154,7 +155,7 @@ void QWoSshProcess::onZmodemReadyReadStandardOutput()
 {
     if(m_zmodem) {
         QByteArray out = m_zmodem->readAllStandardOutput();
-        QWoProcess::writeData(out.data(), out.length());
+        //QWoProcess::writeData(out.data(), out.length());
     }
 }
 
@@ -207,25 +208,25 @@ void QWoSshProcess::prepareContextMenu(QMenu *menu)
     }
 }
 
-qint64 QWoSshProcess::readData(char *data, qint64 maxlen)
-{
-    qint64 nread = QWoProcess::readData(data, maxlen);
-    if(m_zmodem) {
-        QProcess::ProcessChannel channel =  readChannel();
-        if(channel == QProcess::StandardOutput) {
-            m_zmodem->write(data, nread);
-            return 0;
-        }
-        m_term->parseSequenceText(QByteArray(data, nread));
-        return 0;
-    }
-    return nread;
-}
+//qint64 QWoSshProcess::readData(char *data, qint64 maxlen)
+//{
+//    qint64 nread = QWoProcess::readData(data, maxlen);
+//    if(m_zmodem) {
+//        QProcess::ProcessChannel channel =  readChannel();
+//        if(channel == QProcess::StandardOutput) {
+//            m_zmodem->write(data, nread);
+//            return 0;
+//        }
+//        m_term->parseSequenceText(QByteArray(data, nread));
+//        return 0;
+//    }
+//    return nread;
+//}
 
-qint64 QWoSshProcess::writeData(const char *data, qint64 len)
-{
-    if(m_zmodem) {
-        return 0;
-    }
-    return QWoProcess::writeData(data, len);
-}
+//qint64 QWoSshProcess::writeData(const char *data, qint64 len)
+//{
+//    if(m_zmodem) {
+//        return 0;
+//    }
+//    return QWoProcess::writeData(data, len);
+//}

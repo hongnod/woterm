@@ -87,7 +87,7 @@ void QWoTermWidget::onFinished(int code)
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
 {
-    m_process->write(buf.data(), buf.length());
+    m_process->write(buf);
 }
 
 void QWoTermWidget::onCopyToClipboard()
@@ -104,7 +104,7 @@ void QWoTermWidget::onPasteFromClipboard()
     QClipboard *clip = QGuiApplication::clipboard();
     QString clipTxt = clip->text();
     QByteArray buf = clipTxt.toUtf8();
-    m_process->write(buf.data(), buf.length());
+    m_process->write(buf);
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
