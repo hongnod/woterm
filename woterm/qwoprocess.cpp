@@ -70,7 +70,25 @@ QByteArray QWoProcess::readAllStandardError()
 
 void QWoProcess::write(const QByteArray &data)
 {
+    if(writeFilter(data)) {
+        return;
+    }
     m_process->write(data);
+}
+
+bool QWoProcess::readStandardOutputFilter()
+{
+    return false;
+}
+
+bool QWoProcess::readStandardErrorFilter()
+{
+    return false;
+}
+
+bool QWoProcess::writeFilter(const QByteArray &data)
+{
+    return false;
 }
 
 void QWoProcess::setTermWidget(QTermWidget *widget)
@@ -85,11 +103,17 @@ void QWoProcess::prepareContextMenu(QMenu *menu)
 
 void QWoProcess::onReadyReadStandardOutput()
 {
+    if(readStandardOutputFilter()) {
+        return;
+    }
     emit readyReadStandardOutput();
 }
 
 void QWoProcess::onReadyReadStandardError()
 {
+    if(readStandardErrorFilter()) {
+        return;
+    }
     emit readyReadStandardError();
 }
 

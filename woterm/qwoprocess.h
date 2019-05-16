@@ -34,6 +34,9 @@ signals:
     void finished(int code);
 
 protected:
+    virtual bool readStandardOutputFilter();
+    virtual bool readStandardErrorFilter();
+    virtual bool writeFilter(const QByteArray& data);
     virtual void setTermWidget(QTermWidget *widget);
     virtual void prepareContextMenu(QMenu *menu);
 
