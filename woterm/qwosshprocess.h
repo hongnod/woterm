@@ -34,6 +34,9 @@ private slots:
 private:
     Q_INVOKABLE void updateTermSize();
 private:
+    virtual bool readStandardOutputFilter();
+    virtual bool readStandardErrorFilter();
+    virtual bool writeFilter(const QByteArray& data);
     virtual bool eventFilter(QObject *obj, QEvent *ev);
     virtual void setTermWidget(QTermWidget *widget);
     virtual void prepareContextMenu(QMenu *menu);
@@ -54,7 +57,7 @@ private:
     QPointer<QAction> m_zmodemAbort;
     QPointer<QFileDialog> m_fileDialog;
 
-    QPointer<QProcess> m_zmodem;
+    QPointer<QWoProcess> m_zmodem;
     QString m_exeSend;
     QString m_exeRecv;
 };

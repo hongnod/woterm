@@ -23,10 +23,14 @@ public:
     QStringList environment() const;
     void setEnvironment(const QStringList& env);
 
+
     void start();
     QByteArray readAllStandardOutput();
     QByteArray readAllStandardError();
     void write(const QByteArray& data);
+    void writeError(const QByteArray& data);
+
+    void enableDebugConsole(bool on);
 private:
 signals:
     void readyReadStandardOutput();

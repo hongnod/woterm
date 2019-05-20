@@ -122,8 +122,6 @@ void QWoSshProcess::onZmodemAbort()
     }
 }
 
-#include <Windows.h>
-
 void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 {
     QStringList args;
@@ -131,12 +129,8 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
         QString path = files.at(i);
         args.push_back(path);
     }
-    m_zmodem = new QProcess(this);
-    m_zmodem->setCreateProcessArgumentsModifier([] (QProcess::CreateProcessArguments *cpa){
-        cpa->flags = CREATE_NEW_CONSOLE;
-        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-        cpa->startupInfo->wShowWindow = SW_SHOW;
-    });
+    m_zmodem = new QWoProcess(this);
+    m_zmodem->enableDebugConsole(false);
     QObject::connect(m_zmodem, SIGNAL(readyReadStandardOutput()), this, SLOT(onZmodemReadyReadStandardOutput()));
     QObject::connect(m_zmodem, SIGNAL(readyReadStandardError()), this, SLOT(onZmodemReadyReadStandardError()));
     QObject::connect(m_zmodem, SIGNAL(finished(int)), this, SLOT(onZmodemFinished(int)));
@@ -154,8 +148,10 @@ void QWoSshProcess::onZmodemFinished(int code)
 void QWoSshProcess::onZmodemReadyReadStandardOutput()
 {
     if(m_zmodem) {
-        QByteArray out = m_zmodem->readAllStandardOutput();
-        //QWoProcess::writeData(out.data(), out.length());
+        static int count = 0;
+        QByteArray read = m_zmodem->readAllStandardOutput();
+        qDebug() << "zrecv" << count++ << read.length();
+        write(read);
     }
 }
 
@@ -178,6 +174,31 @@ void QWoSshProcess::updateTermSize()
     QByteArray cmd = QString("%1%2").arg(fun.size(), 3, 10, QChar('0')).arg(fun).toUtf8();
     //qDebug() << "length:" << cmd.length() << "cmd:" << cmd.data();
     m_writer->write(cmd);
+}
+
+bool QWoSshProcess::readStandardOutputFilter()
+{
+    if(m_zmodem) {
+        QByteArray data = readAllStandardOutput();
+        m_zmodem->write(data);
+        return true;
+    }
+    return false;
+}
+
+bool QWoSshProcess::readStandardErrorFilter()
+{
+    if(m_zmodem) {
+        QByteArray data = readAllStandardError();
+        m_zmodem->writeError(data);
+        return true;
+    }
+    return false;
+}
+
+bool QWoSshProcess::writeFilter(const QByteArray &data)
+{
+    return false;
 }
 
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
@@ -207,26 +228,3 @@ void QWoSshProcess::prepareContextMenu(QMenu *menu)
         QObject::connect(m_zmodemAbort, SIGNAL(triggered()), this, SLOT(onZmodemAbort()));
     }
 }
-
-//qint64 QWoSshProcess::readData(char *data, qint64 maxlen)
-//{
-//    qint64 nread = QWoProcess::readData(data, maxlen);
-//    if(m_zmodem) {
-//        QProcess::ProcessChannel channel =  readChannel();
-//        if(channel == QProcess::StandardOutput) {
-//            m_zmodem->write(data, nread);
-//            return 0;
-//        }
-//        m_term->parseSequenceText(QByteArray(data, nread));
-//        return 0;
-//    }
-//    return nread;
-//}
-
-//qint64 QWoSshProcess::writeData(const char *data, qint64 len)
-//{
-//    if(m_zmodem) {
-//        return 0;
-//    }
-//    return QWoProcess::writeData(data, len);
-//}

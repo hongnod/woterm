@@ -73,8 +73,34 @@ void QWoProcess::write(const QByteArray &data)
     if(writeFilter(data)) {
         return;
     }
+    m_process->setCurrentWriteChannel(QProcess::StandardOutput);
     m_process->write(data);
 }
+
+void QWoProcess::writeError(const QByteArray &data)
+{
+    if(writeFilter(data)) {
+        return;
+    }
+    m_process->setCurrentWriteChannel(QProcess::StandardError);
+    m_process->write(data);
+}
+
+#ifdef Q_OS_WIN
+#include <Windows.h>
+void QWoProcess::enableDebugConsole(bool on)
+{
+    m_process->setCreateProcessArgumentsModifier([on] (QProcess::CreateProcessArguments *cpa){
+        cpa->flags = CREATE_NEW_CONSOLE;
+        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+        cpa->startupInfo->wShowWindow = on ? SW_SHOW : SW_HIDE;
+    });
+}
+#else
+void QWoProcess::enableDebugConsole(bool on)
+{
+}
+#endif
 
 bool QWoProcess::readStandardOutputFilter()
 {
