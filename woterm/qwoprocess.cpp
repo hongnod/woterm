@@ -53,6 +53,11 @@ void QWoProcess::setEnvironment(const QStringList &env)
     m_process->setEnvironment(env);
 }
 
+void QWoProcess::setWorkingDirectory(const QString &dir)
+{
+    m_process->setWorkingDirectory(dir);
+}
+
 void QWoProcess::start()
 {
     m_process->start();

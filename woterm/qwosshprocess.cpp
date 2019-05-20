@@ -16,7 +16,7 @@
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
     , m_exeSend("D:\\woterm\\lszrz\\sbin\\x64\\Debug\\sz.exe")
-    , m_exeRecv("d:/woterm/rz.exe")
+    , m_exeRecv("D:\\woterm\\lszrz\\sbin\\x64\\Debug\\rz.exe")
 {
     setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
     QStringList args;
@@ -46,6 +46,16 @@ void QWoSshProcess::zmodemSend(const QStringList &files)
 void QWoSshProcess::zmodemRecv()
 {
 
+}
+
+QWoProcess *QWoSshProcess::createZmodem()
+{
+    QWoProcess *process = new QWoProcess(this);
+    process->enableDebugConsole(false);
+    QObject::connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(onZmodemReadyReadStandardOutput()));
+    QObject::connect(process, SIGNAL(readyReadStandardError()), this, SLOT(onZmodemReadyReadStandardError()));
+    QObject::connect(process, SIGNAL(finished(int)), this, SLOT(onZmodemFinished(int)));
+    return process;
 }
 
 void QWoSshProcess::onNewConnection()
@@ -113,6 +123,13 @@ void QWoSshProcess::onZmodemRecv()
     if(m_zmodem) {
         return;
     }
+    m_zmodem = createZmodem();
+    m_zmodem->setProgram(m_exeRecv);
+    QStringList args;
+    args << "rz";
+    m_zmodem->setArguments(args);
+    m_zmodem->setWorkingDirectory("d:\\zmodem");
+    m_zmodem->start();
 }
 
 void QWoSshProcess::onZmodemAbort()
@@ -129,11 +146,7 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
         QString path = files.at(i);
         args.push_back(path);
     }
-    m_zmodem = new QWoProcess(this);
-    m_zmodem->enableDebugConsole(false);
-    QObject::connect(m_zmodem, SIGNAL(readyReadStandardOutput()), this, SLOT(onZmodemReadyReadStandardOutput()));
-    QObject::connect(m_zmodem, SIGNAL(readyReadStandardError()), this, SLOT(onZmodemReadyReadStandardError()));
-    QObject::connect(m_zmodem, SIGNAL(finished(int)), this, SLOT(onZmodemFinished(int)));
+    m_zmodem = createZmodem();
     m_zmodem->setProgram(m_exeSend);
     m_zmodem->setArguments(args);
     m_zmodem->start();

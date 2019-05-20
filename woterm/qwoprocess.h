@@ -23,6 +23,7 @@ public:
     QStringList environment() const;
     void setEnvironment(const QStringList& env);
 
+    void setWorkingDirectory(const QString &dir);
 
     void start();
     QByteArray readAllStandardOutput();
