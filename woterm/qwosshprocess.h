@@ -36,6 +36,7 @@ private:
 private:
     virtual bool readStandardOutputFilter();
     virtual bool readStandardErrorFilter();
+    virtual bool finishFilter(int code);
     virtual bool writeFilter(const QByteArray& data);
     virtual bool eventFilter(QObject *obj, QEvent *ev);
     virtual void setTermWidget(QTermWidget *widget);

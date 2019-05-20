@@ -112,6 +112,11 @@ bool QWoProcess::readStandardErrorFilter()
     return false;
 }
 
+bool QWoProcess::finishFilter(int code)
+{
+    return false;
+}
+
 bool QWoProcess::writeFilter(const QByteArray &data)
 {
     return false;
@@ -145,5 +150,8 @@ void QWoProcess::onReadyReadStandardError()
 
 void QWoProcess::onFinished(int code)
 {
+    if(finishFilter(code)) {
+        return ;
+    }
     emit finished(code);
 }

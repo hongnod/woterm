@@ -143,6 +143,7 @@ void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
     m_zmodem->deleteLater();
+    write("\n");
 }
 
 void QWoSshProcess::onZmodemReadyReadStandardOutput()
@@ -193,6 +194,11 @@ bool QWoSshProcess::readStandardErrorFilter()
         m_zmodem->writeError(data);
         return true;
     }
+    return false;
+}
+
+bool QWoSshProcess::finishFilter(int code)
+{
     return false;
 }
 

@@ -40,6 +40,7 @@ signals:
 protected:
     virtual bool readStandardOutputFilter();
     virtual bool readStandardErrorFilter();
+    virtual bool finishFilter(int code);
     virtual bool writeFilter(const QByteArray& data);
     virtual void setTermWidget(QTermWidget *widget);
     virtual void prepareContextMenu(QMenu *menu);
