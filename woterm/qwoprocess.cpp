@@ -1,4 +1,5 @@
 #include "qwoprocess.h"
+#include "qwoevent.h"
 
 #include <qtermwidget.h>
 
@@ -8,37 +9,6 @@
 #include <QMenu>
 #include <QClipboard>
 
-int QWoProcessEvent::EventType = QEvent::registerEventType();
-
-QWoProcessEvent::QWoProcessEvent(WoEventType t, const QByteArray& data)
- : QEvent(QEvent::Type(EventType))
- , m_type(t)
- , m_data(data)
-{
-
-}
-
-QWoProcessEvent::WoEventType QWoProcessEvent::type() const
-{
-    return m_type;
-}
-
-
-QByteArray QWoProcessEvent::data() const
-{
-    return m_data;
-}
-
-void QWoProcessEvent::setResult(const QByteArray &result)
-{
-    m_result = result;
-}
-
-QByteArray QWoProcessEvent::result() const
-{
-    return m_result;
-}
-
 QWoProcess::QWoProcess(QObject *parent)
     : QObject (parent)
     , m_process(new QProcess())
@@ -46,6 +16,7 @@ QWoProcess::QWoProcess(QObject *parent)
     QObject::connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
     QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
+    installEventFilter(this);
 }
 
 QWoProcess::~QWoProcess()
@@ -95,33 +66,56 @@ void QWoProcess::start()
 
 QByteArray QWoProcess::readAllStandardOutput()
 {
-    return m_process->readAllStandardOutput();
+    QByteArray data = m_process->readAllStandardOutput();
+    QWoEvent ev(QWoEvent::AfterReadStdOut, data);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
+        if(ev.hasResult()) {
+            return ev.result().toByteArray();
+        }
+    }
+    return data;
 }
 
 QByteArray QWoProcess::readAllStandardError()
 {
-    return m_process->readAllStandardError();
+    QByteArray data = m_process->readAllStandardError();
+    QWoEvent ev(QWoEvent::AfterReadStdErr, data);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
+        if(ev.hasResult()) {
+            return ev.result().toByteArray();
+        }
+    }
+    return data;
 }
 
 void QWoProcess::write(const QByteArray &data)
 {
-    QWoProcessEvent ev(QWoProcessEvent::StdOut, data);
+    QWoEvent ev(QWoEvent::BeforeWriteStdOut, data);
     QApplication::sendEvent(this, &ev);
-    if(ev.isAccepted()) {
-        return;
-    }
     m_process->setCurrentWriteChannel(QProcess::StandardOutput);
+    if(ev.isAccepted()) {
+        if(ev.hasResult()) {
+            m_process->write(ev.result().toByteArray());
+            return;
+        }
+        return;
+    }   
     m_process->write(data);
 }
 
 void QWoProcess::writeError(const QByteArray &data)
 {
-    QWoProcessEvent ev(QWoProcessEvent::StdErr, data);
+    QWoEvent ev(QWoEvent::BeforeWriteStdErr, data);
     QApplication::sendEvent(this, &ev);
+    m_process->setCurrentWriteChannel(QProcess::StandardError);
     if(ev.isAccepted()) {
+        if(ev.hasResult()) {
+            m_process->write(ev.result().toByteArray());
+        }
         return;
     }
-    m_process->setCurrentWriteChannel(QProcess::StandardError);
     m_process->write(data);
 }
 
@@ -141,26 +135,6 @@ void QWoProcess::enableDebugConsole(bool on)
 }
 #endif
 
-bool QWoProcess::readStandardOutputFilter()
-{
-    return false;
-}
-
-bool QWoProcess::readStandardErrorFilter()
-{
-    return false;
-}
-
-bool QWoProcess::finishFilter(int code)
-{
-    return false;
-}
-
-bool QWoProcess::writeFilter(const QByteArray &data)
-{
-    return false;
-}
-
 void QWoProcess::setTermWidget(QTermWidget *widget)
 {
     m_term = widget;
@@ -173,7 +147,9 @@ void QWoProcess::prepareContextMenu(QMenu *menu)
 
 void QWoProcess::onReadyReadStandardOutput()
 {
-    if(readStandardOutputFilter()) {
+    QWoEvent ev(QWoEvent::BeforeReadStdOut);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
         return;
     }
     emit readyReadStandardOutput();
@@ -181,7 +157,9 @@ void QWoProcess::onReadyReadStandardOutput()
 
 void QWoProcess::onReadyReadStandardError()
 {
-    if(readStandardErrorFilter()) {
+    QWoEvent ev(QWoEvent::BeforeReadStdErr);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
         return;
     }
     emit readyReadStandardError();
@@ -189,8 +167,10 @@ void QWoProcess::onReadyReadStandardError()
 
 void QWoProcess::onFinished(int code)
 {
-    if(finishFilter(code)) {
-        return ;
+    QWoEvent ev(QWoEvent::BeforeFinish, code);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
+        return;
     }
     emit finished(code);
 }

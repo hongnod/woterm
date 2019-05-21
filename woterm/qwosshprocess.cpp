@@ -1,4 +1,5 @@
 #include "qwosshprocess.h"
+#include "qwoevent.h"
 
 #include <qtermwidget.h>
 
@@ -254,41 +255,39 @@ void QWoSshProcess::updateTermSize()
     m_writer->write(cmd);
 }
 
-bool QWoSshProcess::readStandardOutputFilter()
-{
-    if(m_zmodem) {
-        QByteArray data = readAllStandardOutput();
-        m_zmodem->write(data);
-        return true;
-    }
-    return false;
-}
-
-bool QWoSshProcess::readStandardErrorFilter()
-{
-    if(m_zmodem) {
-        QByteArray data = readAllStandardError();
-        m_zmodem->writeError(data);
-        return true;
-    }
-    return false;
-}
-
-bool QWoSshProcess::finishFilter(int code)
-{
-    return false;
-}
-
-bool QWoSshProcess::writeFilter(const QByteArray &data)
-{
-    return false;
-}
-
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
 {
     QEvent::Type t = ev->type();
     if (t == QEvent::Resize) {
         QMetaObject::invokeMethod(this, "updateTermSize",Qt::QueuedConnection);
+    }else if(t == QWoEvent::EventType) {
+        QWoEvent *we = (QWoEvent*)ev;
+        QWoEvent::WoEventType t = we->eventType();
+        if(t == QWoEvent::BeforeReadStdOut) {
+            if(m_zmodem) {
+                QByteArray data = readAllStandardOutput();
+                m_zmodem->write(data);
+                we->setAccepted(true);
+            }else{
+                we->setAccepted(false);
+            }
+        }else if(t == QWoEvent::BeforeReadStdErr) {
+
+        }else if(t == QWoEvent::AfterReadStdOut) {
+            QByteArray data = we->data().toByteArray();
+        }else if(t == QWoEvent::AfterReadStdErr) {
+            if(m_zmodem) {
+                QByteArray data = readAllStandardError();
+                m_zmodem->writeError(data);
+                we->setAccepted(true);
+            }else{
+                we->setAccepted(false);
+            }
+        }else if(t == QWoEvent::BeforeFinish) {
+
+        }
+
+        return true;
     }
     return false;
 }
