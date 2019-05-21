@@ -193,6 +193,21 @@ void QWoSshProcess::onZmodemFinished(int code)
 //  }
 //}
 
+//int isRzCommand(char *buf, int len) {
+//	if (len >= 3 && len < 30) {
+//		for (int i = 0; i < 10; i++) {
+//			if (buf[i] == 114 && buf[i + 1] == 122 && buf[i + 2] == 13) {
+//				if (i > 0 && buf[i - 1] == 10 || buf[i - 1] == 13) {
+//					return isFromServer();
+//				} else {
+//					return isFromServer();
+//				}
+//			}
+//		}
+//	}
+//	return 0;
+//}
+
 int isRzCommand(char *buf, int len) {
     if (len >= 3 && len < 30) {
         for (int i = 0; i < 10; i++) {
