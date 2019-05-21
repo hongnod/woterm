@@ -156,7 +156,56 @@ void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
     m_zmodem->deleteLater();
-    write("\n");
+    write("\030\030\030\030"); // Abort
+    write("\001\013\n"); // Try to get prompt back
+}
+
+//void Session::cancelZModem()
+//{
+//  _shellProcess->sendData("\030\030\030\030", 4); // Abort
+//  _zmodemBusy = false;
+//}
+//void Session::zmodemReadStatus()
+//{
+//  _zmodemProc->setReadChannel( QProcess::StandardError );
+//  QByteArray msg = _zmodemProc->readAll();
+//  while(!msg.isEmpty())
+//  {
+//     int i = msg.indexOf('\015');
+//     int j = msg.indexOf('\012');
+//     QByteArray txt;
+//     if ((i != -1) && ((j == -1) || (i < j)))
+//     {
+//       msg = msg.mid(i+1);
+//     }
+//     else if (j != -1)
+//     {
+//       txt = msg.left(j);
+//       msg = msg.mid(j+1);
+//     }
+//     else
+//     {
+//       txt = msg;
+//       msg.truncate(0);
+//     }
+//     if (!txt.isEmpty())
+//       _zmodemProgress->addProgressText(QString::fromLocal8Bit(txt));
+//  }
+//}
+
+int isRzCommand(char *buf, int len) {
+    if (len >= 3 && len < 30) {
+        for (int i = 0; i < 10; i++) {
+            if (buf[i] == 114 && buf[i + 1] == 122 && buf[i + 2] == 13) {
+                if (i > 0 && buf[i - 1] == 10 || buf[i - 1] == 13) {
+                    return 1;
+                } else {
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 void QWoSshProcess::onZmodemReadyReadStandardOutput()
