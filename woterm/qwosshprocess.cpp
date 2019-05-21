@@ -59,6 +59,30 @@ QWoProcess *QWoSshProcess::createZmodem()
     return process;
 }
 
+bool QWoSshProcess::isRzCommand(const QByteArray &ba)
+{
+//    char rzhdr[6] = { 0 };
+//        rzhdr[0] = '*';
+//        rzhdr[1] = '*';
+//        rzhdr[2] = 30;
+//        rzhdr[3] = 'B';
+    //check \r\nrz\r
+    const char *buf = ba.data();
+    int len = ba.length();
+    if (len >= 3 && len < 30) {
+        for (int i = 0; i < 10; i++) {
+            if (buf[i] == 'r' && buf[i + 1] == 'z' && buf[i + 2] == '\r') {
+                if (i > 0 && (buf[i - 1] == '\r' || buf[i - 1] == '\n')) {
+                    return true;
+                } else {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void QWoSshProcess::onNewConnection()
 {
     QLocalSocket* local = m_server->nextPendingConnection();
@@ -209,20 +233,7 @@ void QWoSshProcess::onZmodemFinished(int code)
 //	return 0;
 //}
 
-int isRzCommand(char *buf, int len) {
-    if (len >= 3 && len < 30) {
-        for (int i = 0; i < 10; i++) {
-            if (buf[i] == 114 && buf[i + 1] == 122 && buf[i + 2] == 13) {
-                if (i > 0 && buf[i - 1] == 10 || buf[i - 1] == 13) {
-                    return 1;
-                } else {
-                    return 1;
-                }
-            }
-        }
-    }
-    return 0;
-}
+
 
 void QWoSshProcess::onZmodemReadyReadStandardOutput()
 {
@@ -269,12 +280,16 @@ bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
                 m_zmodem->write(data);
                 we->setAccepted(true);
             }else{
+
                 we->setAccepted(false);
             }
         }else if(t == QWoEvent::BeforeReadStdErr) {
 
         }else if(t == QWoEvent::AfterReadStdOut) {
             QByteArray data = we->data().toByteArray();
+            if(isRzCommand(data)) {
+                onZmodemRecv();
+            }
         }else if(t == QWoEvent::AfterReadStdErr) {
             if(m_zmodem) {
                 QByteArray data = readAllStandardError();

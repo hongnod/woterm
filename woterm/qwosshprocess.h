@@ -42,6 +42,7 @@ private:
     void zmodemSend(const QStringList& files);
     void zmodemRecv();
     QWoProcess *createZmodem();
+    bool isRzCommand(const QByteArray& data);
 private:
     QPointer<QLocalServer> m_server;
     QPointer<QLocalSocket> m_reader;
