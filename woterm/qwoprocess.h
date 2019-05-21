@@ -2,11 +2,34 @@
 
 #include <QObject>
 #include <QPointer>
+#include <QEvent>
 
 class QTermWidget;
 class QWoTermWidget;
 class QMenu;
 class QProcess;
+
+class QWoProcessEvent : public QEvent
+{
+public:
+    enum WoEventType{StdIn, StdOut, StdErr};
+public:
+    QWoProcessEvent(WoEventType t, const QByteArray& data = QByteArray());
+
+    WoEventType type() const;
+    QByteArray data() const;
+
+    void setResult(const QByteArray& result);
+    QByteArray result() const;
+
+    static int EventType;
+private:
+    WoEventType m_type;
+    QByteArray m_data;
+    QByteArray m_result;
+
+};
+
 
 class QWoProcess : public QObject
 {

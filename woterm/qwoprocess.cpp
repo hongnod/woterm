@@ -8,6 +8,36 @@
 #include <QMenu>
 #include <QClipboard>
 
+int QWoProcessEvent::EventType = QEvent::registerEventType();
+
+QWoProcessEvent::QWoProcessEvent(WoEventType t, const QByteArray& data)
+ : QEvent(QEvent::Type(EventType))
+ , m_type(t)
+ , m_data(data)
+{
+
+}
+
+QWoProcessEvent::WoEventType QWoProcessEvent::type() const
+{
+    return m_type;
+}
+
+
+QByteArray QWoProcessEvent::data() const
+{
+    return m_data;
+}
+
+void QWoProcessEvent::setResult(const QByteArray &result)
+{
+    m_result = result;
+}
+
+QByteArray QWoProcessEvent::result() const
+{
+    return m_result;
+}
 
 QWoProcess::QWoProcess(QObject *parent)
     : QObject (parent)
@@ -75,7 +105,9 @@ QByteArray QWoProcess::readAllStandardError()
 
 void QWoProcess::write(const QByteArray &data)
 {
-    if(writeFilter(data)) {
+    QWoProcessEvent ev(QWoProcessEvent::StdOut, data);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
         return;
     }
     m_process->setCurrentWriteChannel(QProcess::StandardOutput);
@@ -84,7 +116,9 @@ void QWoProcess::write(const QByteArray &data)
 
 void QWoProcess::writeError(const QByteArray &data)
 {
-    if(writeFilter(data)) {
+    QWoProcessEvent ev(QWoProcessEvent::StdErr, data);
+    QApplication::sendEvent(this, &ev);
+    if(ev.isAccepted()) {
         return;
     }
     m_process->setCurrentWriteChannel(QProcess::StandardError);
