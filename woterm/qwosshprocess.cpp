@@ -163,9 +163,12 @@ void QWoSshProcess::onZmodemAbort()
     if(m_zmodem == nullptr) {
         return;
     }
-    write(canistr); // Abort
-    QTimer::singleShot(1000, m_zmodem, "terminate");
-    write("\001\013\n"); // Try to get prompt back
+    if(m_zmodem->program() == m_exeRecv) {
+        write(canistr);
+    }else{
+        m_zmodem->close();
+        write(canistr);
+    }
 }
 
 void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)

@@ -101,7 +101,7 @@ void QWoProcess::write(const QByteArray &data)
             return;
         }
         return;
-    }   
+    }
     m_process->write(data);
 }
 
@@ -117,6 +117,11 @@ void QWoProcess::writeError(const QByteArray &data)
         return;
     }
     m_process->write(data);
+}
+
+void QWoProcess::close()
+{
+    m_process->close();
 }
 
 void QWoProcess::terminate()

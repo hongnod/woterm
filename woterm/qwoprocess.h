@@ -33,6 +33,7 @@ public:
 
     void enableDebugConsole(bool on);
 
+    Q_INVOKABLE void close();
     Q_INVOKABLE void terminate();
     Q_INVOKABLE void kill();
 private:
