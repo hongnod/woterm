@@ -32,6 +32,9 @@ public:
     void writeError(const QByteArray& data);
 
     void enableDebugConsole(bool on);
+
+    Q_INVOKABLE void terminate();
+    Q_INVOKABLE void kill();
 private:
 signals:
     void readyReadStandardOutput();

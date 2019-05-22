@@ -119,6 +119,16 @@ void QWoProcess::writeError(const QByteArray &data)
     m_process->write(data);
 }
 
+void QWoProcess::terminate()
+{
+    m_process->terminate();
+}
+
+void QWoProcess::kill()
+{
+    m_process->kill();
+}
+
 #ifdef Q_OS_WIN
 #include <Windows.h>
 void QWoProcess::enableDebugConsole(bool on)
