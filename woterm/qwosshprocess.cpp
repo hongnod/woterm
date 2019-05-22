@@ -188,7 +188,7 @@ void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
     m_zmodem->deleteLater();
-    write("\001\013\n"); // Try to get prompt back
+    write("\r");
 }
 
 //void Session::cancelZModem()

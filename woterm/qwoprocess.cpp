@@ -5,9 +5,9 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QProcess>
 #include <QMenu>
 #include <QClipboard>
+#include <QProcess>
 
 QWoProcess::QWoProcess(QObject *parent)
     : QObject (parent)
@@ -134,6 +134,22 @@ void QWoProcess::kill()
     m_process->kill();
 }
 
+void QWoProcess::closeReadChannel(QProcess::ProcessChannel channel)
+{
+    m_process->closeReadChannel(channel);
+}
+
+void QWoProcess::closeWriteChannel()
+{
+    m_process->closeWriteChannel();
+}
+
+bool QWoProcess::waitForBytesWritten(int msecs)
+{
+    return m_process->waitForBytesWritten(msecs);
+}
+
+
 #ifdef Q_OS_WIN
 #include <Windows.h>
 void QWoProcess::enableDebugConsole(bool on)
@@ -149,6 +165,7 @@ void QWoProcess::enableDebugConsole(bool on)
 {
 }
 #endif
+
 
 void QWoProcess::setTermWidget(QTermWidget *widget)
 {

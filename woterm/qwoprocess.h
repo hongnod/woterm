@@ -1,12 +1,11 @@
 #pragma once
 
-#include <QObject>
 #include <QPointer>
+#include <QProcess>
 
 class QTermWidget;
 class QWoTermWidget;
 class QMenu;
-class QProcess;
 
 class QWoProcess : public QObject
 {
@@ -31,7 +30,11 @@ public:
     void write(const QByteArray& data);
     void writeError(const QByteArray& data);
 
-    void enableDebugConsole(bool on);
+    void closeReadChannel(QProcess::ProcessChannel channel);
+    void closeWriteChannel();
+
+    bool waitForBytesWritten(int msecs = 30000);
+    void enableDebugConsole(bool on);    
 
     Q_INVOKABLE void close();
     Q_INVOKABLE void terminate();
