@@ -15,7 +15,7 @@ QString get_kb_layout_dir()
 {
     QString rval = QString();
     QString binPath = QCoreApplication::applicationDirPath();
-    QString path = QDir::cleanPath(binPath +"/" + KB_LAYOUT_DIR+"/");
+    QString path = QDir::cleanPath(binPath +"/../opt/" + KB_LAYOUT_DIR+"/");
     qDebug() << "default KB_LAYOUT_DIR: " << path;
     QDir d(path);
     if (d.exists()) {
@@ -45,7 +45,7 @@ But in some cases (apple bundle) there can be more locations).
 QString get_color_schemes_dir()
 {
     QString binPath = QCoreApplication::applicationDirPath();
-    QString path = QDir::cleanPath(binPath +"/" + COLORSCHEMES_DIR);
+    QString path = QDir::cleanPath(binPath +"/../opt/" + COLORSCHEMES_DIR);
     qDebug() << "default COLORSCHEMES_DIR: " << path;
     QDir d(path);
     if (d.exists()) {

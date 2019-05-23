@@ -9,10 +9,12 @@ SOURCES += main.cpp \
     qwotermwidget.cpp \
     qwoprocess.cpp \
     qwosshprocess.cpp \
-    qwoevent.cpp
+    qwoevent.cpp \
+    qwosetting.cpp
 
 HEADERS += \
     qwotermwidget.h \
     qwoprocess.h \
     qwosshprocess.h \
-    qwoevent.h
+    qwoevent.h \
+    qwosetting.h
