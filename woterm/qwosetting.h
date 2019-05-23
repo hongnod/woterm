@@ -1,14 +1,10 @@
 #pragma once
 
-#include <QSettings>
-#include <QPointer>
+#include <QVariant>
 
-class QWoSetting : public QSettings
+class QWoSetting
 {
-    Q_OBJECT
 public:
-    explicit QWoSetting();
-    static QWoSetting *instance();
-private:
-    QPointer<QSettings> m_setting;
+    static void setValue(const QString& key, const QVariant& v);
+    static QVariant value(const QString& key);
 };

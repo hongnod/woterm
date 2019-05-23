@@ -26,6 +26,15 @@
 
 #include "qwotermwidget.h"
 #include "qwosshprocess.h"
+#include "qwosetting.h"
+
+void test()
+{
+    QWoSetting::setValue("abc/xyz", 1);
+    QWoSetting::setValue("abc/xyz1", 2);
+    QWoSetting::setValue("abc/xyz2", 3);
+    QWoSetting::setValue("abc/xyz3", 4);
+}
 
 int main(int argc, char *argv[])
 {
@@ -36,6 +45,8 @@ int main(int argc, char *argv[])
     QWoSshProcess process;
     QWoTermWidget *console = new QWoTermWidget(&process);
     process.start();
+
+    test();
 
     QMenuBar *menuBar = new QMenuBar(mainWindow);
     QMenu *actionsMenu = new QMenu("Actions", menuBar);

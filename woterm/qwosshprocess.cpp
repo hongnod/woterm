@@ -1,5 +1,6 @@
 #include "qwosshprocess.h"
 #include "qwoevent.h"
+#include "qwosetting.h"
 
 #include <qtermwidget.h>
 
@@ -13,13 +14,25 @@
 #include <QClipboard>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QMessageBox>
 
 QWoSshProcess::QWoSshProcess()
     : QWoProcess (nullptr)
-    , m_exeSend("D:\\woterm\\lszrz\\sbin\\x64\\Debug\\sz.exe")
-    , m_exeRecv("D:\\woterm\\lszrz\\sbin\\x64\\Debug\\rz.exe")
 {
-    setProgram("D:\\woterm\\openssh\\win32\\sbin\\x64\\Debug\\ssh.exe");
+    m_exeSend = QWoSetting::value("zmodem/sz").toString();
+    if(!QFile::exists(m_exeSend)) {
+        QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
+    }
+    m_exeRecv = QWoSetting::value("zmodem/rz").toString();
+    if(!QFile::exists(m_exeRecv)) {
+        QMessageBox::warning(m_term, "zmodem", "can't find rz program.");
+    }
+    QString program = QWoSetting::value("ssh/program").toString();
+    if(!QFile::exists(program)) {
+        QMessageBox::critical(m_term, "ssh", "can't find ssh program.");
+        QApplication::exit(0);
+    }
+    setProgram(program);
     QStringList args;
     args << "-F" << "D:\\config" << "target";
     setArguments(args);
@@ -29,7 +42,6 @@ QWoSshProcess::QWoSshProcess()
     m_server->listen(name);
     QStringList env = environment();
     env << "TERM_MSG_CHANNEL="+name;
-   // env << "ProgramData="+QApplication::applicationDirPath();
     setEnvironment(env);
 
     QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
