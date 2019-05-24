@@ -21,16 +21,25 @@ QWoSshProcess::QWoSshProcess()
 {
     m_exeSend = QWoSetting::value("zmodem/sz").toString();
     if(!QFile::exists(m_exeSend)) {
-        QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
+        QString path = QApplication::applicationDirPath() + "/sz.exe";
+        if(!QFile::exists(m_exeSend)){
+            QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
+        }
     }
     m_exeRecv = QWoSetting::value("zmodem/rz").toString();
     if(!QFile::exists(m_exeRecv)) {
-        QMessageBox::warning(m_term, "zmodem", "can't find rz program.");
+        QString path = QApplication::applicationDirPath() + "/rz.exe";
+        if(!QFile::exists(m_exeRecv)){
+            QMessageBox::warning(m_term, "zmodem", "can't find rz program.");
+        }
     }
     QString program = QWoSetting::value("ssh/program").toString();
     if(!QFile::exists(program)) {
-        QMessageBox::critical(m_term, "ssh", "can't find ssh program.");
-        QApplication::exit(0);
+        QString path = QApplication::applicationDirPath() + "/ssh.exe";
+        if(!QFile::exists(program)){
+            QMessageBox::critical(m_term, "ssh", "can't find ssh program.");
+            QApplication::exit(0);
+        }
     }
     setProgram(program);
     QStringList args;
