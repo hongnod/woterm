@@ -22,6 +22,7 @@
 #include <QIcon>
 #include <QMenuBar>
 #include <QProcess>
+#include <QMessageBox>
 
 #include "qwomainwindow.h"
 #include "qwotermwidget.h"
@@ -46,7 +47,7 @@ int main(int argc, char *argv[])
     QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);
     process.start();
 
-   // test();
+    //QMessageBox::warning(mainWindow, "ok", QApplication::arguments().join(","));
 
     QMenuBar *menuBar = new QMenuBar(mainWindow);
     QMenu *actionsMenu = new QMenu("Actions", menuBar);

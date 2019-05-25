@@ -48,7 +48,10 @@ QWoSshProcess::QWoSshProcess()
         QApplication::exit(-1);
         return;
     }
-    m_title = args.last();
+    m_title = args.first();
+    args.append("-F");
+    QString cfg = QDir::cleanPath(QApplication::applicationDirPath() + "/../config");
+    args.append(cfg);
     setArguments(args);
 
     QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
