@@ -1,5 +1,6 @@
 #include "qwotermwidget.h"
 #include "qwoprocess.h"
+#include "qwosetting.h"
 
 #include <QApplication>
 #include <QDebug>

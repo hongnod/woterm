@@ -162,7 +162,8 @@ void QWoSshProcess::onZmodemSend()
         return;
     }
     if(m_fileDialog == nullptr) {
-        m_fileDialog = new QFileDialog(m_term);
+        QString path = QWoSetting::value("zmodem/lastPath").toString();
+        m_fileDialog = new QFileDialog(m_term, tr("FileSelect"), path);
         m_fileDialog->setFileMode(QFileDialog::ExistingFiles);
         QObject::connect(m_fileDialog, SIGNAL(filesSelected(const QStringList&)), this, SLOT(onFileDialogFilesSelected(const QStringList&)));
     }
@@ -200,6 +201,12 @@ void QWoSshProcess::onZmodemAbort()
 void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 {
     QStringList args;
+    QString path = files.front();
+    int idx = path.lastIndexOf('/');
+    if(idx > 0) {
+        path = path.left(idx);
+        QWoSetting::setValue("zmodem/lastPath", path);
+    }
     for(int i = 0; i < files.length(); i++) {
         QString path = files.at(i);
         args.push_back(path);
@@ -215,62 +222,18 @@ void QWoSshProcess::onTermTitleChanged()
     QString name = m_term->title();
 }
 
+void QWoSshProcess::onDuplicateSession()
+{
+    QString args = QApplication::arguments().join(" ");
+    QProcess::execute(args);
+}
+
 void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
     m_zmodem->deleteLater();
     write("\r");
 }
-
-//void Session::cancelZModem()
-//{
-//  _shellProcess->sendData("\030\030\030\030", 4); // Abort
-//  _zmodemBusy = false;
-//}
-//void Session::zmodemReadStatus()
-//{
-//  _zmodemProc->setReadChannel( QProcess::StandardError );
-//  QByteArray msg = _zmodemProc->readAll();
-//  while(!msg.isEmpty())
-//  {
-//     int i = msg.indexOf('\015');
-//     int j = msg.indexOf('\012');
-//     QByteArray txt;
-//     if ((i != -1) && ((j == -1) || (i < j)))
-//     {
-//       msg = msg.mid(i+1);
-//     }
-//     else if (j != -1)
-//     {
-//       txt = msg.left(j);
-//       msg = msg.mid(j+1);
-//     }
-//     else
-//     {
-//       txt = msg;
-//       msg.truncate(0);
-//     }
-//     if (!txt.isEmpty())
-//       _zmodemProgress->addProgressText(QString::fromLocal8Bit(txt));
-//  }
-//}
-
-//int isRzCommand(char *buf, int len) {
-//	if (len >= 3 && len < 30) {
-//		for (int i = 0; i < 10; i++) {
-//			if (buf[i] == 114 && buf[i + 1] == 122 && buf[i + 2] == 13) {
-//				if (i > 0 && buf[i - 1] == 10 || buf[i - 1] == 13) {
-//					return isFromServer();
-//				} else {
-//					return isFromServer();
-//				}
-//			}
-//		}
-//	}
-//	return 0;
-//}
-
-
 
 void QWoSshProcess::onZmodemReadyReadStandardOutput()
 {
@@ -356,10 +319,11 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
 void QWoSshProcess::prepareContextMenu(QMenu *menu)
 {
     if(m_zmodemSend == nullptr) {
+        m_zmodemDupl = menu->addAction(tr("Duplicate Session"));
         m_zmodemSend = menu->addAction(tr("Zmodem Upload"));
         m_zmodemRecv = menu->addAction(tr("Zmodem Receive"));
         m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"));
-
+        QObject::connect(m_zmodemDupl, SIGNAL(triggered()), this, SLOT(onDuplicateSession()));
         QObject::connect(m_zmodemSend, SIGNAL(triggered()), this, SLOT(onZmodemSend()));
         QObject::connect(m_zmodemRecv, SIGNAL(triggered()), this, SLOT(onZmodemRecv()));
         QObject::connect(m_zmodemAbort, SIGNAL(triggered()), this, SLOT(onZmodemAbort()));

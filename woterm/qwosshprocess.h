@@ -32,6 +32,8 @@ private slots:
     void onZmodemReadyReadStandardError();
     void onFileDialogFilesSelected(const QStringList& files);
     void onTermTitleChanged();
+    void onDuplicateSession();
+
 private:
     Q_INVOKABLE void updateTermSize();
 private:
@@ -48,6 +50,7 @@ private:
     QPointer<QLocalServer> m_server;
     QPointer<QLocalSocket> m_reader;
     QPointer<QLocalSocket> m_writer;
+    QPointer<QAction> m_zmodemDupl;
     QPointer<QAction> m_zmodemSend;
     QPointer<QAction> m_zmodemRecv;
     QPointer<QAction> m_zmodemAbort;

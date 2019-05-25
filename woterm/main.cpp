@@ -20,10 +20,10 @@
 #include <QApplication>
 #include <QtDebug>
 #include <QIcon>
-#include <QMainWindow>
 #include <QMenuBar>
 #include <QProcess>
 
+#include "qwomainwindow.h"
 #include "qwotermwidget.h"
 #include "qwosshprocess.h"
 #include "qwosetting.h"
@@ -41,12 +41,12 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
-    QMainWindow *mainWindow = new QMainWindow();
+    QWoMainWindow *mainWindow = new QWoMainWindow();
     QWoSshProcess process;
     QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);
     process.start();
 
-    test();
+   // test();
 
     QMenuBar *menuBar = new QMenuBar(mainWindow);
     QMenu *actionsMenu = new QMenu("Actions", menuBar);
@@ -56,8 +56,6 @@ int main(int argc, char *argv[])
     mainWindow->setMenuBar(menuBar);
 
     mainWindow->setCentralWidget(console);
-    mainWindow->resize(600, 400);
-
     // info output
     qDebug() << "* INFO *************************";
     qDebug() << " availableKeyBindings:" << console->availableKeyBindings();
