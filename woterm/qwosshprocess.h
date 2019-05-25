@@ -31,6 +31,7 @@ private slots:
     void onZmodemReadyReadStandardOutput();
     void onZmodemReadyReadStandardError();
     void onFileDialogFilesSelected(const QStringList& files);
+    void onTermTitleChanged();
 private:
     Q_INVOKABLE void updateTermSize();
 private:
@@ -55,4 +56,5 @@ private:
     QPointer<QWoProcess> m_zmodem;
     QString m_exeSend;
     QString m_exeRecv;
+    QString m_title;
 };

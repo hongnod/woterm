@@ -42,8 +42,13 @@ QWoSshProcess::QWoSshProcess()
         }
     }
     setProgram(program);
-    QStringList args;
-    args << "-F" << "D:\\config" << "target";
+    QStringList args = QApplication::arguments();
+    args.removeAt(0);
+    if(args.length() <= 0) {
+        QApplication::exit(-1);
+        return;
+    }
+    m_title = args.last();
     setArguments(args);
 
     QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
@@ -53,7 +58,7 @@ QWoSshProcess::QWoSshProcess()
     env << "TERM_MSG_CHANNEL="+name;
     setEnvironment(env);
 
-    QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+    QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));    
 }
 
 QWoSshProcess::~QWoSshProcess()
@@ -205,6 +210,11 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
     m_zmodem->start();
 }
 
+void QWoSshProcess::onTermTitleChanged()
+{
+    QString name = m_term->title();
+}
+
 void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
@@ -338,6 +348,9 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
 {
     QWoProcess::setTermWidget(widget);
     widget->installEventFilter(this);
+    QObject::connect(m_term, SIGNAL(titleChanged()), this, SLOT(onTermTitleChanged()));
+    QWidget *topLevel = m_term->topLevelWidget();
+    topLevel->setWindowTitle(m_title);
 }
 
 void QWoSshProcess::prepareContextMenu(QMenu *menu)

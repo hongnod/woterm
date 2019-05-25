@@ -154,11 +154,11 @@ bool QWoProcess::waitForBytesWritten(int msecs)
 #include <Windows.h>
 void QWoProcess::enableDebugConsole(bool on)
 {
-    m_process->setCreateProcessArgumentsModifier([on] (QProcess::CreateProcessArguments *cpa){
-        cpa->flags = CREATE_NEW_CONSOLE;
-        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-        cpa->startupInfo->wShowWindow = on ? SW_SHOW : SW_HIDE;
-    });
+//    m_process->setCreateProcessArgumentsModifier([on] (QProcess::CreateProcessArguments *cpa){
+//        cpa->flags = CREATE_NEW_CONSOLE;
+//        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+//        cpa->startupInfo->wShowWindow = on ? SW_SHOW : SW_HIDE;
+//    });
 }
 #else
 void QWoProcess::enableDebugConsole(bool on)

@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     qputenv("TERM", "xterm-256color");
     QMainWindow *mainWindow = new QMainWindow();
     QWoSshProcess process;
-    QWoTermWidget *console = new QWoTermWidget(&process);
+    QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);
     process.start();
 
     test();
