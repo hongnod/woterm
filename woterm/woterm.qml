@@ -21,26 +21,41 @@ ApplicationWindow {
 
     menuBar: WoMenuBar {
         Menu {
-            id: menu
-            title: "sdfdsfdf"
+            title: qsTr("Help")
+            Action { text: qsTr("About") }
+        }
+    }
 
-            Action { text: qsTr("Tool Bar"); checkable: true }
-            Action { text: qsTr("Side Bar"); checkable: true; checked: true }
-            Action { text: qsTr("Status Bar"); checkable: true; checked: true }
-            Menu {
-                title: qsTr("Advanced")
-                // ...
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            ToolButton {
+                text: qsTr("New")
+                onClicked: {
+
+                }
+            }
+            ToolButton {
+                text: qsTr("Connect")
+                implicitWidth: 60
+                onClicked: {
+
+                }
+                Button{
+                    width: 20
+                    anchors.right: parent.right
+                    text : "Drop"
+                }
+            }
+            Item {
+                Layout.fillWidth: true
             }
         }
-        Menu {
-            title: qsTr("&Edit")
-            Action { text: qsTr("Cu&t") }
-            Action { text: qsTr("&Copy") }
-            Action { text: qsTr("&Paste") }
-        }
-        Menu {
-            title: qsTr("&Help")
-            Action { text: qsTr("&About") }
-        }
+    }
+    Rectangle {
+        color: "black"
+        anchors.fill: parent
+        border.color: "red"
+        border.width: 3
     }
 }
