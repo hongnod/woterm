@@ -12,5 +12,7 @@
         <file>images/textfield.png</file>
         <file>layout/custom.qml</file>
         <file>layout/musicplayer.qml</file>
+        <file>control/WoMenuBar.qml</file>
+        <file>control/WoTheme.qml</file>
     </qresource>
 </RCC>

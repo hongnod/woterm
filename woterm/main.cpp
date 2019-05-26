@@ -24,11 +24,7 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle("Imagine");
     QQuickStyle::setFallbackStyle("Default");
 
-    QPalette pal;
-    pal.setBrush(QPalette::Text, Qt::red);
-    pal.setBrush(QPalette::ButtonText, Qt::red);
-    pal.setBrush(QPalette::WindowText, Qt::red);
-    QApplication::setPalette(pal);
+
 
     QQmlApplicationEngine engine;
 
