@@ -6,8 +6,9 @@
 #include <QQmlContext>
 #include <QDir>
 #include <QVariant>
+#include <QPalette>
 
-#define USE_CUSTOM_SKIN
+//#define USE_CUSTOM_SKIN
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +23,9 @@ int main(int argc, char *argv[])
     qDebug() << "styles:" << styles;
     QQuickStyle::setStyle("Imagine");
     QQuickStyle::setFallbackStyle("Default");
+
+    QPalette pal;
+    QGuiApplication::setPalette(pal);
 
     QQmlApplicationEngine engine;
 

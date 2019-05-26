@@ -13,10 +13,10 @@ ApplicationWindow {
     height: 720
     minimumWidth: 800
     minimumHeight: 600
-    Imagine.path: skinPath
-
     menuBar: MenuBar {
+        leftPadding: 30
         Menu {
+
             title: qsTr("&File")
             Action { text: qsTr("&New...") }
             Action { text: qsTr("&Open...") }
@@ -24,6 +24,8 @@ ApplicationWindow {
             Action { text: qsTr("Save &As...") }
             MenuSeparator { }
             Action { text: qsTr("&Quit") }
+
+
         }
         Menu {
             title: qsTr("&Edit")
@@ -34,6 +36,18 @@ ApplicationWindow {
         Menu {
             title: qsTr("&Help")
             Action { text: qsTr("&About") }
+        }
+        background: Rectangle {
+            implicitWidth: 40
+            implicitHeight: 40
+            color: "gray"
+
+            Rectangle {
+                color: "#21be2b"
+                width: parent.width
+                height: 1
+                anchors.bottom: parent.bottom
+            }
         }
     }
 }
