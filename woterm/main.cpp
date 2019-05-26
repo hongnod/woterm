@@ -25,7 +25,10 @@ int main(int argc, char *argv[])
     QQuickStyle::setFallbackStyle("Default");
 
     QPalette pal;
-    QGuiApplication::setPalette(pal);
+    pal.setBrush(QPalette::Text, Qt::red);
+    pal.setBrush(QPalette::ButtonText, Qt::red);
+    pal.setBrush(QPalette::WindowText, Qt::red);
+    QApplication::setPalette(pal);
 
     QQmlApplicationEngine engine;
 
