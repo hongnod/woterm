@@ -25,10 +25,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 win32 {
     COPY_DEST = $$replace(PROJECT_BINDIR, /, \\)
     system("echo $$COPY_DEST")
-    system("mkdir $$COPY_DEST\\translations")
-    system("mkdir $$COPY_DEST\\kb-layouts")
-    system("mkdir $$COPY_DEST\\color-schemes")
-    system("copy translations\\* $$COPY_DEST\\translations\\")
-    system("copy kb-layouts\\* $$COPY_DEST\\kb-layouts\\")
-    system("copy color-schemes\\* $$COPY_DEST\\color-schemes\\")
 }
