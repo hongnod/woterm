@@ -5,6 +5,9 @@
 #include <QDebug>
 #include <QQmlContext>
 #include <QDir>
+#include <QVariant>
+
+#define USE_CUSTOM_SKIN
 
 int main(int argc, char *argv[])
 {
@@ -19,14 +22,20 @@ int main(int argc, char *argv[])
     qDebug() << "styles:" << styles;
     QQuickStyle::setStyle("Imagine");
     QQuickStyle::setFallbackStyle("Default");
-    //qputenv("QT_QUICK_CONTROLS_IMAGINE_PATH", ":/imagine-assets/");
 
     QQmlApplicationEngine engine;
-    //engine.load(QUrl(QStringLiteral("qrc:/woterm.qml")));
+
     QQmlContext *qmlContext = engine.rootContext();
-    QString skinPath = QDir::cleanPath(QApplication::applicationDirPath() +"/../opt/skin/");
-    qmlContext->setContextProperty("skinPath", );
-    engine.load(QUrl(QStringLiteral("qrc:/layout/musicplayer.qml")));
+#ifdef USE_CUSTOM_SKIN
+    QString opt = QDir::cleanPath(QApplication::applicationDirPath() +"/../opt/");
+    QString conf = QDir::cleanPath(opt + "/skins/skin.conf");
+    QString skinPath = QDir::cleanPath(opt + "/skins/imagine");
+    qputenv("QT_QUICK_CONTROLS_CONF", conf.toUtf8());
+    //qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", "0");
+    qmlContext->setContextProperty("skinPath", skinPath);
+#endif
+    engine.load(QUrl(QStringLiteral("qrc:/woterm.qml")));
+    //engine.load(QUrl(QStringLiteral("qrc:/layout/musicplayer.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
     return app.exec();

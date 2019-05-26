@@ -31,8 +31,7 @@ HEADERS += \
     qwomainwindow.h
 
 RESOURCES += \
-    woterm.qrc \
-    imagine-assets\imagine-assets.qrc
+    woterm.qrc
 
 OTHER_FILES += \
     woterm.qml
