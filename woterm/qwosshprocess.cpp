@@ -229,7 +229,7 @@ void QWoSshProcess::onTermTitleChanged()
 void QWoSshProcess::onDuplicateSession()
 {
     QString args = QApplication::arguments().join(" ");
-    QProcess::execute(args);
+    QProcess::startDetached(args);
 }
 
 void QWoSshProcess::onZmodemFinished(int code)
