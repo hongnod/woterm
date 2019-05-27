@@ -1,3 +1,5 @@
+#include "qwoitem.h"
+
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
@@ -7,6 +9,7 @@
 #include <QDir>
 #include <QVariant>
 #include <QPalette>
+
 
 //#define USE_CUSTOM_SKIN
 
@@ -25,6 +28,8 @@ int main(int argc, char *argv[])
     QQuickStyle::setFallbackStyle("Default");
 
 
+
+    qmlRegisterType<QWoItem>("WoItem", 1, 0, "WoItem");
 
     QQmlApplicationEngine engine;
 

@@ -7,6 +7,8 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Imagine 2.4
 import "layout"
 import "control"
+import WoItem 1.0
+
 
 ApplicationWindow {
     visible: true
@@ -52,10 +54,13 @@ ApplicationWindow {
             }
         }
     }
-    Rectangle {
-        color: "black"
+    WoItem {
         anchors.fill: parent
-        border.color: "red"
-        border.width: 3
+        Rectangle {
+            anchors.fill: parent
+            color: "red"
+            border.width: 3
+            border.color: "green"
+        }
     }
 }
