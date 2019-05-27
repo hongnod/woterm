@@ -23,7 +23,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
     QFont font = QApplication::font();
     font.setFamily(DEFAULT_FONT_FAMILY);
-    font.setPointSize(12);
+    font.setPointSize(10);
     setTerminalFont(font);
     setScrollBarPosition(QTermWidget::ScrollBarRight);
     setColorScheme("Linux");

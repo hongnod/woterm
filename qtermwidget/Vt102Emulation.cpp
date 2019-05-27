@@ -391,54 +391,90 @@ void Vt102Emulation::receiveChar(wchar_t cc)
   }
 }
 
+bool Vt102Emulation::translateKey(QKeyEvent *e)
+{
+    int key = e->key();
+    bool appck = getMode(MODE_AppCuKeys);
+    if(key == Qt::Key_Down){
+        QChar ch(e->nativeVirtualKey());
+        QByteArray data;
+        if(appck) {
+            data.append("\x1BOB");
+        }else {
+            data.append("\x1B[B");
+        }
+        emit sendData(data);
+    }else if(key == Qt::Key_Up){
+        QChar ch(e->nativeVirtualKey());
+        QByteArray data;
+        if(appck) {
+            data.append("\x1BOA");
+        }else {
+            data.append("\x1B[A");
+        }
+        emit sendData(data);
+    }else if(key == Qt::Key_Left){
+        QChar ch(e->nativeVirtualKey());
+        QByteArray data;
+        if(appck) {
+            data.append("\x1BOD");
+        }else {
+            data.append("\x1B[D");
+        }
+        emit sendData(data);
+    }else if(key == Qt::Key_Right){
+        QChar ch(e->nativeVirtualKey());
+        QByteArray data;
+        if(appck) {
+            data.append("\x1BOC");
+        }else {
+            data.append("\x1B[C");
+        }
+        emit sendData(data);
+    }else if(key == Qt::Key_Home) {
+        QByteArray data;
+        data.append("\x1B[1~");
+        emit sendData(data);
+    }else if(key == Qt::Key_Insert) {
+        QByteArray data;
+        data.append("\x1B[2~");
+        emit sendData(data);
+    }else if(key == Qt::Key_Delete) {
+        QByteArray data;
+        data.append("\x1B[3~");
+        emit sendData(data);
+    }else if(key == Qt::Key_End) {
+        QByteArray data;
+        data.append("\x1B[4~");
+        emit sendData(data);
+    }else if(key == Qt::Key_PageUp) {
+        QByteArray data;
+        data.append("\x1B[5~");
+        emit sendData(data);
+    }else if(key == Qt::Key_PageDown) {
+        QByteArray data;
+        data.append("\x1B[6~");
+        emit sendData(data);
+    }else{
+        return false;
+    }
+    return true;
+}
+
+
 bool Vt102Emulation::eventFilter(QObject *obj, QEvent *ev)
 {
     QEvent::Type t = ev->type();
     if (t == QEvent::KeyPress) {
         QKeyEvent* e = (QKeyEvent*)ev;
         qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
+
+        if(translateKey(e)) {
+            return true;
+        }
         QString keyTxt = e->text();
-        int key = e->key();
-        bool appck = getMode(MODE_AppCuKeys);
         if(!keyTxt.isEmpty()) {
             QByteArray data = keyTxt.toUtf8();
-            emit sendData(data);
-        }else if(key == Qt::Key_Down){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            if(appck) {
-                data.append("\x1BOB");
-            }else {
-                data.append("\x1B[B");
-            }
-
-            emit sendData(data);
-        }else if(key == Qt::Key_Up){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            if(appck) {
-                data.append("\x1BOA");
-            }else {
-                data.append("\x1B[A");
-            }
-            emit sendData(data);
-        }else if(key == Qt::Key_Left){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            if(appck) {
-                data.append("\x1BOD");
-            }else {
-                data.append("\x1B[D");
-            }
-            emit sendData(data);
-        }else if(key == Qt::Key_Right){
-            QChar ch(e->nativeVirtualKey());
-            QByteArray data;
-            if(appck) {
-                data.append("\x1BOC");
-            }else {
-                data.append("\x1B[C");
-            }
             emit sendData(data);
         }
         return true;
