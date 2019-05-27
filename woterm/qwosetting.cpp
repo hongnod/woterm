@@ -11,13 +11,24 @@ QSettings *qSettings()
     return &setting;
 }
 
-void QWoSetting::setValue(const QString &key, const QVariant &v)
+void QWoSetting::setValue(const QString &key, const QVariant &val)
 {
-    qSettings()->setValue(key, v);
+    qSettings()->setValue(key, val);
     qSettings()->sync();
 }
 
 QVariant QWoSetting::value(const QString &key)
 {
     return qSettings()->value(key);
+}
+
+void QWoSetting::setValue(const QVariant &key, const QVariant &val)
+{
+    qSettings()->setValue(key.toString(), val);
+    qSettings()->sync();
+}
+
+QVariant QWoSetting::value(const QVariant &key) const
+{
+    return qSettings()->value(key.toString());
 }

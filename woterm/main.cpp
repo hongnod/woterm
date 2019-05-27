@@ -1,4 +1,5 @@
 #include "qwoitem.h"
+#include "qwosetting.h"
 
 #include <QApplication>
 #include <QQmlApplicationEngine>
@@ -27,9 +28,8 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle("Imagine");
     QQuickStyle::setFallbackStyle("Default");
 
-
-
     qmlRegisterType<QWoItem>("WoItem", 1, 0, "WoItem");
+    qmlRegisterType<QWoSetting>("WoSetting", 1, 0, "WoSetting");
 
     QQmlApplicationEngine engine;
 

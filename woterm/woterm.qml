@@ -8,6 +8,7 @@ import QtQuick.Controls.Imagine 2.4
 import "layout"
 import "control"
 import WoItem 1.0
+import WoSetting 1.0
 
 
 ApplicationWindow {
@@ -17,8 +18,16 @@ ApplicationWindow {
     minimumWidth: 800
     minimumHeight: 600
 
+    Component.onCompleted: {
+        g_setting.setValue("ddddd", 12222)
+    }
+
     WoTheme {
         id:g_theme
+    }
+
+    WoSetting {
+        id:g_setting
     }
 
     menuBar: WoMenuBar {
