@@ -19,15 +19,10 @@ ApplicationWindow {
     minimumHeight: 600
 
     Component.onCompleted: {
-        g_setting.setValue("ddddd", 12222)
     }
 
     WoTheme {
         id:g_theme
-    }
-
-    WoSetting {
-        id:g_setting
     }
 
     menuBar: WoMenuBar {
@@ -67,9 +62,7 @@ ApplicationWindow {
         anchors.fill: parent
         Rectangle {
             anchors.fill: parent
-            color: "red"
             border.width: 3
-            border.color: "green"
         }
     }
 }

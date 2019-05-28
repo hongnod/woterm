@@ -4,31 +4,38 @@
 #include<QApplication>
 #include<QDir>
 
-QSettings *qSettings()
+QWoSetting::QWoSetting(QObject *parent)
+    : QSettings(parent)
+{
+
+}
+
+QWoSetting *QWoSetting::instance()
 {
     static QString path = QDir::cleanPath(QApplication::applicationDirPath()+"/../opt/woterm.ini");
     static QSettings setting(path, QSettings::IniFormat);
-    return &setting;
+    static QWoSetting gset(&setting);
+    return &gset;
 }
 
 void QWoSetting::setValue(const QString &key, const QVariant &val)
 {
-    qSettings()->setValue(key, val);
-    qSettings()->sync();
+    instance()->setValue(key, val);
+    instance()->sync();
 }
 
 QVariant QWoSetting::value(const QString &key)
 {
-    return qSettings()->value(key);
+    return instance()->value(key);
 }
 
-void QWoSetting::setValue(const QVariant &key, const QVariant &val)
+void QWoSetting::set(const QString &key, const QVariant &val)
 {
-    qSettings()->setValue(key.toString(), val);
-    qSettings()->sync();
+    instance()->setValue(key, val);
+    instance()->sync();
 }
 
-QVariant QWoSetting::value(const QVariant &key) const
+QVariant QWoSetting::get(const QString &key) const
 {
-    return qSettings()->value(key.toString());
+    return instance()->value(key);
 }

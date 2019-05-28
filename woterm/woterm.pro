@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     qwoevent.cpp \
     qwosetting.cpp \
     qwomainwindow.cpp \
-    qwoitem.cpp
+    qwoitem.cpp \
+    qwotermitem.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -30,7 +31,8 @@ HEADERS += \
     qwoevent.h \
     qwosetting.h \
     qwomainwindow.h \
-    qwoitem.h
+    qwoitem.h \
+    qwotermitem.h
 
 RESOURCES += \
     woterm.qrc

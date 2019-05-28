@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QQmlContext *qmlContext = engine.rootContext();
+    qmlContext->setContextProperty("conf", QWoSetting::instance());
 #ifdef USE_CUSTOM_SKIN
     QString opt = QDir::cleanPath(QApplication::applicationDirPath() +"/../opt/");
     QString conf = QDir::cleanPath(opt + "/skins/skin.conf");
