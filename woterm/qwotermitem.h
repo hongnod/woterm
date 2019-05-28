@@ -1,6 +1,9 @@
 #pragma once
 
 #include "qwoitem.h"
+#include <QPointer>
+
+class QWoTermWidget;
 
 class QWoTermItem: public QWoItem
 {
@@ -8,4 +11,6 @@ class QWoTermItem: public QWoItem
 public:
     explicit QWoTermItem(QQuickItem *parent = nullptr);
     virtual ~QWoTermItem();
+private:
+    QPointer<QWoTermWidget> m_term;
 };

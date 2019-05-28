@@ -2,7 +2,7 @@ QT += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-QT += qml quick quickcontrols2
+QT += qml quick quickcontrols2 quickwidgets
 
 CONFIG += c++11
 

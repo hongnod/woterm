@@ -11,28 +11,14 @@ import WoItem 1.0
 import WoSetting 1.0
 
 
-ApplicationWindow {
+Rectangle {
     visible: true
-    width: 1280
-    height: 720
-    minimumWidth: 800
-    minimumHeight: 600
-
-    Component.onCompleted: {
-    }
 
     WoTheme {
         id:g_theme
     }
 
-    menuBar: WoMenuBar {
-        Menu {
-            title: qsTr("Help")
-            Action { text: qsTr("About") }
-        }
-    }
-
-    header: ToolBar {
+    ToolBar {
         RowLayout {
             anchors.fill: parent
             ToolButton {
