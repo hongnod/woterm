@@ -29,9 +29,16 @@ void QWoTermItem::connect(const QString &remote)
     m_sshRemote = new QWoSshProcess(remote);
     m_term = new QWoTermWidget(m_sshRemote, container());
     m_sshRemote->start();
+    QRectF rt(x(), y(), width(), height());
+    m_term->setGeometry(rt.toRect());
 }
 
 void QWoTermItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
+    QRectF newGeom = mapRectToScene(newGeometry);
+    qDebug() << newGeometry << oldGeometry << newGeom;
+    if(m_term) {
+        m_term->setGeometry(newGeometry.toRect());
+    }
     QWoItem::geometryChanged(newGeometry, oldGeometry);
 }
