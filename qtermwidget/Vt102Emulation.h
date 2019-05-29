@@ -105,6 +105,7 @@ protected:
   virtual void receiveChar(wchar_t cc);
 
 private:
+  bool translateKey(QKeyEvent* ev);
   virtual bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:

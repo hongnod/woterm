@@ -10,6 +10,7 @@
 #ifdef Q_OS_MACOS
 #define DEFAULT_FONT_FAMILY                   "Menlo"
 #elif defined(Q_OS_WIN)
+//#define DEFAULT_FONT_FAMILY                   "Lucida Console"
 #define DEFAULT_FONT_FAMILY                   "Courier New"
 #else
 #define DEFAULT_FONT_FAMILY                   "Monospace"
@@ -23,7 +24,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
     QFont font = QApplication::font();
     font.setFamily(DEFAULT_FONT_FAMILY);
-    font.setPointSize(12);
+    font.setPointSize(10);
     setTerminalFont(font);
     setScrollBarPosition(QTermWidget::ScrollBarRight);
     setColorScheme("Linux");
