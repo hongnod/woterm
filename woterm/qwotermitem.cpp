@@ -23,9 +23,15 @@ QQuickWidget *QWoTermItem::container()
     return qWidget;
 }
 
-void QWoTermItem::connect(const QString &args)
+void QWoTermItem::connect(const QString &remote)
 {
-    qDebug() << args;
-    m_sshRemote = new QWoSshProcess();
+    qDebug() << remote;
+    m_sshRemote = new QWoSshProcess(remote);
     m_term = new QWoTermWidget(m_sshRemote, container());
+    m_sshRemote->start();
+}
+
+void QWoTermItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
+{
+    QWoItem::geometryChanged(newGeometry, oldGeometry);
 }

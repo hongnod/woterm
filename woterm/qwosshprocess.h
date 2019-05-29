@@ -16,7 +16,7 @@ class QWoSshProcess : public QWoProcess
 {
     Q_OBJECT
 public:
-    explicit QWoSshProcess();
+    explicit QWoSshProcess(const QString& remote);
     virtual ~QWoSshProcess();
 
 private slots:
