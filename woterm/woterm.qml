@@ -8,47 +8,56 @@ import QtQuick.Controls.Imagine 2.4
 import "layout"
 import "control"
 import WoItem 1.0
-import WoSetting 1.0
 
 
 Rectangle {
     visible: true
+    color: "red"
 
     WoTheme {
         id:g_theme
     }
 
-    ToolBar {
-        RowLayout {
-            anchors.fill: parent
-            ToolButton {
-                text: qsTr("New")
-                onClicked: {
+    ColumnLayout {
+        spacing: 0
+        anchors.fill: parent
+        ToolBar {
+            Layout.fillWidth: true
+            Layout.margins:0
+            RowLayout {
+                anchors.fill: parent
+                ToolButton {
+                    text: qsTr("New")
+                    onClicked: {
 
+                    }
                 }
-            }
-            ToolButton {
-                text: qsTr("Connect")
-                implicitWidth: 60
-                onClicked: {
+                ToolButton {
+                    text: qsTr("Connect")
+                    implicitWidth: 60
+                    onClicked: {
 
+                    }
+                    Button{
+                        width: 20
+                        anchors.right: parent.right
+                        text : "Drop"
+                    }
                 }
-                Button{
-                    width: 20
-                    anchors.right: parent.right
-                    text : "Drop"
+                Item {
+                    Layout.fillWidth: true
                 }
-            }
-            Item {
-                Layout.fillWidth: true
             }
         }
-    }
-    WoItem {
-        anchors.fill: parent
-        Rectangle {
-            anchors.fill: parent
-            border.width: 3
+        WoItem {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Rectangle {
+                anchors.fill: parent
+                border.width: 3
+                border.color: "yellow"
+                color: "green"
+            }
         }
     }
 }
