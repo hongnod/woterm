@@ -8,6 +8,7 @@ import QtQuick.Controls.Imagine 2.4
 import "layout"
 import "control"
 import WoItem 1.0
+import WoTermItem 1.0
 
 
 Rectangle {
@@ -49,9 +50,14 @@ Rectangle {
                 }
             }
         }
-        WoItem {
+        WoTermItem {
+            id: m_term
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Component.onCompleted: {
+                m_term.connect("target")
+            }
+
             Rectangle {
                 anchors.fill: parent
                 border.width: 3

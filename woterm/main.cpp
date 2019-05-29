@@ -47,11 +47,13 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle("Imagine");
     QQuickStyle::setFallbackStyle("Default");
 
-    QQuickWidget *quick = new QQuickWidget(mainWindow);
+    QQuickWidget *quick = QWoTermItem::container();
+    quick->setParent(mainWindow);
     quick->setResizeMode(QQuickWidget::SizeRootObjectToView );
     quick->setSource(QUrl("qrc:/woterm.qml"));
     QQmlContext *qmlContext = quick->rootContext();
     qmlContext->setContextProperty("conf", QWoSetting::instance());
+    qmlContext->setContextProperty("container", quick);
 
     mainWindow->setCentralWidget(quick);
     mainWindow->show();
