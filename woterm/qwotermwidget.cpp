@@ -89,6 +89,7 @@ void QWoTermWidget::onFinished(int code)
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
 {
+    scrollToEnd();
     m_process->write(buf);
 }
 
