@@ -35,10 +35,10 @@ void QWoTermItem::connect(const QString &remote)
 
 void QWoTermItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
 {
-    QRectF newGeom = mapFromItem(newGeometry);
-    qDebug() << newGeometry << oldGeometry << newGeom;
+    QRectF geom = newGeometry;
+    geom.moveTo(mapToScene(QPointF(0,0)));
     if(m_term) {
-        m_term->setGeometry(newGeom.toRect());
+        m_term->setGeometry(geom.toRect());
     }
     QWoItem::geometryChanged(newGeometry, oldGeometry);
 }

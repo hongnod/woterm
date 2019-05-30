@@ -50,31 +50,23 @@ Rectangle {
                 }
             }
         }
-        Rectangle {
+
+        WoTermItem {
+            id: m_term
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.margins: 30
-            color: "gray"
+            Layout.margins: 0
 
+            Component.onCompleted: {
+                m_term.connect("target")
+            }
 
-            WoTermItem {
-                id: m_term
+            Rectangle {
                 anchors.fill: parent
-                anchors.margins: 20
-
-                Component.onCompleted: {
-                    m_term.connect("target")
-                }
-
-                Rectangle {
-                    anchors.fill: parent
-                    border.width: 3
-                    border.color: "yellow"
-                    color: "green"
-                }
+                border.width: 3
+                border.color: "yellow"
+                color: "green"
             }
         }
-
-
     }
 }
