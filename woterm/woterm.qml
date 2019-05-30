@@ -11,9 +11,15 @@ import WoItem 1.0
 import WoTermItem 1.0
 
 
-Rectangle {
+Item {
     visible: true
-    color: "red"
+    property var sshRemote: []
+
+    Component.onCompleted: {
+        sshRemote.push("A");
+        sshRemote.push("B");
+        sshRemote.push("C")
+    }
 
     WoTheme {
         id:g_theme
@@ -50,22 +56,50 @@ Rectangle {
                 }
             }
         }
+        TabBar {
+            id: bar
+            width: parent.width
 
-        WoTermItem {
-            id: m_term
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.margins: 0
+            Repeater {
+                id: repeater;
+                Component.onCompleted: {
+                    lstModel.append({"server":"A"})
+                    lstModel.append({"server":"B"})
+                    lstModel.append({"server":"C"})
+                }
 
-            Component.onCompleted: {
-                m_term.connect("target")
+                model: ListModel{
+                    id: lstModel
+                }
+
+                delegate:Component {
+                    TabButton {
+                        text: model.server
+                        width: Math.max(100, bar.width / 5)
+                    }
+                }
             }
+        }
 
-            Rectangle {
-                anchors.fill: parent
-                border.width: 3
-                border.color: "yellow"
-                color: "green"
+        StackLayout {
+            id: stackLayout
+            width: parent.width
+            WoTermItem {
+                id: m_term
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.margins: 0
+
+                Component.onCompleted: {
+                    m_term.connect("target")
+                }
+
+                Rectangle {
+                    anchors.fill: parent
+                    border.width: 3
+                    border.color: "yellow"
+                    color: "green"
+                }
             }
         }
     }

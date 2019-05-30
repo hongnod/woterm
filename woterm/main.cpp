@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
     actionsMenu->addAction("Find...");
     actionsMenu->addAction("About Qt");
     mainWindow->setMenuBar(menuBar);
-    mainWindow->setMenuBar(menuBar);
 
     qmlRegisterType<QWoItem>("WoItem", 1, 0, "WoItem");
     qmlRegisterType<QWoTermItem>("WoTermItem", 1, 0, "WoTermItem");
