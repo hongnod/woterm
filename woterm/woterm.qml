@@ -45,7 +45,7 @@ Item {
                     text: qsTr("New")
                     onClicked: {
                         var cnt = remoteBar.count;
-                        lstModel.append({"title":"target"+cnt, "server":"target"})
+                        lstModel.insert(0, {"title":"target"+cnt, "server":"target"})
                         remoteBar.currentIndex = cnt
                     }
                 }
