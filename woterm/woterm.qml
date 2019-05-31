@@ -63,8 +63,8 @@ Item {
             Repeater {
                 id: repeater;
                 Component.onCompleted: {
-                    lstModel.append({"server":"A"})
-                    lstModel.append({"server":"B"})
+                    lstModel.append({"server":"dddddddddA"})
+                    lstModel.append({"server":"Bdddd"})
                     lstModel.append({"server":"C"})
                 }
 
@@ -75,7 +75,7 @@ Item {
                 delegate:Component {
                     TabButton {
                         text: model.server
-                        width: Math.max(100, bar.width / 5)
+                        width: implicitWidth
                     }
                 }
             }
