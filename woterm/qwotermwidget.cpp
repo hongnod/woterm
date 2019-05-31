@@ -84,7 +84,7 @@ void QWoTermWidget::onReadyReadStandardError()
 void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
-    QApplication::exit(code);
+    //QApplication::exit(code);
 }
 
 void QWoTermWidget::onSendData(const QByteArray &buf)

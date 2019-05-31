@@ -12,17 +12,26 @@ import WoTermItem 1.0
 
 Item {
     visible: true
-    property var sshRemote: []
 
     Component.onCompleted: {
-        sshRemote.push("A");
-        sshRemote.push("B");
-        sshRemote.push("C")
     }
 
     WoTheme {
         id:g_theme
     }
+
+    Component {
+        id: itemTab
+        WoTermItem {
+            Rectangle {
+                anchors.fill: parent
+                border.width: 3
+                border.color: "yellow"
+                color: "green"
+            }
+        }
+    }
+
 
     ColumnLayout {
         spacing: 0
@@ -35,7 +44,9 @@ Item {
                 ToolButton {
                     text: qsTr("New")
                     onClicked: {
-
+                        var cnt = remoteBar.count;
+                        lstModel.append({"title":"target"+cnt, "server":"target"})
+                        remoteBar.currentIndex = cnt
                     }
                 }
                 ToolButton {
@@ -55,25 +66,58 @@ Item {
                 }
             }
         }
+
+        Component {
+            id: tabViewStyle
+            TabViewStyle {
+                tabOverlap: 16
+                frameOverlap: 4
+                tabsMovable: true
+
+                frame: Rectangle {
+                    gradient: Gradient {
+                        GradientStop { color: "#e5e5e5" ; position: 0 }
+                        GradientStop { color: "#e0e0e0" ; position: 1 }
+                    }
+                    border.color: "#898989"
+                    Rectangle { anchors.fill: parent ; anchors.margins: 1 ; border.color: "white" ; color: "transparent" }
+                }
+                tab: Item {
+                    property int totalOverlap: tabOverlap * (control.count - 1)
+                    implicitWidth: Math.min ((styleData.availableWidth + totalOverlap)/control.count - 4, image.sourceSize.width)
+                    implicitHeight: image.sourceSize.height
+                    BorderImage {
+                        id: image
+                        anchors.fill: parent
+                        source: styleData.selected ? "images/tab_selected.png" : "images/tab.png"
+                        border.left: 30
+                        smooth: false
+                        border.right: 30
+                    }
+                    Text {
+                        text: styleData.title
+                        anchors.centerIn: parent
+                    }
+                }
+                leftCorner: Item { implicitWidth: 12 }
+            }
+        }
+
         TabView {
-            id: bar
-            anchors.fill: parent
+            id: remoteBar
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            style: tabViewStyle
 
             Repeater {
-                id: repeater;
-                Component.onCompleted: {
-                    lstModel.append({"server":"dddddddddA"})
-                    lstModel.append({"server":"Bdddd"})
-                    lstModel.append({"server":"C"})
-                }
-
                 model: ListModel{
                     id: lstModel
                 }
 
                 delegate:Component {
                     Tab {
-                        title: model.server
+                        title: model.title
                         width: implicitWidth
                         WoTermItem {
                             id: m_term
@@ -82,7 +126,7 @@ Item {
                             Layout.margins: 0
 
                             Component.onCompleted: {
-                                m_term.connect("target")
+                                m_term.connect(model.server)
                             }
 
                             Rectangle {
@@ -95,6 +139,6 @@ Item {
                     }
                 }
             }
-        }      
+        }
     }
 }

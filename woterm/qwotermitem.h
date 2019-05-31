@@ -21,8 +21,13 @@ public:
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
+private slots:
+    void onVisibleChanged();
 private:
     virtual bool event(QEvent *ev);
+
+private:
+    void syncTermGeometry();
 
 private:
     QPointer<QWoTermWidget> m_term;
