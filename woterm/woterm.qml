@@ -74,6 +74,12 @@ Item {
 
                 delegate:Component {
                     TabButton {
+//                        background: Rectangle{
+//                            color:"red"
+//                            anchors.fill: parent
+//                            border.color: "green"
+//                            border.width: 2
+//                        }
                         text: model.server
                         width: implicitWidth
                     }
