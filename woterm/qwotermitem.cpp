@@ -42,3 +42,10 @@ void QWoTermItem::geometryChanged(const QRectF &newGeometry, const QRectF &oldGe
     }
     QWoItem::geometryChanged(newGeometry, oldGeometry);
 }
+
+bool QWoTermItem::event(QEvent *ev)
+{
+    QEvent::Type t = ev->type();
+    qDebug() << "event:" << t;
+    return QWoItem::event(ev);
+}

@@ -2,9 +2,8 @@ import QtQuick 2.11
 import QtQuick.Window 2.11
 import QtQuick.Layouts 1.11
 import QtQuick.Dialogs 1.3
-import QtQuick.Controls 2.4
+import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls.Imagine 2.4
 import "layout"
 import "control"
 import WoItem 1.0
@@ -56,9 +55,9 @@ Item {
                 }
             }
         }
-        TabBar {
+        TabView {
             id: bar
-            width: parent.width
+            anchors.fill: parent
 
             Repeater {
                 id: repeater;
@@ -73,40 +72,29 @@ Item {
                 }
 
                 delegate:Component {
-                    TabButton {
-//                        background: Rectangle{
-//                            color:"red"
-//                            anchors.fill: parent
-//                            border.color: "green"
-//                            border.width: 2
-//                        }
-                        text: model.server
+                    Tab {
+                        title: model.server
                         width: implicitWidth
+                        WoTermItem {
+                            id: m_term
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.margins: 0
+
+                            Component.onCompleted: {
+                                m_term.connect("target")
+                            }
+
+                            Rectangle {
+                                anchors.fill: parent
+                                border.width: 3
+                                border.color: "yellow"
+                                color: "green"
+                            }
+                        }
                     }
                 }
             }
-        }
-
-        StackLayout {
-            id: stackLayout
-            width: parent.width
-            WoTermItem {
-                id: m_term
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.margins: 0
-
-                Component.onCompleted: {
-                    m_term.connect("target")
-                }
-
-                Rectangle {
-                    anchors.fill: parent
-                    border.width: 3
-                    border.color: "yellow"
-                    color: "green"
-                }
-            }
-        }
+        }      
     }
 }
