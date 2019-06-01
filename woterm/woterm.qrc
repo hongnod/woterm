@@ -14,5 +14,7 @@
         <file>layout/musicplayer.qml</file>
         <file>control/WoMenuBar.qml</file>
         <file>control/WoTheme.qml</file>
+        <file>control/WoTab.qml</file>
+        <file>control/WoTabView.qml</file>
     </qresource>
 </RCC>
