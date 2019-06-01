@@ -42,7 +42,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
+    QApplication::setStyle("Fusion");
     QWoMainWindow *mainWindow = new QWoMainWindow();
+
 
 //    QWoSshProcess process;
 //    QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);

@@ -1,6 +1,7 @@
 #include "qwomainwindow.h"
 #include "qwosetting.h"
 #include "qwoshower.h"
+#include "qwowidget.h"
 
 #include <QMessageBox>
 #include <QCloseEvent>
@@ -8,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QTabBar>
 #include <QToolBar>
+#include <QPushButton>
 
 QWoMainWindow::QWoMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -22,14 +24,19 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
     setMenuBar(menuBar);
 
-    m_tool = new QToolBar(this);
-    m_tool->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
-    m_tab = new QTabBar(this);
-    m_tab->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+    QWoWidget *central = new QWoWidget(this);
+    setCentralWidget(central);
 
+    m_tool = new QToolBar(this);
+    m_tab = new QTabBar(this);
+    m_tab->setMovable(true);
+    m_tab->setTabsClosable(true);
+    m_tab->setExpanding(false);
+    m_tab->setUsesScrollButtons(true);
     m_shower = new QWoShower(this);
-    m_layout = new QVBoxLayout(this);
-    setLayout(m_layout);
+
+    m_layout = new QVBoxLayout(central);
+    central->setLayout(m_layout);
 
     m_layout->addWidget(m_tool);
     m_layout->addWidget(m_tab);
@@ -38,9 +45,12 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tool->addAction("AB");
     m_tool->addAction("AB2");
     m_tool->addAction("AB3");
-    m_tab->addTab("A");
-    m_tab->addTab("B");
-    m_tab->addTab("C");
+    m_tab->addTab("Aadddfdfsdf");
+    m_tab->addTab("Baadfsdfdsfdsf");
+    m_tab->addTab("Cccccccc");
+    m_tab->addTab("Cddddddd");
+    m_tab->addTab("Cffffff");
+    m_tab->addTab("Ceeeeee");
 }
 
 void QWoMainWindow::closeEvent(QCloseEvent *event)

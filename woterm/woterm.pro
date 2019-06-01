@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     qwoevent.cpp \
     qwosetting.cpp \
     qwomainwindow.cpp \
-    qwoshower.cpp
+    qwoshower.cpp \
+    qwowidget.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -21,4 +22,5 @@ HEADERS += \
     qwoevent.h \
     qwosetting.h \
     qwomainwindow.h \
-    qwoshower.h
+    qwoshower.h \
+    qwowidget.h
