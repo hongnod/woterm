@@ -43,29 +43,21 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
     QWoMainWindow *mainWindow = new QWoMainWindow();
-    QWoSshProcess process;
-    QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);
-    process.start();
 
-    //QMessageBox::warning(mainWindow, "ok", QApplication::arguments().join(","));
+//    QWoSshProcess process;
+//    QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);
+//    process.start();
 
-    QMenuBar *menuBar = new QMenuBar(mainWindow);
-    QMenu *actionsMenu = new QMenu("Actions", menuBar);
-    menuBar->addMenu(actionsMenu);
-    actionsMenu->addAction("Find...", console, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
-    actionsMenu->addAction("About Qt", &app, SLOT(aboutQt()));
-    mainWindow->setMenuBar(menuBar);
-
-    mainWindow->setCentralWidget(console);
+//    mainWindow->setCentralWidget(console);
     // info output
-    qDebug() << "* INFO *************************";
-    qDebug() << " availableKeyBindings:" << console->availableKeyBindings();
-    qDebug() << " keyBindings:" << console->keyBindings();
-    qDebug() << " availableColorSchemes:" << console->availableColorSchemes();
-    qDebug() << "* INFO END *********************";
+//    qDebug() << "* INFO *************************";
+//    qDebug() << " availableKeyBindings:" << console->availableKeyBindings();
+//    qDebug() << " keyBindings:" << console->keyBindings();
+//    qDebug() << " availableColorSchemes:" << console->availableColorSchemes();
+//    qDebug() << "* INFO END *********************";
 
-    // real startup
-    QObject::connect(console, SIGNAL(finished()), mainWindow, SLOT(close()));
+//    // real startup
+//    QObject::connect(console, SIGNAL(finished()), mainWindow, SLOT(close()));
 
     mainWindow->show();
     return app.exec();

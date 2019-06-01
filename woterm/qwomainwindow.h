@@ -3,6 +3,12 @@
 #include <QMainWindow>
 #include <QPointer>
 
+class QMenuBar;
+class QVBoxLayout;
+class QTabBar;
+class QToolBar;
+class QWoShower;
+
 class QWoMainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -10,4 +16,10 @@ public:
     explicit QWoMainWindow(QWidget *parent=nullptr);
 protected:
     void closeEvent(QCloseEvent *event);
+private:
+    QPointer<QMenuBar> m_memuBar;
+    QPointer<QToolBar> m_tool;
+    QPointer<QVBoxLayout> m_layout;
+    QPointer<QTabBar> m_tab;
+    QPointer<QWoShower> m_shower;
 };
