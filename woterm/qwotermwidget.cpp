@@ -21,6 +21,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     , m_process(process)
 {
     m_process->setTermWidget(this);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     QFont font = QApplication::font();
     font.setFamily(DEFAULT_FONT_FAMILY);
@@ -51,6 +52,11 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
     QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
+}
+
+QWoTermWidget::~QWoTermWidget()
+{
+
 }
 
 void QWoTermWidget::onTimeout()
@@ -84,7 +90,6 @@ void QWoTermWidget::onReadyReadStandardError()
 void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
-    QApplication::exit(code);
 }
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
@@ -129,4 +134,13 @@ void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
     m_process->prepareContextMenu(m_menu);
 
     m_menu->exec(QCursor::pos());
+}
+
+void QWoTermWidget::closeEvent(QCloseEvent *event)
+{
+    emit aboutToClose(event);
+    if(event->isAccepted()) {
+        return;
+    }
+    QTermWidget::closeEvent(event);
 }

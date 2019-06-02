@@ -16,8 +16,8 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 
-QWoSshProcess::QWoSshProcess(const QString& target)
-    : QWoProcess (nullptr)
+QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
+    : QWoProcess (parent)
 {
     m_exeSend = QWoSetting::value("zmodem/sz").toString();
     if(!QFile::exists(m_exeSend)) {

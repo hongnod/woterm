@@ -12,6 +12,10 @@ class QWoTermWidget : public QTermWidget
     Q_OBJECT
 public:
     explicit QWoTermWidget(QWoProcess *process, QWidget *parent=nullptr);
+    virtual ~QWoTermWidget();
+
+signals:
+    void aboutToClose(QCloseEvent* event);
 private
 slots:
     void onTimeout();
@@ -24,7 +28,7 @@ slots:
 
 private:
     void contextMenuEvent(QContextMenuEvent *event);
-
+    void closeEvent(QCloseEvent *event);
 private:
     QPointer<QWoProcess> m_process;
     QPointer<QMenu> m_menu;

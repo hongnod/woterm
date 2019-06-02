@@ -428,7 +428,6 @@ TerminalDisplay::~TerminalDisplay()
 {
   disconnect(_blinkTimer);
   disconnect(_blinkCursorTimer);
-  qApp->removeEventFilter( this );
 
   delete[] _image;
 

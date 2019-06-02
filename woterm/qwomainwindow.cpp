@@ -49,13 +49,6 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 
     QAction *openTerm = m_tool->addAction("Open");
     QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
-
-    m_tab->addTab("Aadddfdfsdf");
-    m_tab->addTab("Baadfsdfdsfdsf");
-    m_tab->addTab("Cccccccc");
-    m_tab->addTab("Cddddddd");
-    m_tab->addTab("Cffffff");
-    m_tab->addTab("Ceeeeee");
 }
 
 QWoMainWindow *QWoMainWindow::instance()
