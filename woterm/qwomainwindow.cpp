@@ -29,10 +29,12 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
     setMenuBar(menuBar);
 
+    m_tool = new QToolBar(this);
+    addToolBar(m_tool);
+
     QWoWidget *central = new QWoWidget(this);
     setCentralWidget(central);
 
-    m_tool = new QToolBar(this);
     m_tab = new QTabBar(this);
     m_tab->setMovable(true);
     m_tab->setTabsClosable(true);
@@ -44,7 +46,6 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     central->setLayout(m_layout);
     m_layout->setSpacing(0);
 
-    m_layout->addWidget(m_tool);
     m_layout->addWidget(m_tab);
     m_layout->addWidget(m_shower);
 
