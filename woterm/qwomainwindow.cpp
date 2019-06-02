@@ -16,6 +16,7 @@
 #include <QPushButton>
 #include <QDesktopServices>
 #include <QDir>
+#include <QDockWidget>
 
 QWoMainWindow::QWoMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,14 +31,17 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
     setMenuBar(menuBar);
 
-    m_tool = new QToolBar(this);
+    m_tool = new QToolBar("ToolBar", this);
     addToolBar(m_tool);
 
-    m_manager = new QWoSessionManager("SessionManager", this);
-    m_manager->setFloating(false);
-    m_manager->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetClosable);
-    m_manager->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-    addDockWidget(Qt::LeftDockWidgetArea, m_manager);
+    QDockWidget* dock = new QDockWidget("SessionManager", this);
+    addDockWidget(Qt::LeftDockWidgetArea, dock);
+    dock->setFloating(false);
+    dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetClosable);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+
+    m_manager = new QWoSessionManager(dock);
+    dock->setWidget(m_manager);
 
     QWoWidget *central = new QWoWidget(this);
     setCentralWidget(central);
