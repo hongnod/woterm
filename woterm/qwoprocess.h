@@ -34,7 +34,9 @@ public:
     void closeWriteChannel();
 
     bool waitForBytesWritten(int msecs = 30000);
-    void enableDebugConsole(bool on);    
+    void enableDebugConsole(bool on);
+
+    QTermWidget *termWidget();
 
     Q_INVOKABLE void close();
     Q_INVOKABLE void terminate();

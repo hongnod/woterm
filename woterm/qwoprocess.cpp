@@ -2,7 +2,6 @@
 #include "qwoevent.h"
 
 #include <qtermwidget.h>
-
 #include <QApplication>
 #include <QDebug>
 #include <QMenu>
@@ -150,6 +149,11 @@ bool QWoProcess::waitForBytesWritten(int msecs)
 }
 
 
+QTermWidget *QWoProcess::termWidget()
+{
+    return m_term;
+}
+
 #ifdef Q_OS_WIN
 #include <Windows.h>
 void QWoProcess::enableDebugConsole(bool on)
@@ -160,6 +164,7 @@ void QWoProcess::enableDebugConsole(bool on)
 //        cpa->startupInfo->wShowWindow = on ? SW_SHOW : SW_HIDE;
 //    });
 }
+
 #else
 void QWoProcess::enableDebugConsole(bool on)
 {

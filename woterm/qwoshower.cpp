@@ -100,9 +100,9 @@ void QWoShower::onTabMoved(int from, int to)
     m_terms.move(from, to);
 }
 
-void QWoShower::onSshProcessFinished(int)
+void QWoShower::onSshProcessFinished(int code)
 {
-
+    QWoTermWidget *term = qobject_cast<QWoTermWidget*>(sender());
 }
 
 void QWoShower::onTabCurrentChanged(int idx)
