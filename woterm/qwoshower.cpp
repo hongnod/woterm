@@ -14,6 +14,10 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
     QObject::connect(tab, SIGNAL(tabMoved(int,int)), this, SLOT(onTabMoved(int,int)));
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
+
+    setAutoFillBackground(true);
+    setBackgroundColor("black");
+
 }
 
 QWoShower::~QWoShower()
@@ -33,6 +37,17 @@ bool QWoShower::openConnection(const QString &target)
     m_tabs->setTabData(idx, QVariant::fromValue(term));
     QObject::connect(process, SIGNAL(finished(int)), this, SLOT(onSshProcessFinished(int)));
     return true;
+}
+
+void QWoShower::setBackgroundColor(const QColor &clr)
+{
+    QPalette pal;
+    pal.setColor(QPalette::Background, clr);
+    pal.setColor(QPalette::Window, clr);
+    setPalette(pal);
+//    for(int i = 0; i < m_terms.count(); i++) {
+//        QWoTermWidget *term = m_terms.at(i);
+//    }
 }
 
 void QWoShower::resizeEvent(QResizeEvent *event)
@@ -65,7 +80,10 @@ void QWoShower::closeSession(int idx)
     QWoTermWidget *take = m_terms.takeAt(idx);
     Q_ASSERT(target == take);
     m_tabs->removeTab(idx);
+    QWoProcess *process = take->process();
     take->close();
+    process->kill();
+    process->deleteLater();
 }
 
 void QWoShower::onTabCloseRequested(int idx)

@@ -14,6 +14,7 @@ public:
     explicit QWoTermWidget(QWoProcess *process, QWidget *parent=nullptr);
     virtual ~QWoTermWidget();
 
+    QWoProcess *process();
 signals:
     void aboutToClose(QCloseEvent* event);
 private

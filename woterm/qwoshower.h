@@ -13,6 +13,7 @@ public:
     explicit QWoShower(QTabBar *tab, QWidget *parent=nullptr);
     virtual ~QWoShower();
     bool openConnection(const QString& target);
+    void setBackgroundColor(const QColor& clr);
 protected:
     virtual void resizeEvent(QResizeEvent *event);
     void syncGeometry(QWidget *widget);

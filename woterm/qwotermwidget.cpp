@@ -59,6 +59,11 @@ QWoTermWidget::~QWoTermWidget()
 
 }
 
+QWoProcess *QWoTermWidget::process()
+{
+    return m_process;
+}
+
 void QWoTermWidget::onTimeout()
 {
     qDebug() << "onTimeout()";
