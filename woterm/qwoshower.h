@@ -24,6 +24,7 @@ private slots:
     void onTabCloseRequested(int index);
     void onTabMoved(int from, int to);
     void onSshProcessFinished(int);
+    void onTabCurrentChanged(int index);
 private:
     QPointer<QTabBar> m_tabs;
     QList<QPointer<QWoTermWidget>> m_terms;

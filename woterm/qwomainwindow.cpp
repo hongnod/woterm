@@ -39,6 +39,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 
     m_layout = new QVBoxLayout(central);
     central->setLayout(m_layout);
+    m_layout->setSpacing(0);
 
     m_layout->addWidget(m_tool);
     m_layout->addWidget(m_tab);
