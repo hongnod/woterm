@@ -14,7 +14,7 @@ SOURCES += main.cpp \
     qwomainwindow.cpp \
     qwoshower.cpp \
     qwowidget.cpp \
-    qwodockserverlist.cpp
+    qwosessionmanager.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -25,4 +25,4 @@ HEADERS += \
     qwomainwindow.h \
     qwoshower.h \
     qwowidget.h \
-    qwodockserverlist.h
+    qwosessionmanager.h

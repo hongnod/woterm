@@ -4,6 +4,7 @@
 #include "qwowidget.h"
 #include "qwosshprocess.h"
 #include "qwotermwidget.h"
+#include "qwosessionmanager.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -32,6 +33,12 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tool = new QToolBar(this);
     addToolBar(m_tool);
 
+    m_manager = new QWoSessionManager("SessionManager", this);
+    m_manager->setFloating(false);
+    m_manager->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetClosable);
+    m_manager->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+    addDockWidget(Qt::LeftDockWidgetArea, m_manager);
+
     QWoWidget *central = new QWoWidget(this);
     setCentralWidget(central);
 
@@ -45,6 +52,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_layout = new QVBoxLayout(central);
     central->setLayout(m_layout);
     m_layout->setSpacing(0);
+    m_layout->setMargin(0);
 
     m_layout->addWidget(m_tab);
     m_layout->addWidget(m_shower);
