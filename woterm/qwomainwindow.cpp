@@ -2,7 +2,9 @@
 #include "qwosetting.h"
 #include "qwoshower.h"
 #include "qwowidget.h"
-
+#include "qwosshprocess.h"
+#include "qwotermwidget.h"
+\
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QMenuBar>
@@ -33,7 +35,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tab->setTabsClosable(true);
     m_tab->setExpanding(false);
     m_tab->setUsesScrollButtons(true);
-    m_shower = new QWoShower(this);
+    m_shower = new QWoShower(m_tab, this);
 
     m_layout = new QVBoxLayout(central);
     central->setLayout(m_layout);
@@ -42,15 +44,24 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_layout->addWidget(m_tab);
     m_layout->addWidget(m_shower);
 
-    m_tool->addAction("AB");
-    m_tool->addAction("AB2");
-    m_tool->addAction("AB3");
+    QAction *newTerm = m_tool->addAction("New");
+    QObject::connect(newTerm, SIGNAL(triggered()), this, SLOT(onNewTerm()));
+
+    QAction *openTerm = m_tool->addAction("Open");
+    QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
+
     m_tab->addTab("Aadddfdfsdf");
     m_tab->addTab("Baadfsdfdsfdsf");
     m_tab->addTab("Cccccccc");
     m_tab->addTab("Cddddddd");
     m_tab->addTab("Cffffff");
     m_tab->addTab("Ceeeeee");
+}
+
+QWoMainWindow *QWoMainWindow::instance()
+{
+     static QWoMainWindow win;
+     return &win;
 }
 
 void QWoMainWindow::closeEvent(QCloseEvent *event)
@@ -63,4 +74,18 @@ void QWoMainWindow::closeEvent(QCloseEvent *event)
     QByteArray geom = saveGeometry();
     QWoSetting::setValue("woterm/geometry", geom);
     QMainWindow::closeEvent(event);
+}
+
+void QWoMainWindow::onNewTerm()
+{
+//    QWoSshProcess *process = new QWoSshProcess();
+//    QWoTermWidget *console = new QWoTermWidget(process, m_shower);
+//    process.start();
+//    QVariantMap mapVar;
+//    mapVar["process"] = process;
+}
+
+void QWoMainWindow::onOpenTerm()
+{
+    m_shower->openConnection("target");
 }

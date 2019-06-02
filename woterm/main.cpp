@@ -43,24 +43,9 @@ int main(int argc, char *argv[])
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
     QApplication::setStyle("Fusion");
-    QWoMainWindow *mainWindow = new QWoMainWindow();
 
-
-//    QWoSshProcess process;
-//    QWoTermWidget *console = new QWoTermWidget(&process, mainWindow);
-//    process.start();
-
-//    mainWindow->setCentralWidget(console);
-    // info output
-//    qDebug() << "* INFO *************************";
-//    qDebug() << " availableKeyBindings:" << console->availableKeyBindings();
-//    qDebug() << " keyBindings:" << console->keyBindings();
-//    qDebug() << " availableColorSchemes:" << console->availableColorSchemes();
-//    qDebug() << "* INFO END *********************";
-
-//    // real startup
-//    QObject::connect(console, SIGNAL(finished()), mainWindow, SLOT(close()));
-
+    QWoMainWindow *mainWindow = QWoMainWindow::instance();
     mainWindow->show();
+
     return app.exec();
 }

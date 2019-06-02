@@ -16,7 +16,7 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 
-QWoSshProcess::QWoSshProcess()
+QWoSshProcess::QWoSshProcess(const QString& target)
     : QWoProcess (nullptr)
 {
     m_exeSend = QWoSetting::value("zmodem/sz").toString();
@@ -41,14 +41,10 @@ QWoSshProcess::QWoSshProcess()
             QApplication::exit(0);
         }
     }
+    m_title = target;
     setProgram(program);
-    QStringList args = QApplication::arguments();
-    args.removeAt(0);
-    if(args.length() <= 0) {
-        QApplication::exit(-1);
-        return;
-    }
-    m_title = args.first();
+    QStringList args;
+    args.append(target);
     args.append("-F");
     QString cfg = QDir::cleanPath(QApplication::applicationDirPath() + "/../config");
     args.append(cfg);
