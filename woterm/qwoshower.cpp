@@ -102,7 +102,15 @@ void QWoShower::onTabMoved(int from, int to)
 
 void QWoShower::onSshProcessFinished(int code)
 {
-    QWoTermWidget *term = qobject_cast<QWoTermWidget*>(sender());
+    QWoProcess *hit = qobject_cast<QWoProcess*>(sender());
+    for(int i = 0; i < m_terms.count(); i++) {
+        QWoTermWidget *term = m_terms.at(i);
+        QWoProcess *ssh = term->process();
+        if(ssh == hit) {
+            closeSession(i);
+            return;
+        }
+    }
 }
 
 void QWoShower::onTabCurrentChanged(int idx)
