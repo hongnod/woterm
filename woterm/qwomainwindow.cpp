@@ -4,7 +4,8 @@
 #include "qwowidget.h"
 #include "qwosshprocess.h"
 #include "qwotermwidget.h"
-\
+
+#include <QApplication>
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QMenuBar>
@@ -12,6 +13,8 @@
 #include <QTabBar>
 #include <QToolBar>
 #include <QPushButton>
+#include <QDesktopServices>
+#include <QDir>
 
 QWoMainWindow::QWoMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,6 +53,9 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 
     QAction *openTerm = m_tool->addAction("Open");
     QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
+
+    QAction *edit = m_tool->addAction("Edit");
+    QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
 }
 
 QWoMainWindow *QWoMainWindow::instance()
@@ -82,4 +88,10 @@ void QWoMainWindow::onNewTerm()
 void QWoMainWindow::onOpenTerm()
 {
     m_shower->openConnection("target");
+}
+
+void QWoMainWindow::onEditConfig()
+{
+    QString cfg = QDir::cleanPath(QApplication::applicationDirPath() + "/../");
+    QDesktopServices::openUrl(QUrl(cfg, QUrl::TolerantMode));
 }

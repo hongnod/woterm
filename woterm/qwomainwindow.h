@@ -20,6 +20,7 @@ protected:
 private slots:
     void onNewTerm();
     void onOpenTerm();
+    void onEditConfig();
 
 private:
     QPointer<QMenuBar> m_memuBar;
