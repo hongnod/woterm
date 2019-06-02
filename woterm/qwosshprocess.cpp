@@ -19,34 +19,31 @@
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     : QWoProcess (parent)
 {
-    m_exeSend = QWoSetting::value("zmodem/sz").toString();
-    if(!QFile::exists(m_exeSend)) {
-        m_exeSend = QApplication::applicationDirPath() + "/sz.exe";
-        if(!QFile::exists(m_exeSend)){
-            QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
-        }
+    m_exeSend = QWoSetting::zmodemSZPath();
+    if(m_exeSend.isEmpty()){
+        QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
     }
-    m_exeRecv = QWoSetting::value("zmodem/rz").toString();
-    if(!QFile::exists(m_exeRecv)) {
-        m_exeRecv = QApplication::applicationDirPath() + "/rz.exe";
-        if(!QFile::exists(m_exeRecv)){
-            QMessageBox::warning(m_term, "zmodem", "can't find rz program.");
-        }
+    m_exeRecv = QWoSetting::zmodemRZPath();
+    if(m_exeRecv.isEmpty()) {
+        QMessageBox::warning(m_term, "zmodem", "can't find rz program.");
     }
-    QString program = QWoSetting::value("ssh/program").toString();
-    if(!QFile::exists(program)) {
-        program = QApplication::applicationDirPath() + "/ssh.exe";
-        if(!QFile::exists(program)){
-            QMessageBox::critical(m_term, "ssh", "can't find ssh program.");
-            QApplication::exit(0);
-        }
+    QString program = QWoSetting::sshProgramPath();
+    if(program.isEmpty()) {
+        QMessageBox::critical(m_term, "ssh", "can't find ssh program.");
+        QApplication::exit(0);
+        return;
+    }
+    QString cfg = QWoSetting::sshServerListPath();
+    if(cfg.isEmpty()) {
+        QMessageBox::critical(m_term, "ssh server list", "no path for ssh server list.");
+        QApplication::exit(0);
+        return;
     }
     m_title = target;
     setProgram(program);
     QStringList args;
     args.append(target);
     args.append("-F");
-    QString cfg = QDir::cleanPath(QApplication::applicationDirPath() + "/../config");
     args.append(cfg);
     setArguments(args);
 
