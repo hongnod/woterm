@@ -4,14 +4,15 @@
 #include <QCloseEvent>
 #include <QVBoxLayout>
 #include <QLineEdit>
-#include <QListWidget>
+#include <QTableView>
 #include <QApplication>
 #include <QFile>
 #include <QRegExp>
-#include <QListWidgetItem>
 #include <QDebug>
 #include <QtAlgorithms>
 #include <QPushButton>
+#include <QSortFilterProxyModel>
+#include <QStringListModel>
 
 QWoSessionManager::QWoSessionManager(QWidget *parent)
     : QWidget(parent)
@@ -23,21 +24,25 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
 
     QHBoxLayout *hlayout = new QHBoxLayout(this);
     layout->addLayout(hlayout);
-    m_list = new QListWidget(this);
+    QTableView *table = new QTableView(this);
     QLineEdit *input = new QLineEdit(this);
     QPushButton *reload = new QPushButton("load", this);
     QPushButton *all = new QPushButton("all", this);
     hlayout->addWidget(reload);
     hlayout->addWidget(input);
     hlayout->addWidget(all);
-    layout->addWidget(m_list);
+    layout->addWidget(table);
 
     QObject::connect(reload, SIGNAL(clicked()), this, SLOT(onReloadSessionList()));
     QObject::connect(all, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
     QObject::connect(input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
-    m_list->addItem("dddd");
-    m_list->addItem("dddd1");
-    m_list->addItem("dddd2");
+
+    m_model = new QStringListModel(this);
+    QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
+    proxy->setSourceModel(m_model);
+    table->setModel(proxy);
+    //QString regExp = QString("^[%1].*").arg(str);
+    //proxy->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
 }
 
 void QWoSessionManager::init()
@@ -53,9 +58,9 @@ bool lessThan(QListWidgetItem* a, QListWidgetItem *b)
 
 void QWoSessionManager::refreshList()
 {
-    for(int i = 0; i < 10; i++) {
-        m_list->addItem(QString("aaaaa%1").arg(i));
-    }
+//    for(int i = 0; i < 10; i++) {
+//        m_model->addItem(QString("aaaaa%1").arg(i));
+//    }
 
 //    QString cfg = QWoSetting::sshServerListPath();
 //    if(cfg.isEmpty()) {
@@ -102,13 +107,13 @@ void QWoSessionManager::refreshList()
 
 int QWoSessionManager::findIndex(const QString &name)
 {
-    for(int i = 0; i < m_items.length(); i++) {
-        QListWidgetItem* item = m_items.at(i);
-        QString txt = item->text();
-        if(txt == name) {
-            return i;
-        }
-    }
+//    for(int i = 0; i < m_items.length(); i++) {
+//        QListWidgetItem* item = m_items.at(i);
+//        QString txt = item->text();
+//        if(txt == name) {
+//            return i;
+//        }
+//    }
     return -1;
 }
 

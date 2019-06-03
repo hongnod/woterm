@@ -5,8 +5,8 @@
 #include <QPointer>
 class QLineEdit;
 class QListWidget;
-class QListWidgetItem;
 class QPushButton;
+class QStringListModel;
 
 class QWoSessionManager : public QWidget
 {
@@ -26,6 +26,5 @@ private slots:
 private:
     void closeEvent(QCloseEvent *event);
 private:
-    QPointer<QListWidget> m_list;
-    QList<QListWidgetItem*> m_items;
+    QPointer<QStringListModel> m_model;
 };
