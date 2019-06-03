@@ -41,6 +41,9 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
     proxy->setSourceModel(m_model);
     table->setModel(proxy);
+    QStringList list;
+  list << "a" << "b" << "c";
+  m_model->setStringList(list);
     //QString regExp = QString("^[%1].*").arg(str);
     //proxy->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
 }
@@ -51,10 +54,6 @@ void QWoSessionManager::init()
 }
 
 
-bool lessThan(QListWidgetItem* a, QListWidgetItem *b)
-{
-    return a->text() < b->text();
-}
 
 void QWoSessionManager::refreshList()
 {
