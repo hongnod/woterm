@@ -35,6 +35,9 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     QObject::connect(reload, SIGNAL(clicked()), this, SLOT(onReloadSessionList()));
     QObject::connect(all, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
     QObject::connect(input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
+    m_list->addItem("dddd");
+    m_list->addItem("dddd1");
+    m_list->addItem("dddd2");
 }
 
 void QWoSessionManager::init()
@@ -50,46 +53,50 @@ bool lessThan(QListWidgetItem* a, QListWidgetItem *b)
 
 void QWoSessionManager::refreshList()
 {
-    QString cfg = QWoSetting::sshServerListPath();
-    if(cfg.isEmpty()) {
-        return;
+    for(int i = 0; i < 10; i++) {
+        m_list->addItem(QString("aaaaa%1").arg(i));
     }
-    QFile file(cfg);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return;
-    }
-    QList<QListWidgetItem*> items;
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        line = line.trimmed();
-        if(!line.startsWith("Host ")) {
-            continue;
-        }
-        QList<QByteArray> sets = line.split(' ');
-        for(int i = 0; i < sets.length(); i++) {
-            QByteArray name = sets.at(i).trimmed();
-            if(name.contains('*')) {
-                continue;
-            }
-            int idx = findIndex(name);
-            if(idx >= 0) {
-                items.append(m_items.takeAt(idx));
-            }else{
-                QListWidgetItem *item = new QListWidgetItem(name, m_list);
-                items.append(item);
-            }
-        }
-    }
-    m_items.swap(items);
-    while(items.length() > 0){
-        delete items.takeFirst();
-    }
-    std::sort(m_items.begin(), m_items.end(), lessThan);
 
-    m_list.clear();
-    for(int i = 0; i < m_items.length(); i++) {
-        m_list->addItem(m_items.at(i));
-    }
+//    QString cfg = QWoSetting::sshServerListPath();
+//    if(cfg.isEmpty()) {
+//        return;
+//    }
+//    QFile file(cfg);
+//    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+//        return;
+//    }
+//    QList<QListWidgetItem*> items;
+//    while (!file.atEnd()) {
+//        QByteArray line = file.readLine();
+//        line = line.trimmed();
+//        if(!line.startsWith("Host ")) {
+//            continue;
+//        }
+//        QList<QByteArray> sets = line.split(' ');
+//        for(int i = 0; i < sets.length(); i++) {
+//            QByteArray name = sets.at(i).trimmed();
+//            if(name.contains('*')) {
+//                continue;
+//            }
+//            int idx = findIndex(name);
+//            if(idx >= 0) {
+//                items.append(m_items.takeAt(idx));
+//            }else{
+//                QListWidgetItem *item = new QListWidgetItem(name);
+//                items.append(item);
+//            }
+//        }
+//    }
+//    m_items.swap(items);
+//    while(items.length() > 0){
+//        delete items.takeFirst();
+//    }
+//    std::sort(m_items.begin(), m_items.end(), lessThan);
+
+//    //m_list.clear();
+//    for(int i = 0; i < m_items.length(); i++) {
+//        m_list->addItem(m_items.at(i)->text());
+//    }
 
 }
 
