@@ -4,7 +4,7 @@
 #include <QCloseEvent>
 #include <QVBoxLayout>
 #include <QLineEdit>
-#include <QTableView>
+#include <QListView>
 #include <QApplication>
 #include <QFile>
 #include <QRegExp>
@@ -24,7 +24,7 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
 
     QHBoxLayout *hlayout = new QHBoxLayout(this);
     layout->addLayout(hlayout);
-    QTableView *table = new QTableView(this);
+    QListView *table = new QListView(this);
     QLineEdit *input = new QLineEdit(this);
     QPushButton *reload = new QPushButton("load", this);
     QPushButton *all = new QPushButton("all", this);
