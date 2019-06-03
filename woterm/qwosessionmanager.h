@@ -6,6 +6,7 @@
 class QLineEdit;
 class QListWidget;
 class QListWidgetItem;
+class QPushButton;
 
 class QWoSessionManager : public QWidget
 {
@@ -18,10 +19,13 @@ private:
     void init();
     void refreshList();
     int findIndex(const QString& name);
+private slots:
+    void onReloadSessionList();
+    void onOpenSelectSessions();
+    void onEditTextChanged(const QString& txt);
 private:
     void closeEvent(QCloseEvent *event);
 private:
-    QPointer<QLineEdit> m_input;
     QPointer<QListWidget> m_list;
     QList<QListWidgetItem*> m_items;
 };
