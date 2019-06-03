@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QFile>
 #include <QRegExp>
+#include <QListWidgetItem>
 
 QWoSessionManager::QWoSessionManager(QWidget *parent)
     : QWidget(parent)
@@ -28,6 +29,8 @@ void QWoSessionManager::init()
 
 }
 
+
+
 void QWoSessionManager::refreshList()
 {
     QString cfg = QWoSetting::sshServerListPath();
@@ -38,12 +41,44 @@ void QWoSessionManager::refreshList()
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         return;
     }
-    QString content = file.readAll();
-    QRegExp rx("^Host ");
-    int pos = 0;
-    while ((pos = rx.indexIn(content, pos)) != -1) {
-        pos += rx.matchedLength();
+    QList<QListWidgetItem*> items;
+    while (!file.atEnd()) {
+        QByteArray line = file.readLine();
+        line = line.trimmed();
+        if(!line.startsWith("Host ")) {
+            continue;
+        }
+        QList<QByteArray> sets = line.split(' ');
+        for(int i = 0; i < sets.length(); i++) {
+            QByteArray name = sets.at(i).trimmed();
+            if(name.contains('*')) {
+                continue;
+            }
+            int idx = findIndex(name);
+            if(idx >= 0) {
+                items.append(m_items.takeAt(idx));
+            }else{
+                QListWidgetItem *item = new QListWidgetItem(name, m_list);
+                items.append(item);
+            }
+        }
     }
+    m_items.swap(items);
+    while(items.length() > 0){
+        delete items.takeFirst();
+    }
+}
+
+int QWoSessionManager::findIndex(const QString &name)
+{
+    for(int i = 0; i < m_items.length(); i++) {
+        QListWidgetItem* item = m_items.at(i);
+        QString txt = item->text();
+        if(txt == name) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 void QWoSessionManager::closeEvent(QCloseEvent *event)

@@ -17,10 +17,11 @@ signals:
 private:
     void init();
     void refreshList();
+    int findIndex(const QString& name);
 private:
     void closeEvent(QCloseEvent *event);
 private:
     QPointer<QLineEdit> m_input;
     QPointer<QListWidget> m_list;
-    QList<QListWidgetItem> m_items;
+    QList<QListWidgetItem*> m_items;
 };
