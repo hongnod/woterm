@@ -7,6 +7,7 @@ class QLineEdit;
 class QListWidget;
 class QPushButton;
 class QStringListModel;
+class QSortFilterProxyModel;
 
 class QWoSessionManager : public QWidget
 {
@@ -18,7 +19,6 @@ signals:
 private:
     void init();
     void refreshList();
-    int findIndex(const QString& name);
 private slots:
     void onReloadSessionList();
     void onOpenSelectSessions();
@@ -27,4 +27,5 @@ private:
     void closeEvent(QCloseEvent *event);
 private:
     QPointer<QStringListModel> m_model;
+    QPointer<QSortFilterProxyModel> m_proxyModel;
 };
