@@ -27,6 +27,8 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     QListView *list = new QListView(this);
     QLineEdit *input = new QLineEdit(this);
     QPushButton *all = new QPushButton("all", this);
+    all->setMaximumWidth(25);
+    all->hide();
     hlayout->addWidget(input);
     hlayout->addWidget(all);
     layout->addWidget(list);
@@ -92,7 +94,16 @@ void QWoSessionManager::onReloadSessionList()
 
 void QWoSessionManager::onOpenSelectSessions()
 {
-
+    int cnt = m_proxyModel->rowCount();
+    qDebug() << "rowCount:" << cnt;
+    QStringList sessions;
+    for(int i = 0; i < cnt; i++) {
+        QModelIndex mi = m_proxyModel->index(i, 0);
+        QString name = mi.data().toString();
+        qDebug() << "name:" << name;
+        sessions << name;
+    }
+    emit sessionBatchClicked(sessions);
 }
 
 void QWoSessionManager::onEditTextChanged(const QString &txt)

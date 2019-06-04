@@ -8,6 +8,7 @@ class QListWidget;
 class QPushButton;
 class QStringListModel;
 class QSortFilterProxyModel;
+class QListView;
 
 class QWoSessionManager : public QWidget
 {
@@ -17,6 +18,7 @@ public:
 signals:
     void aboutToClose(QCloseEvent* event);
     void sessionDoubleClicked(const QString& session);
+    void sessionBatchClicked(const QStringList& sessions);
 private:
     void init();
     void refreshList();

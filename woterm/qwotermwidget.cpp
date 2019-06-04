@@ -56,7 +56,9 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
 QWoTermWidget::~QWoTermWidget()
 {
-
+    if(m_menu) {
+        delete m_menu;
+    }
 }
 
 QWoProcess *QWoTermWidget::process()
@@ -123,7 +125,7 @@ void QWoTermWidget::onPasteFromClipboard()
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
 {
     if(m_menu == nullptr) {
-        m_menu = new QMenu(this);
+        m_menu = new QMenu();
         m_copy = m_menu->addAction(tr("Copy"));
         QObject::connect(m_copy, SIGNAL(triggered()), this, SLOT(onCopyToClipboard()));
         m_paste = m_menu->addAction(tr("Paste"));

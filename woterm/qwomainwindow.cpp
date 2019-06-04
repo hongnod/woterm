@@ -71,6 +71,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
 
     QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const QString&)), this, SLOT(onSessionDoubleClicked(const QString&)));
+    QObject::connect(m_manager, SIGNAL(sessionBatchClicked(const QStringList&)), this, SLOT(onSessionBatchClicked(const QStringList&)));
 }
 
 QWoMainWindow *QWoMainWindow::instance()
@@ -114,4 +115,12 @@ void QWoMainWindow::onEditConfig()
 void QWoMainWindow::onSessionDoubleClicked(const QString &name)
 {
     m_shower->openConnection(name);
+}
+
+void QWoMainWindow::onSessionBatchClicked(const QStringList &sessions)
+{
+    for(int i = 0; i < sessions.length(); i++) {
+        QString name = sessions.at(i);
+        m_shower->openConnection(name);
+    }
 }
