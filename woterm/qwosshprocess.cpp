@@ -39,7 +39,7 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
         QApplication::exit(0);
         return;
     }
-    m_title = target;
+    m_target = target;
     setProgram(program);
     QStringList args;
     args.append(target);
@@ -221,8 +221,10 @@ void QWoSshProcess::onTermTitleChanged()
 
 void QWoSshProcess::onDuplicateSession()
 {
-    QString args = QApplication::arguments().join(" ");
-    QProcess::startDetached(args);
+    QString path = QApplication::applicationFilePath();
+    path.append(" ");
+    path.append(m_target);
+    QProcess::startDetached(path);
 }
 
 void QWoSshProcess::onZmodemFinished(int code)
@@ -310,7 +312,7 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
     widget->installEventFilter(this);
     QObject::connect(m_term, SIGNAL(titleChanged()), this, SLOT(onTermTitleChanged()));
     QWidget *topLevel = m_term->topLevelWidget();
-    topLevel->setWindowTitle(m_title);
+    topLevel->setWindowTitle(m_target);
 }
 
 void QWoSshProcess::prepareContextMenu(QMenu *menu)

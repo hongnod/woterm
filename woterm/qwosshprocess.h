@@ -59,5 +59,5 @@ private:
     QPointer<QWoProcess> m_zmodem;
     QString m_exeSend;
     QString m_exeRecv;
-    QString m_title;
+    QString m_target;
 };

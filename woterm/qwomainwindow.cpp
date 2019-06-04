@@ -30,9 +30,11 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
     actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
     setMenuBar(menuBar);
+    menuBar->hide();
 
     m_tool = new QToolBar("ToolBar", this);
     addToolBar(m_tool);
+    m_tool->hide();
 
     QDockWidget* dock = new QDockWidget("SessionManager", this);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -72,6 +74,8 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 
     QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const QString&)), this, SLOT(onSessionDoubleClicked(const QString&)));
     QObject::connect(m_manager, SIGNAL(sessionBatchClicked(const QStringList&)), this, SLOT(onSessionBatchClicked(const QStringList&)));
+
+    QTimer::singleShot(1000, this, SLOT(onProcessStartCheck()));
 }
 
 QWoMainWindow *QWoMainWindow::instance()
@@ -123,4 +127,14 @@ void QWoMainWindow::onSessionBatchClicked(const QStringList &sessions)
         QString name = sessions.at(i);
         m_shower->openConnection(name);
     }
+}
+
+void QWoMainWindow::onProcessStartCheck()
+{
+    QStringList args = QApplication::arguments();
+    args.takeFirst();
+    if(args.isEmpty()) {
+        return;
+    }
+    onSessionBatchClicked(args);
 }

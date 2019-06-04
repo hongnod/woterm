@@ -24,6 +24,7 @@ private slots:
     void onEditConfig();
     void onSessionDoubleClicked(const QString& name);
     void onSessionBatchClicked(const QStringList& sessions);
+    void onProcessStartCheck();
 
 private:
     QPointer<QMenuBar> m_memuBar;
