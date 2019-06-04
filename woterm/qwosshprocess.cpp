@@ -318,13 +318,10 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
 void QWoSshProcess::prepareContextMenu(QMenu *menu)
 {
     if(m_zmodemSend == nullptr) {
-        m_zmodemDupl = menu->addAction(tr("Duplicate Session"));
-        m_zmodemSend = menu->addAction(tr("Zmodem Upload"));
-        m_zmodemRecv = menu->addAction(tr("Zmodem Receive"));
-        m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"));
-        QObject::connect(m_zmodemDupl, SIGNAL(triggered()), this, SLOT(onDuplicateSession()));
-        QObject::connect(m_zmodemSend, SIGNAL(triggered()), this, SLOT(onZmodemSend()));
-        QObject::connect(m_zmodemRecv, SIGNAL(triggered()), this, SLOT(onZmodemRecv()));
-        QObject::connect(m_zmodemAbort, SIGNAL(triggered()), this, SLOT(onZmodemAbort()));
+        menu->addAction(tr("Find..."), m_term, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
+        m_zmodemDupl = menu->addAction(tr("Duplicate Session"), this, SLOT(onDuplicateSession()));
+        m_zmodemSend = menu->addAction(tr("Zmodem Upload"), this, SLOT(onZmodemSend()));
+        m_zmodemRecv = menu->addAction(tr("Zmodem Receive"), this, SLOT(onZmodemRecv()));
+        m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"), this, SLOT(onZmodemAbort()), QKeySequence(Qt::CTRL +  Qt::Key_C));
     }
 }

@@ -27,6 +27,10 @@ SearchBar::SearchBar(QWidget *parent) : QWidget(parent)
 {
     widget.setupUi(this);
     setAutoFillBackground(true); // make it always opaque, especially inside translucent windows
+    QPalette pal;
+    pal.setColor(QPalette::Background, QColor("gray"));
+    pal.setColor(QPalette::Window, QColor("gray"));
+    setPalette(pal);
     connect(widget.closeButton, SIGNAL(clicked()), this, SLOT(hide()));
     connect(widget.searchTextEdit, SIGNAL(textChanged(QString)), this, SIGNAL(searchCriteriaChanged()));
     connect(widget.findPreviousButton, SIGNAL(clicked()), this, SIGNAL(findPrevious()));
