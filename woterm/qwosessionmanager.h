@@ -16,6 +16,7 @@ public:
     explicit QWoSessionManager(QWidget *parent=nullptr);
 signals:
     void aboutToClose(QCloseEvent* event);
+    void sessionDoubleClicked(const QString& session);
 private:
     void init();
     void refreshList();
@@ -23,6 +24,7 @@ private slots:
     void onReloadSessionList();
     void onOpenSelectSessions();
     void onEditTextChanged(const QString& txt);
+    void onListItemDoubleClicked(const QModelIndex& item);
 private:
     void closeEvent(QCloseEvent *event);
 private:

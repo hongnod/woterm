@@ -26,16 +26,10 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     layout->addLayout(hlayout);
     QListView *list = new QListView(this);
     QLineEdit *input = new QLineEdit(this);
-    QPushButton *reload = new QPushButton("load", this);
     QPushButton *all = new QPushButton("all", this);
-    hlayout->addWidget(reload);
     hlayout->addWidget(input);
     hlayout->addWidget(all);
     layout->addWidget(list);
-
-    QObject::connect(reload, SIGNAL(clicked()), this, SLOT(onReloadSessionList()));
-    QObject::connect(all, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
-    QObject::connect(input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
 
     m_model = new QStringListModel(this);
     m_proxyModel = new QSortFilterProxyModel(this);
@@ -44,16 +38,18 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     refreshList();
 
     list->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    list->setSelectionMode(QAbstractItemView::MultiSelection);
-    //QString regExp = QString("^[%1].*").arg(str);
-    //proxy->setFilterRegExp(QRegExp(regExp, Qt::CaseInsensitive));
+    //list->setSelectionMode(QAbstractItemView::MultiSelection);
+
+    QObject::connect(all, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
+    QObject::connect(input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
+    QObject::connect(list, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
+    QObject::connect(list, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onListItemDoubleClicked(const QModelIndex&)));
 }
 
 void QWoSessionManager::init()
 {
 
 }
-
 
 
 void QWoSessionManager::refreshList()
@@ -101,7 +97,28 @@ void QWoSessionManager::onOpenSelectSessions()
 
 void QWoSessionManager::onEditTextChanged(const QString &txt)
 {
-    m_proxyModel->setFilterRegExp(txt);
+    QStringList sets = txt.split(' ');
+    for(QStringList::iterator iter = sets.begin(); iter != sets.end(); ) {
+        if(*iter == "") {
+            iter = sets.erase(iter);
+        }else{
+            iter++;
+        }
+    }
+
+    QRegExp regex(sets.join(".*"), Qt::CaseInsensitive);
+    regex.setPatternSyntax(QRegExp::RegExp2);
+    m_proxyModel->setFilterRegExp(regex);
+}
+
+void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
+{
+    QString name = item.data().toString();
+    if(name == "") {
+        return;
+    }
+    qDebug() << "server:" << name;
+    emit sessionDoubleClicked(name);
 }
 
 

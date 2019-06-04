@@ -69,6 +69,8 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 
     QAction *edit = m_tool->addAction("Edit");
     QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
+
+    QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const QString&)), this, SLOT(onSessionDoubleClicked(const QString&)));
 }
 
 QWoMainWindow *QWoMainWindow::instance()
@@ -107,4 +109,9 @@ void QWoMainWindow::onEditConfig()
 {
     QString cfg = QDir::cleanPath(QApplication::applicationDirPath() + "/../");
     QDesktopServices::openUrl(QUrl(cfg, QUrl::TolerantMode));
+}
+
+void QWoMainWindow::onSessionDoubleClicked(const QString &name)
+{
+    m_shower->openConnection(name);
 }
