@@ -28,6 +28,9 @@ QString QWoSetting::zmodemSZPath()
     path = QWoSetting::value("zmodem/sz").toString();
     if(!QFile::exists(path)) {
         path = QDir::cleanPath(QApplication::applicationDirPath() + "/sz");
+#ifdef Q_OS_WIN
+        path.append(".exe");
+#endif
         if(!QFile::exists(path)){
             return "";
         }
@@ -41,6 +44,9 @@ QString QWoSetting::zmodemRZPath()
     path = QWoSetting::value("zmodem/rz").toString();
     if(!QFile::exists(path)) {
         path = QDir::cleanPath(QApplication::applicationDirPath() + "/rz");
+#ifdef Q_OS_WIN
+        path.append(".exe");
+#endif
         if(!QFile::exists(path)){
             return "";
         }
@@ -54,6 +60,9 @@ QString QWoSetting::sshProgramPath()
     path = QWoSetting::value("ssh/program").toString();
     if(!QFile::exists(path)) {
         path = QDir::cleanPath(QApplication::applicationDirPath() + "/ssh");
+#ifdef Q_OS_WIN
+        path.append(".exe");
+#endif
         if(!QFile::exists(path)){
             return "";
         }
