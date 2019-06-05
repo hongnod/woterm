@@ -27,9 +27,14 @@ private slots:
     void onOpenSelectSessions();
     void onEditTextChanged(const QString& txt);
     void onListItemDoubleClicked(const QModelIndex& item);
+    void onTimeout();
+    void onEditReturnPressed();
 private:
     void closeEvent(QCloseEvent *event);
 private:
     QPointer<QStringListModel> m_model;
     QPointer<QSortFilterProxyModel> m_proxyModel;
+    QPointer<QLineEdit> m_input;
+    QPointer<QListView> m_list;
+    int m_countLeft;
 };

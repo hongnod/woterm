@@ -13,6 +13,8 @@
 #include <QPushButton>
 #include <QSortFilterProxyModel>
 #include <QStringListModel>
+#include <QTimer>
+#include <QModelIndexList>
 
 QWoSessionManager::QWoSessionManager(QWidget *parent)
     : QWidget(parent)
@@ -24,28 +26,33 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
 
     QHBoxLayout *hlayout = new QHBoxLayout(this);
     layout->addLayout(hlayout);
-    QListView *list = new QListView(this);
-    QLineEdit *input = new QLineEdit(this);
+    m_list = new QListView(this);
+    m_input = new QLineEdit(this);
     QPushButton *all = new QPushButton("all", this);
     all->setMaximumWidth(25);
     all->hide();
-    hlayout->addWidget(input);
+    hlayout->addWidget(m_input);
     hlayout->addWidget(all);
-    layout->addWidget(list);
+    layout->addWidget(m_list);
 
     m_model = new QStringListModel(this);
     m_proxyModel = new QSortFilterProxyModel(this);
     m_proxyModel->setSourceModel(m_model);
-    list->setModel(m_proxyModel);
+    m_list->setModel(m_proxyModel);
     refreshList();
 
-    list->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //list->setSelectionMode(QAbstractItemView::MultiSelection);
+    m_list->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //m_list->setSelectionMode(QAbstractItemView::MultiSelection);
 
+    QObject::connect(m_input, SIGNAL(returnPressed()), this, SLOT(onEditReturnPressed()));
     QObject::connect(all, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
-    QObject::connect(input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
-    QObject::connect(list, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
-    QObject::connect(list, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onListItemDoubleClicked(const QModelIndex&)));
+    QObject::connect(m_input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
+    QObject::connect(m_list, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
+    QObject::connect(m_list, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onListItemDoubleClicked(const QModelIndex&)));
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    timer->start(1000);
+    m_countLeft = 0;
 }
 
 void QWoSessionManager::init()
@@ -56,7 +63,6 @@ void QWoSessionManager::init()
 
 void QWoSessionManager::refreshList()
 {
-
     QString cfg = QWoSetting::sshServerListPath();
     if(cfg.isEmpty()) {
         return;
@@ -108,6 +114,7 @@ void QWoSessionManager::onOpenSelectSessions()
 
 void QWoSessionManager::onEditTextChanged(const QString &txt)
 {
+    m_countLeft = 30;
     QStringList sets = txt.split(' ');
     for(QStringList::iterator iter = sets.begin(); iter != sets.end(); ) {
         if(*iter == "") {
@@ -130,6 +137,37 @@ void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
     }
     qDebug() << "server:" << name;
     emit sessionDoubleClicked(name);
+}
+
+void QWoSessionManager::onTimeout()
+{
+    if(m_countLeft < 0) {
+        return;
+    }
+    if(m_countLeft > 0) {
+        m_countLeft--;
+        return;
+    }
+    m_input->setText("");
+    m_list->clearSelection();
+}
+
+void QWoSessionManager::onEditReturnPressed()
+{
+    QString txt = m_input->text().trimmed();
+    if(txt.isEmpty()) {
+        return;
+    }
+    int cnt = m_proxyModel->rowCount();
+    if(cnt <= 0) {
+        return;
+    }
+    QModelIndex idx = m_list->currentIndex();
+    if(idx.isValid()) {
+        idx = m_proxyModel->index(0, 0);
+    }
+    QString target = idx.data().toString();
+    emit sessionDoubleClicked(target);
 }
 
 
