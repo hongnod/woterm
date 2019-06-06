@@ -14,7 +14,9 @@ SOURCES += main.cpp \
     qwomainwindow.cpp \
     qwoshower.cpp \
     qwowidget.cpp \
-    qwosessionmanager.cpp
+    qwosessionmanager.cpp \
+    aes.cpp \
+    aes_test.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -25,4 +27,5 @@ HEADERS += \
     qwomainwindow.h \
     qwoshower.h \
     qwowidget.h \
-    qwosessionmanager.h
+    qwosessionmanager.h \
+    aes.h
