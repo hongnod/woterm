@@ -1,6 +1,7 @@
 #include "qwosessionmanager.h"
 #include "qwosetting.h"
 #include "qwosshconf.h"
+#include "qwohosteditdialog.h"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -59,6 +60,13 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start(1000);
     m_countLeft = 0;
+}
+
+QWoSessionManager::~QWoSessionManager()
+{
+    if(m_menu) {
+        delete m_menu;
+    }
 }
 
 void QWoSessionManager::init()
@@ -166,7 +174,10 @@ void QWoSessionManager::onListViewItemReload()
 
 void QWoSessionManager::onListViewItemEdit()
 {
-
+    if(m_dlgHostEdit == nullptr) {
+        m_dlgHostEdit = new QWoHostEditDialog(this);
+    }
+    m_dlgHostEdit->exec();
 }
 
 void QWoSessionManager::onListViewItemAdd()
@@ -183,7 +194,7 @@ bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
 {
     QModelIndex mi = m_list->indexAt(ev->pos());
     if(m_menu == nullptr) {
-        m_menu = new QMenu(m_list);
+        m_menu = new QMenu();
         m_itemOpen = m_menu->addAction(tr("Open"), this, SLOT(onListViewItemOpen()));
         m_menu->addAction(tr("ReloadAll"), this, SLOT(onListViewItemReload()));
         m_menu->addAction(tr("Edit"), this, SLOT(onListViewItemEdit()));

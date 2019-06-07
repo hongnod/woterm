@@ -10,12 +10,14 @@ class QStringListModel;
 class QSortFilterProxyModel;
 class QListView;
 class QMenu;
+class QWoHostEditDialog;
 
 class QWoSessionManager : public QWidget
 {
     Q_OBJECT
 public:
     explicit QWoSessionManager(QWidget *parent=nullptr);
+    virtual ~QWoSessionManager();
 signals:
     void aboutToClose(QCloseEvent* event);
     void sessionDoubleClicked(const QString& session);
@@ -48,4 +50,5 @@ private:
     int m_countLeft;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_itemOpen;
+    QPointer<QWoHostEditDialog> m_dlgHostEdit;
 };

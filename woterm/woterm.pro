@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     qwosessionmanager.cpp \
     aes.cpp \
     aes_test.cpp \
-    qwosshconf.cpp
+    qwosshconf.cpp \
+    qwohosteditdialog.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -31,4 +32,8 @@ HEADERS += \
     qwosessionmanager.h \
     aes.h \
     qwosshconf.h \
-    qwoglobal.h
+    qwoglobal.h \
+    qwohosteditdialog.h
+
+FORMS += \
+    qwohosteditdialog.ui
