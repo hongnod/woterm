@@ -9,10 +9,15 @@
 #include "qwotermwidget.h"
 #include "qwosshprocess.h"
 #include "qwosetting.h"
+#include "qwosshconf.h"
 
 void test()
 {
-
+    QWoSshConf conf;
+    if(!conf.load("d:/config")) {
+        return;
+    }
+    conf.save("d:/config_save");
 }
 
 int main(int argc, char *argv[])

@@ -1,8 +1,9 @@
 #include "qwosshconf.h"
 
 #include <QFile>
+#include <QDebug>
 
-/*  #begin
+/*
  *  #
  *  #    <---memo--->
  *  #
@@ -13,8 +14,12 @@
  *    IdentityFile ~xxx
  *    Password xxxx
  *    ProxyJump xxx
- *  #end
  */
+
+
+bool lessThan(QWoSshConf::HostInfo& a, QWoSshConf::HostInfo& b) {
+    return a.name < b.name;
+}
 
 QWoSshConf::QWoSshConf(QObject *parent)
     :QObject (parent)
@@ -28,19 +33,184 @@ bool QWoSshConf::load(const QString &conf)
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         return false;
     }
-    QList<QStringList> hosts;
-    QStringList host;
+    QList<QByteArray> lines;
     while (!file.atEnd()) {
         QByteArray line = file.readLine();
-        line = line.trimmed();
-        if(line == "#begin" || line == "#end" || line == "") {
-            if(host.length() > 0) {
-                hosts.push_back(host);
+        lines.append(line);
+    }
+
+    QList<QStringList> blocks;
+    QStringList block;
+    for(int i = 0; i < lines.length(); i++) {
+        QByteArray line = lines.at(i);
+        if(line.startsWith("Host ")) {
+            if(!block.isEmpty()) {
+                blocks.push_back(block);
+                block.clear();
             }
-            host.clear();
-        } else {
-            host.push_back(line);
+            for(int j = i-1; j > 0; j--) {
+                QByteArray prev = lines.at(j);
+                if(prev.startsWith('#')){
+                    block.insert(0, prev);
+                    continue;
+                }
+                break;
+            }
+            block.push_back(line);
+        }else if(line.startsWith(' ') || line.startsWith('\t')) {
+            if(!block.isEmpty()) {
+                block.push_back(line);
+            }
+        }else{
+            if(!block.isEmpty()) {
+                blocks.push_back(block);
+                block.clear();
+            }
         }
     }
-    return false;
+    if(!block.isEmpty()) {
+        blocks.push_back(block);
+        block.clear();
+    }
+    //for(QList<QStringList>::iterator iter = blocks.begin(); iter != blocks.end(); iter++) {
+    //    qDebug() << *iter;
+    //}
+    QHash<QString, HostInfo> common;
+    QHash<QString, HostInfo> wildcard;
+    for(int i = 0; i < blocks.length(); i++) {
+        QStringList host = blocks.at(i);
+        QStringList comments;
+        HostInfo hi;
+        //qDebug() << host;
+        for(int j = 0; j < host.length(); j++) {
+            QString item = host.at(j).trimmed();
+            if(item.startsWith("Host ")) {
+                hi.name = item.mid(5).trimmed();
+            }else if(item.startsWith("HostName ")) {
+                hi.host = item.mid(9).trimmed();
+            }else if(item.startsWith("Port ")) {
+                hi.port = item.mid(5).trimmed().toInt();
+            }else if(item.startsWith("User ")) {
+                hi.user = item.mid(5).trimmed();
+            }else if(item.startsWith("IdentityFile ")) {
+                hi.identityFile = item.mid(13).trimmed();
+            }else if(item.startsWith("Password")) {
+                hi.password = item.mid(9).trimmed();
+            }else if(item.startsWith("ProxyJump")) {
+                hi.proxyJump = item.mid(9).trimmed();
+            }else if(item.startsWith("#")) {
+                comments.push_back(item.mid(1));
+            }
+        }
+        hi.comment = comments.join("\n");
+        QStringList names = hi.name.split(' ');
+        for(int i = 0; i < names.length(); i++) {
+            QString name = names.at(i).trimmed();
+            if(name.isEmpty()) {
+                continue;
+            }
+            hi.name = name;
+            if(name.contains("*")) {
+                wildcard.insert(hi.name, hi);
+            }else{
+                common.insert(hi.name, hi);
+            }
+        }
+    }
+    for(QHash<QString,HostInfo>::iterator iter = common.begin(); iter != common.end(); iter++) {
+        QString name = iter.key();
+        HostInfo hi = iter.value();
+        HostInfo hiTmp;
+        bool hitWildcard = false;
+        for(QHash<QString,HostInfo>::iterator iter = wildcard.begin(); iter != wildcard.end(); iter++) {
+            QString nameHit = iter.key();
+            HostInfo hiHit = iter.value();
+            QRegExp rx(nameHit);
+            rx.setPatternSyntax(QRegExp::Wildcard);
+            if(rx.exactMatch(name)) {
+                hitWildcard = true;
+                copyHostInfo(hiTmp, hiHit);
+            }
+        }
+        if(hitWildcard) {
+            copyHostInfo(hi, hiTmp);
+        }
+
+        m_hosts.push_back(hi);
+    }
+    std::sort(m_hosts.begin(), m_hosts.end(), lessThan);
+    return true;
+}
+
+bool QWoSshConf::save(const QString &conf)
+{
+    QFile file(conf);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        return false;
+    }
+    for(int i = 0; i < m_hosts.length(); i++) {
+        HostInfo hi = m_hosts.at(i);
+        file.write("\n", 1);
+        if(!hi.comment.isEmpty()) {
+            QStringList comments = hi.comment.split('\n');
+            for(int j = 0; j < comments.length(); j++) {
+                QString line(QString("#%1\n").arg(comments.at(j)));
+                file.write(line.toUtf8());
+            }
+        }
+        if(!hi.name.isEmpty()) {
+            QString line(QString("Host %1\n").arg(hi.name));
+            file.write(line.toUtf8());
+        }
+        if(!hi.host.isEmpty()) {
+            QString line(QString("  HostName %1\n").arg(hi.host));
+            file.write(line.toUtf8());
+        }
+        if(hi.port > 0) {
+            QString line(QString("  Port %1\n").arg(hi.port));
+            file.write(line.toUtf8());
+        }
+        if(!hi.user.isEmpty()) {
+            QString line(QString("  User %1\n").arg(hi.user));
+            file.write(line.toUtf8());
+        }
+        if(!hi.identityFile.isEmpty()) {
+            QString line(QString("  IdentityFile %1\n").arg(hi.identityFile));
+            file.write(line.toUtf8());
+        }
+        if(!hi.password.isEmpty()) {
+            QString line(QString("  Password %1\n").arg(hi.password));
+            file.write(line.toUtf8());
+        }
+        if(!hi.proxyJump.isEmpty()) {
+            QString line(QString("  ProxyJump %1\n").arg(hi.proxyJump));
+            file.write(line.toUtf8());
+        }
+    }
+    return true;
+}
+
+void QWoSshConf::copyHostInfo(QWoSshConf::HostInfo &dst, const QWoSshConf::HostInfo &src)
+{
+    if(!src.comment.isEmpty()) {
+        dst.comment = src.comment;
+    }
+    if(!src.host.isEmpty()) {
+        dst.host = src.host;
+    }
+    if(!src.identityFile.isEmpty()) {
+        dst.identityFile = src.identityFile;
+    }
+    if(!src.password.isEmpty()) {
+        dst.password = src.password;
+    }
+    if(src.port > 0) {
+        dst.port = src.port;
+    }
+    if(!src.proxyJump.isEmpty()) {
+        dst.proxyJump = src.proxyJump;
+    }
+    if(!src.user.isEmpty()) {
+        dst.user = src.user;
+    }
 }
