@@ -9,6 +9,7 @@ class QPushButton;
 class QStringListModel;
 class QSortFilterProxyModel;
 class QListView;
+class QMenu;
 
 class QWoSessionManager : public QWidget
 {
@@ -29,12 +30,22 @@ private slots:
     void onListItemDoubleClicked(const QModelIndex& item);
     void onTimeout();
     void onEditReturnPressed();
+    void onListViewItemOpen();
+    void onListViewItemReload();
+    void onListViewItemEdit();
+    void onListViewItemAdd();
+    void onListViewItemDelete();
+private:
+    bool handleListViewContextMenu(QContextMenuEvent* ev);
 private:
     void closeEvent(QCloseEvent *event);
+    bool eventFilter(QObject *obj, QEvent *ev);
 private:
     QPointer<QStringListModel> m_model;
     QPointer<QSortFilterProxyModel> m_proxyModel;
     QPointer<QLineEdit> m_input;
     QPointer<QListView> m_list;
     int m_countLeft;
+    QPointer<QMenu> m_menu;
+    QPointer<QAction> m_itemOpen;
 };

@@ -16,6 +16,8 @@
 #include <QStringListModel>
 #include <QTimer>
 #include <QModelIndexList>
+#include <QMenu>
+#include <QAction>
 
 QWoSessionManager::QWoSessionManager(QWidget *parent)
     : QWidget(parent)
@@ -35,6 +37,9 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     hlayout->addWidget(m_input);
     hlayout->addWidget(all);
     layout->addWidget(m_list);
+
+    m_list->installEventFilter(this);
+    //m_list->setSelectionMode(QAbstractItemView::MultiSelection);
 
     m_model = new QStringListModel(this);
     m_proxyModel = new QSortFilterProxyModel(this);
@@ -124,7 +129,6 @@ void QWoSessionManager::onTimeout()
         return;
     }
     m_input->setText("");
-    m_list->clearSelection();
 }
 
 void QWoSessionManager::onEditReturnPressed()
@@ -145,6 +149,58 @@ void QWoSessionManager::onEditReturnPressed()
     emit sessionDoubleClicked(target);
 }
 
+void QWoSessionManager::onListViewItemOpen()
+{
+    QModelIndex idx = m_list->currentIndex();
+    if(idx.isValid()) {
+        idx = m_proxyModel->index(0, 0);
+    }
+    QString target = idx.data().toString();
+    emit sessionDoubleClicked(target);
+}
+
+void QWoSessionManager::onListViewItemReload()
+{
+    refreshList();
+}
+
+void QWoSessionManager::onListViewItemEdit()
+{
+
+}
+
+void QWoSessionManager::onListViewItemAdd()
+{
+
+}
+
+void QWoSessionManager::onListViewItemDelete()
+{
+
+}
+
+bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
+{
+    QModelIndex mi = m_list->indexAt(ev->pos());
+    if(m_menu == nullptr) {
+        m_menu = new QMenu(m_list);
+        m_itemOpen = m_menu->addAction(tr("Open"), this, SLOT(onListViewItemOpen()));
+        m_menu->addAction(tr("ReloadAll"), this, SLOT(onListViewItemReload()));
+        m_menu->addAction(tr("Edit"), this, SLOT(onListViewItemEdit()));
+        m_menu->addAction(tr("Add"), this, SLOT(onListViewItemAdd()));
+        m_menu->addAction(tr("Delete"), this, SLOT(onListViewItemDelete()));
+    }
+    if(mi.isValid()) {
+        m_itemOpen->setVisible(true);
+        QString target = mi.data().toString();
+    }else{
+        m_itemOpen->setVisible(false);
+        m_list->clearSelection();
+    }
+    m_menu->exec(ev->globalPos());
+    return true;
+}
+
 
 void QWoSessionManager::closeEvent(QCloseEvent *event)
 {
@@ -153,4 +209,16 @@ void QWoSessionManager::closeEvent(QCloseEvent *event)
         return;
     }
     QWidget::closeEvent(event);
+}
+
+bool QWoSessionManager::eventFilter(QObject *obj, QEvent *ev)
+{
+    QEvent::Type t = ev->type();
+    if(obj == m_list) {
+        qDebug() << "lisview:" << t;
+        if(t == QEvent::ContextMenu) {
+            return handleListViewContextMenu((QContextMenuEvent *)ev);
+        }
+    }
+    return false;
 }
