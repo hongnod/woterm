@@ -1,4 +1,5 @@
 #include "qwosshconf.h"
+#include "qwosetting.h"
 
 #include <QFile>
 #include <QDebug>
@@ -17,19 +18,51 @@
  */
 
 
-bool lessThan(QWoSshConf::HostInfo& a, QWoSshConf::HostInfo& b) {
+bool lessThan(HostInfo& a, HostInfo& b) {
     return a.name < b.name;
 }
 
-QWoSshConf::QWoSshConf(QObject *parent)
-    :QObject (parent)
+void copyHostInfo(HostInfo &dst, const HostInfo &src)
 {
-
+    if(!src.comment.isEmpty()) {
+        dst.comment = src.comment;
+    }
+    if(!src.host.isEmpty()) {
+        dst.host = src.host;
+    }
+    if(!src.identityFile.isEmpty()) {
+        dst.identityFile = src.identityFile;
+    }
+    if(!src.password.isEmpty()) {
+        dst.password = src.password;
+    }
+    if(src.port > 0) {
+        dst.port = src.port;
+    }
+    if(!src.proxyJump.isEmpty()) {
+        dst.proxyJump = src.proxyJump;
+    }
+    if(!src.user.isEmpty()) {
+        dst.user = src.user;
+    }
 }
 
-bool QWoSshConf::load(const QString &conf)
+QWoSshConf::QWoSshConf(const QString& conf, QObject *parent)
+    :QObject (parent)
+    ,m_conf(conf)
 {
-    QFile file(conf);
+    load();
+}
+
+QWoSshConf *QWoSshConf::instance()
+{
+    static QWoSshConf sc(QWoSetting::sshServerListPath());
+    return &sc;
+}
+
+bool QWoSshConf::load()
+{
+    QFile file(m_conf);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
         return false;
     }
@@ -142,9 +175,14 @@ bool QWoSshConf::load(const QString &conf)
     return true;
 }
 
-bool QWoSshConf::save(const QString &conf)
+bool QWoSshConf::save()
 {
-    QFile file(conf);
+    return exportTo(m_conf);
+}
+
+bool QWoSshConf::exportTo(const QString &path)
+{
+    QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
         return false;
     }
@@ -190,27 +228,54 @@ bool QWoSshConf::save(const QString &conf)
     return true;
 }
 
-void QWoSshConf::copyHostInfo(QWoSshConf::HostInfo &dst, const QWoSshConf::HostInfo &src)
+void QWoSshConf::remove(const QString &name)
 {
-    if(!src.comment.isEmpty()) {
-        dst.comment = src.comment;
+    int idx = findHost(name);
+    if(idx >= 0) {
+        m_hosts.removeAt(idx);
     }
-    if(!src.host.isEmpty()) {
-        dst.host = src.host;
-    }
-    if(!src.identityFile.isEmpty()) {
-        dst.identityFile = src.identityFile;
-    }
-    if(!src.password.isEmpty()) {
-        dst.password = src.password;
-    }
-    if(src.port > 0) {
-        dst.port = src.port;
-    }
-    if(!src.proxyJump.isEmpty()) {
-        dst.proxyJump = src.proxyJump;
-    }
-    if(!src.user.isEmpty()) {
-        dst.user = src.user;
-    }
+    save();
 }
+
+void QWoSshConf::append(const HostInfo &hi)
+{
+    m_hosts.push_back(hi);
+    std::sort(m_hosts.begin(), m_hosts.end(), lessThan);
+    save();
+}
+
+QList<HostInfo> QWoSshConf::hostList() const
+{
+    return m_hosts;
+}
+
+QStringList QWoSshConf::hostNameList() const
+{
+    QStringList names;
+    for(int i = 0; i < m_hosts.length(); i++) {
+        const HostInfo &hi = m_hosts.at(i);
+        names.push_back(hi.name);
+    }
+    return names;
+}
+
+int QWoSshConf::findHost(const QString &name)
+{
+    for(int i = 0; i < m_hosts.length(); i++) {
+        const HostInfo& hi = m_hosts.at(i);
+        if(hi.name == name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+HostInfo QWoSshConf::hostInfo(int i)
+{
+    if(i < m_hosts.length() && i >= 0) {
+        return m_hosts.at(i);
+    }
+    HostInfo hi;
+    return hi;
+}
+

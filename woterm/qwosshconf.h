@@ -1,28 +1,27 @@
 #pragma once
 
-#include <QObject>
+#include "qwoglobal.h"
 
+#include <QObject>
 #include <QHash>
 
 class QWoSshConf : public QObject
 {
 public:
-    typedef struct{
-        QString name;
-        QString host;
-        int port;
-        QString user;
-        QString password;
-        QString identityFile;
-        QString proxyJump;
-        QString comment;
-    }HostInfo;
-public:
-    explicit QWoSshConf(QObject *parent = nullptr);
-    bool load(const QString& conf);
-    bool save(const QString& conf);
+    explicit QWoSshConf(const QString& conf, QObject *parent = nullptr);
+    static QWoSshConf* instance();
+    bool load();
+    bool save();
+    bool exportTo(const QString& path);
+    void remove(const QString& name);
+    void append(const HostInfo& hi);
+
+    QList<HostInfo> hostList() const;
+    QStringList hostNameList() const;
+
+    int findHost(const QString& name);
+    HostInfo hostInfo(int i);
 private:
-    void copyHostInfo(HostInfo& dst, const HostInfo& src);
-private:
+    const QString& m_conf;
     QList<HostInfo> m_hosts;
 };

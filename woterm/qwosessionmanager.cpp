@@ -1,5 +1,6 @@
 #include "qwosessionmanager.h"
 #include "qwosetting.h"
+#include "qwosshconf.h"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -63,33 +64,7 @@ void QWoSessionManager::init()
 
 void QWoSessionManager::refreshList()
 {
-    QString cfg = QWoSetting::sshServerListPath();
-    if(cfg.isEmpty()) {
-        return;
-    }
-    QFile file(cfg);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return;
-    }
-    QStringList items;
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        line = line.trimmed();
-        if(!line.startsWith("Host ")) {
-            continue;
-        }
-        QList<QByteArray> sets = line.split(' ');
-        for(int i = 0; i < sets.length(); i++) {
-            QByteArray name = sets.at(i).trimmed();
-            if(name.contains('*')) {
-                continue;
-            }
-            if(name == "Host") {
-                continue;
-            }
-            items.append(name);
-        }
-    }
+    QStringList items = QWoSshConf::instance()->hostNameList();
     m_model->setStringList(items);
 }
 

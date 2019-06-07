@@ -30,4 +30,5 @@ HEADERS += \
     qwowidget.h \
     qwosessionmanager.h \
     aes.h \
-    qwosshconf.h
+    qwosshconf.h \
+    qwoglobal.h
