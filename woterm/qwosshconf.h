@@ -22,6 +22,6 @@ public:
     int findHost(const QString& name);
     HostInfo hostInfo(int i);
 private:
-    const QString& m_conf;
+    QString m_conf;
     QList<HostInfo> m_hosts;
 };

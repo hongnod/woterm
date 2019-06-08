@@ -1,7 +1,9 @@
 #include "qwosessionmanager.h"
 #include "qwosetting.h"
 #include "qwosshconf.h"
-#include "qwohosteditdialog.h"
+#include "qwohostinfoadd.h"
+#include "qwohostinfomodify.h"
+#include "qwohostinfolist.h"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -172,22 +174,29 @@ void QWoSessionManager::onListViewItemReload()
     refreshList();
 }
 
-void QWoSessionManager::onListViewItemEdit()
+void QWoSessionManager::onListViewItemModify()
 {
-    if(m_dlgHostEdit == nullptr) {
-        m_dlgHostEdit = new QWoHostEditDialog(this);
+    if(m_hostModify == nullptr) {
+        m_hostModify = new QWoHostInfoModify(this);
     }
-    m_dlgHostEdit->exec();
+    m_hostModify->exec();
 }
 
 void QWoSessionManager::onListViewItemAdd()
 {
-
+    if(m_hostAdd == nullptr) {
+        m_hostAdd = new QWoHostInfoAdd(this);
+    }
+    m_hostAdd->exec();
 }
 
 void QWoSessionManager::onListViewItemDelete()
 {
-
+    QVariant target = m_menu->property("modeIndex");
+    if(target.isValid()) {
+        QWoSshConf::instance()->remove(target.toString());
+        refreshList();
+    }
 }
 
 bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
@@ -197,17 +206,16 @@ bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
         m_menu = new QMenu();
         m_itemOpen = m_menu->addAction(tr("Open"), this, SLOT(onListViewItemOpen()));
         m_menu->addAction(tr("ReloadAll"), this, SLOT(onListViewItemReload()));
-        m_menu->addAction(tr("Edit"), this, SLOT(onListViewItemEdit()));
+        m_menu->addAction(tr("Edit"), this, SLOT(onListViewItemModify()));
         m_menu->addAction(tr("Add"), this, SLOT(onListViewItemAdd()));
         m_menu->addAction(tr("Delete"), this, SLOT(onListViewItemDelete()));
-    }
-    if(mi.isValid()) {
-        m_itemOpen->setVisible(true);
-        QString target = mi.data().toString();
-    }else{
-        m_itemOpen->setVisible(false);
+    }    
+    QVariant target = mi.data();
+    m_itemOpen->setVisible(mi.isValid());
+    if(!mi.isValid()) {
         m_list->clearSelection();
     }
+    m_menu->setProperty("modeIndex", target);
     m_menu->exec(ev->globalPos());
     return true;
 }

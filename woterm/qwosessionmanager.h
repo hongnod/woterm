@@ -10,7 +10,8 @@ class QStringListModel;
 class QSortFilterProxyModel;
 class QListView;
 class QMenu;
-class QWoHostEditDialog;
+class QWoHostInfoAdd;
+class QWoHostInfoModify;
 
 class QWoSessionManager : public QWidget
 {
@@ -34,7 +35,7 @@ private slots:
     void onEditReturnPressed();
     void onListViewItemOpen();
     void onListViewItemReload();
-    void onListViewItemEdit();
+    void onListViewItemModify();
     void onListViewItemAdd();
     void onListViewItemDelete();
 private:
@@ -50,5 +51,6 @@ private:
     int m_countLeft;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_itemOpen;
-    QPointer<QWoHostEditDialog> m_dlgHostEdit;
+    QPointer<QWoHostInfoAdd> m_hostAdd;
+    QPointer<QWoHostInfoModify> m_hostModify;
 };
