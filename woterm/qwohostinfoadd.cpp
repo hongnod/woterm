@@ -5,6 +5,8 @@ QWoHostInfoAdd::QWoHostInfoAdd(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::QWoHostInfoAdd)
 {
+    Qt::WindowFlags flags = windowFlags();
+    setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
     ui->setupUi(this);
 }
 

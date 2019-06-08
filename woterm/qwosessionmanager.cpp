@@ -234,7 +234,6 @@ bool QWoSessionManager::eventFilter(QObject *obj, QEvent *ev)
 {
     QEvent::Type t = ev->type();
     if(obj == m_list) {
-        qDebug() << "lisview:" << t;
         if(t == QEvent::ContextMenu) {
             return handleListViewContextMenu((QContextMenuEvent *)ev);
         }
