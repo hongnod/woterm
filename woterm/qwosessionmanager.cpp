@@ -69,12 +69,6 @@ QWoSessionManager::~QWoSessionManager()
     if(m_menu) {
         delete m_menu;
     }
-    if(m_hostAdd) {
-        delete m_hostAdd;
-    }
-    if(m_hostModify) {
-        delete m_hostModify;
-    }
 }
 
 void QWoSessionManager::init()
@@ -182,18 +176,14 @@ void QWoSessionManager::onListViewItemReload()
 
 void QWoSessionManager::onListViewItemModify()
 {
-    if(m_hostModify == nullptr) {
-        m_hostModify = new QWoHostInfoModify(this);
-    }
-    m_hostModify->exec();
+    QWoHostInfoModify dlg(this);
+    dlg.exec();
 }
 
 void QWoSessionManager::onListViewItemAdd()
 {
-    if(m_hostAdd == nullptr) {
-        m_hostAdd = new QWoHostInfoAdd(this);
-    }
-    m_hostAdd->exec();
+    QWoHostInfoAdd dlg(this);
+    dlg.exec();
 }
 
 void QWoSessionManager::onListViewItemDelete()
