@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     qwosshconf.cpp \
     qwohostinfomodify.cpp \
     qwohostinfoadd.cpp \
-    qwohostinfolist.cpp
+    qwohostinfolist.cpp \
+    qwoutils.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -37,7 +38,8 @@ HEADERS += \
     qwoglobal.h \
     qwohostinfomodify.h \
     qwohostinfoadd.h \
-    qwohostinfolist.h
+    qwohostinfolist.h \
+    qwoutils.h
 
 FORMS += \
     qwohostinfomodify.ui \

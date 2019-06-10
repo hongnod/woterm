@@ -1,5 +1,6 @@
 #include "qwohostinfoadd.h"
 #include "ui_qwohostinfoadd.h"
+#include "qwoutils.h"
 
 QWoHostInfoAdd::QWoHostInfoAdd(QWidget *parent) :
     QDialog(parent),
@@ -7,9 +8,9 @@ QWoHostInfoAdd::QWoHostInfoAdd(QWidget *parent) :
 {
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
-    setWindowTitle(tr("Add"));
     ui->setupUi(this);
-    ui->passLayout->setEnabled(false);
+    setWindowTitle(tr("Add"));
+    onAuthCurrentIndexChanged(ui->authType->currentText());
     QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
 }
 
@@ -22,9 +23,6 @@ void QWoHostInfoAdd::onAuthCurrentIndexChanged(const QString & txt)
 {
     bool isPass = txt == tr("Password");
 
-    ui->passLayout->setEnabled(isPass);
-    ui->identifyLayout->setEnabled(!isPass);
-    ui->vbox->activate();
-    ui->vbox->update();
-    ui->vbox->invalidate();
+    QWoUtils::setLayoutVisible(ui->passLayout, isPass);
+    QWoUtils::setLayoutVisible(ui->identifyLayout, !isPass);
 }
