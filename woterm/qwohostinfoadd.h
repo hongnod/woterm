@@ -15,6 +15,8 @@ public:
     explicit QWoHostInfoAdd(QWidget *parent = nullptr);
     ~QWoHostInfoAdd();
 
+private slots:
+    void onAuthCurrentIndexChanged(const QString & txt);
 private:
     Ui::QWoHostInfoAdd *ui;
 };

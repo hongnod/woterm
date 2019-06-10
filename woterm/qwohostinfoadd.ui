@@ -28,6 +28,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QVBoxLayout" name="vbox">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -93,7 +96,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="choose">
+        <widget class="QComboBox" name="authType">
          <item>
           <property name="text">
            <string>Password</string>
@@ -122,7 +125,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <layout class="QHBoxLayout" name="passLayout">
        <item>
         <widget class="QLabel" name="label_8">
          <property name="text">
@@ -133,10 +136,6 @@
        <item>
         <widget class="QLineEdit" name="userName"/>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
@@ -150,13 +149,16 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="identifyLayout">
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>IdentifyFile:</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3"/>
        </item>
        <item>
         <widget class="QLineEdit" name="identify"/>

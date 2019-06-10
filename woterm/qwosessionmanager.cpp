@@ -69,6 +69,12 @@ QWoSessionManager::~QWoSessionManager()
     if(m_menu) {
         delete m_menu;
     }
+    if(m_hostAdd) {
+        delete m_hostAdd;
+    }
+    if(m_hostModify) {
+        delete m_hostModify;
+    }
 }
 
 void QWoSessionManager::init()
