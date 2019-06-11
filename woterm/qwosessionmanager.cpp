@@ -184,6 +184,8 @@ void QWoSessionManager::onListViewItemAdd()
 {
     QWoHostInfoAdd dlg(this);
     dlg.exec();
+    HostInfo hi = dlg.hostInfo();
+    QWoSshConf::instance()->append(hi);
 }
 
 void QWoSessionManager::onListViewItemDelete()

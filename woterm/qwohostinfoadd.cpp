@@ -2,6 +2,9 @@
 #include "ui_qwohostinfoadd.h"
 #include "qwoutils.h"
 
+#include <QMessageBox>
+#include <QPlainTextEdit>
+
 QWoHostInfoAdd::QWoHostInfoAdd(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::QWoHostInfoAdd)
@@ -22,6 +25,11 @@ QWoHostInfoAdd::~QWoHostInfoAdd()
     delete ui;
 }
 
+HostInfo QWoHostInfoAdd::hostInfo() const
+{
+    return m_hi;
+}
+
 void QWoHostInfoAdd::onAuthCurrentIndexChanged(const QString & txt)
 {
     bool isPass = txt == tr("Password");
@@ -32,8 +40,27 @@ void QWoHostInfoAdd::onAuthCurrentIndexChanged(const QString & txt)
 
 void QWoHostInfoAdd::onButtonSaveClicked()
 {
-    QString hostName = ui->hostName->text();
-    QString host = ui->host->text();
-    int port = ui->port->text().toInt();
-    QString
+    m_hi.name = ui->hostName->text();
+    m_hi.host = ui->host->text();
+    m_hi.port = ui->port->text().toInt();
+    m_hi.comment = ui->memo->toPlainText();
+    if(ui->authType->currentText() == tr("Password")) {
+        m_hi.user = ui->userName->text();
+        m_hi.password = ui->password->text();
+    }else{
+        m_hi.identityFile = ui->identify->text();
+    }
+    if(m_hi.name.isEmpty()) {
+        QMessageBox::warning(this, tr("Info"), tr("The name can't be empty"));
+        return;
+    }
+    if(m_hi.host.isEmpty()) {
+        QMessageBox::warning(this, tr("Info"), tr("The host can't be empty"));
+        return;
+    }
+    if(m_hi.port < 10 | m_hi.port > 65535) {
+        QMessageBox::warning(this, tr("Info"), tr("The port should be at [10,65535]"));
+        return;
+    }
+    close();
 }
