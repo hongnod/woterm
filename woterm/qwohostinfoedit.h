@@ -1,21 +1,21 @@
-#ifndef QWOHOSTINFOADD_H
-#define QWOHOSTINFOADD_H
+#ifndef QWOHOSTINFOEDIT_H
+#define QWOHOSTINFOEDIT_H
 
 #include "qwoglobal.h"
 
 #include <QDialog>
 
 namespace Ui {
-class QWoHostInfoAdd;
+class QWoHostInfo;
 }
 
-class QWoHostInfoAdd : public QDialog
+class QWoHostInfoEdit : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit QWoHostInfoAdd(QWidget *parent = nullptr);
-    ~QWoHostInfoAdd();
+    explicit QWoHostInfoEdit(QWidget *parent = nullptr);
+    ~QWoHostInfoEdit();
 
     HostInfo hostInfo() const;
 
@@ -23,8 +23,8 @@ private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
     void onButtonSaveClicked();    
 private:
-    Ui::QWoHostInfoAdd *ui;
+    Ui::QWoHostInfo *ui;
     HostInfo m_hi;
 };
 
-#endif // QWOHOSTINFOADD_H
+#endif // QWOHOSTINFOEDIT_H

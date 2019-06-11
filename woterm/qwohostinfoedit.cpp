@@ -1,13 +1,13 @@
-#include "qwohostinfoadd.h"
-#include "ui_qwohostinfoadd.h"
+#include "qwohostinfoedit.h"
+#include "ui_qwohostinfo.h"
 #include "qwoutils.h"
 
 #include <QMessageBox>
 #include <QPlainTextEdit>
 
-QWoHostInfoAdd::QWoHostInfoAdd(QWidget *parent) :
+QWoHostInfoEdit::QWoHostInfoEdit(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::QWoHostInfoAdd)
+    ui(new Ui::QWoHostInfo)
 {
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
@@ -20,17 +20,17 @@ QWoHostInfoAdd::QWoHostInfoAdd(QWidget *parent) :
     QObject::connect(ui->save, SIGNAL(clicked()),  this, SLOT(onButtonSaveClicked()));
 }
 
-QWoHostInfoAdd::~QWoHostInfoAdd()
+QWoHostInfoEdit::~QWoHostInfoEdit()
 {
     delete ui;
 }
 
-HostInfo QWoHostInfoAdd::hostInfo() const
+HostInfo QWoHostInfoEdit::hostInfo() const
 {
     return m_hi;
 }
 
-void QWoHostInfoAdd::onAuthCurrentIndexChanged(const QString & txt)
+void QWoHostInfoEdit::onAuthCurrentIndexChanged(const QString & txt)
 {
     bool isPass = txt == tr("Password");
 
@@ -38,7 +38,7 @@ void QWoHostInfoAdd::onAuthCurrentIndexChanged(const QString & txt)
     QWoUtils::setLayoutVisible(ui->identifyLayout, !isPass);
 }
 
-void QWoHostInfoAdd::onButtonSaveClicked()
+void QWoHostInfoEdit::onButtonSaveClicked()
 {
     m_hi.name = ui->hostName->text();
     m_hi.host = ui->host->text();

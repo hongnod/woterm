@@ -1,7 +1,7 @@
 #include "qwosessionmanager.h"
 #include "qwosetting.h"
 #include "qwosshconf.h"
-#include "qwohostinfoadd.h"
+#include "qwohostinfoedit.h"
 #include "qwohostinfomodify.h"
 #include "qwohostinfolist.h"
 

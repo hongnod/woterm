@@ -18,10 +18,9 @@ SOURCES += main.cpp \
     aes.cpp \
     aes_test.cpp \
     qwosshconf.cpp \
-    qwohostinfomodify.cpp \
-    qwohostinfoadd.cpp \
     qwohostinfolist.cpp \
-    qwoutils.cpp
+    qwoutils.cpp \
+    qwohostinfoedit.cpp
 
 HEADERS += \
     qwotermwidget.h \
@@ -36,12 +35,10 @@ HEADERS += \
     aes.h \
     qwosshconf.h \
     qwoglobal.h \
-    qwohostinfomodify.h \
-    qwohostinfoadd.h \
     qwohostinfolist.h \
-    qwoutils.h
+    qwoutils.h \
+    qwohostinfoedit.h
 
 FORMS += \
-    qwohostinfomodify.ui \
-    qwohostinfoadd.ui  \
-    qwohostinfolist.ui
+    qwohostinfolist.ui \
+    qwohostinfo.ui

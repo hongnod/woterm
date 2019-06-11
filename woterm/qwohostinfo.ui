@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>QWoHostInfoAdd</class>
- <widget class="QDialog" name="QWoHostInfoAdd">
+ <class>QWoHostInfo</class>
+ <widget class="QDialog" name="QWoHostInfo">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
