@@ -1,6 +1,8 @@
 #ifndef QWOHOSTINFOADD_H
 #define QWOHOSTINFOADD_H
 
+#include "qwoglobal.h"
+
 #include <QDialog>
 
 namespace Ui {
@@ -17,8 +19,10 @@ public:
 
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
+    void onButtonSaveClicked();    
 private:
     Ui::QWoHostInfoAdd *ui;
+    HostInfo m_hi;
 };
 
 #endif // QWOHOSTINFOADD_H
