@@ -112,7 +112,7 @@ bool QWoSshConf::load()
     QHash<QString, HostInfo> wildcard;
     for(int i = 0; i < blocks.length(); i++) {
         QStringList host = blocks.at(i);
-        QStringList comments;
+        QStringList memos;
         HostInfo hi;
         //qDebug() << host;
         for(int j = 0; j < host.length(); j++) {
@@ -132,10 +132,10 @@ bool QWoSshConf::load()
             }else if(item.startsWith("ProxyJump")) {
                 hi.proxyJump = item.mid(9).trimmed();
             }else if(item.startsWith("#")) {
-                comments.push_back(item.mid(1));
+                memos.push_back(item.mid(1));
             }
         }
-        hi.comment = comments.join("\n");
+        hi.memo = memos.join("\n");
         QStringList names = hi.name.split(' ');
         for(int i = 0; i < names.length(); i++) {
             QString name = names.at(i).trimmed();
@@ -189,8 +189,8 @@ bool QWoSshConf::exportTo(const QString &path)
     for(int i = 0; i < m_hosts.length(); i++) {
         HostInfo hi = m_hosts.at(i);
         file.write("\n", 1);
-        if(!hi.comment.isEmpty()) {
-            QStringList comments = hi.comment.split('\n');
+        if(!hi.memo.isEmpty()) {
+            QStringList comments = hi.memo.split('\n');
             for(int j = 0; j < comments.length(); j++) {
                 QString line(QString("#%1\n").arg(comments.at(j)));
                 file.write(line.toUtf8());
@@ -240,6 +240,16 @@ void QWoSshConf::remove(const QString &name)
 void QWoSshConf::append(const HostInfo &hi)
 {
     m_hosts.push_back(hi);
+    std::sort(m_hosts.begin(), m_hosts.end(), lessThan);
+    save();
+}
+
+void QWoSshConf::modify(int idx, const HostInfo &hi)
+{
+    if(idx < 0 || idx >= m_hosts.length()) {
+        return;
+    }
+    m_hosts[idx] = hi;
     std::sort(m_hosts.begin(), m_hosts.end(), lessThan);
     save();
 }

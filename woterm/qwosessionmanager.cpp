@@ -2,7 +2,6 @@
 #include "qwosetting.h"
 #include "qwosshconf.h"
 #include "qwohostinfoedit.h"
-#include "qwohostinfomodify.h"
 #include "qwohostinfolist.h"
 
 #include <QCloseEvent>
@@ -176,16 +175,16 @@ void QWoSessionManager::onListViewItemReload()
 
 void QWoSessionManager::onListViewItemModify()
 {
-    QWoHostInfoModify dlg(this);
+    QWoHostInfoEdit dlg(this);
     dlg.exec();
+    refreshList();
 }
 
 void QWoSessionManager::onListViewItemAdd()
 {
-    QWoHostInfoAdd dlg(this);
+    QWoHostInfoEdit dlg(this);
     dlg.exec();
-    HostInfo hi = dlg.hostInfo();
-    QWoSshConf::instance()->append(hi);
+    refreshList();
 }
 
 void QWoSessionManager::onListViewItemDelete()

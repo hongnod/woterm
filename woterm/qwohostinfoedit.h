@@ -15,16 +15,17 @@ class QWoHostInfoEdit : public QDialog
 
 public:
     explicit QWoHostInfoEdit(QWidget *parent = nullptr);
+    explicit QWoHostInfoEdit(int idx, QWidget *parent = nullptr);
     ~QWoHostInfoEdit();
-
-    HostInfo hostInfo() const;
 
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
-    void onButtonSaveClicked();    
+    void onButtonSaveClicked();
 private:
+    void init();
+private:
+    int m_idx;
     Ui::QWoHostInfo *ui;
-    HostInfo m_hi;
 };
 
 #endif // QWOHOSTINFOEDIT_H

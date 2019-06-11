@@ -10,5 +10,5 @@ typedef struct{
     QString password;
     QString identityFile;
     QString proxyJump;
-    QString comment;
+    QString memo;
 }HostInfo;

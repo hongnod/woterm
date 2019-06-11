@@ -15,6 +15,7 @@ public:
     bool exportTo(const QString& path);
     void remove(const QString& name);
     void append(const HostInfo& hi);
+    void modify(int idx, const HostInfo& hi);
 
     QList<HostInfo> hostList() const;
     QStringList hostNameList() const;
