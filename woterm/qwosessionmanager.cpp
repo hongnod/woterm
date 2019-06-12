@@ -80,6 +80,7 @@ void QWoSessionManager::refreshList()
 {
     QStringList items = QWoSshConf::instance()->hostNameList();
     m_model->setStringList(items);
+    m_model->
 }
 
 void QWoSessionManager::onReloadSessionList()
