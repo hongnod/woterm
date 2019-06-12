@@ -6,10 +6,11 @@
 class QLineEdit;
 class QListWidget;
 class QPushButton;
-class QStringListModel;
+class QWoHostListModel;
 class QSortFilterProxyModel;
 class QListView;
 class QMenu;
+
 
 class QWoSessionManager : public QWidget
 {
@@ -42,7 +43,7 @@ private:
     void closeEvent(QCloseEvent *event);
     bool eventFilter(QObject *obj, QEvent *ev);
 private:
-    QPointer<QStringListModel> m_model;
+    QPointer<QWoHostListModel> m_model;
     QPointer<QSortFilterProxyModel> m_proxyModel;
     QPointer<QLineEdit> m_input;
     QPointer<QListView> m_list;

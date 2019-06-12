@@ -11,6 +11,8 @@ public:
     explicit QWoHostListModel(QObject *parent = nullptr);
     virtual ~QWoHostListModel() override;
 
+    void refreshList();
+private:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex sibling(int row, int column, const QModelIndex &idx) const override;
 

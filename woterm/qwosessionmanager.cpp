@@ -3,6 +3,7 @@
 #include "qwosshconf.h"
 #include "qwohostinfoedit.h"
 #include "qwohostinfolist.h"
+#include "qwohostlistmodel.h"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -43,7 +44,7 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     m_list->installEventFilter(this);
     //m_list->setSelectionMode(QAbstractItemView::MultiSelection);
 
-    m_model = new QStringListModel(this);
+    m_model = new QWoHostListModel(this);
     m_proxyModel = new QSortFilterProxyModel(this);
     m_proxyModel->setSourceModel(m_model);
     m_list->setModel(m_proxyModel);
@@ -78,9 +79,7 @@ void QWoSessionManager::init()
 
 void QWoSessionManager::refreshList()
 {
-    QStringList items = QWoSshConf::instance()->hostNameList();
-    m_model->setStringList(items);
-    m_model->
+    m_model->refreshList();
 }
 
 void QWoSessionManager::onReloadSessionList()

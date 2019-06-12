@@ -1,4 +1,5 @@
 #include "qwohostlistmodel.h"
+#include "qwosshconf.h"
 
 #include<QPair>
 #include<QVector>
@@ -6,7 +7,7 @@
 QWoHostListModel::QWoHostListModel(QObject *parent)
     : QAbstractListModel (parent)
 {
-
+    m_hosts = QWoSshConf::instance()->hostList();
 }
 
 QWoHostListModel::~QWoHostListModel()
@@ -14,11 +15,17 @@ QWoHostListModel::~QWoHostListModel()
 
 }
 
+void QWoHostListModel::refreshList()
+{
+    m_hosts = QWoSshConf::instance()->hostList();
+    resetInternalData();
+}
+
 int QWoHostListModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid()){
         return 0;
-    }
+    }    
     return m_hosts.count();
 }
 
@@ -50,17 +57,6 @@ QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
 
 bool QWoHostListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.row() >= 0 && index.row() < m_hosts.size() && (role == Qt::EditRole || role == Qt::DisplayRole)) {
-        m_hosts.replace(index.row(), value.toString());
-        QVector<int> roles;
-        roles.reserve(2);
-        roles.append(Qt::DisplayRole);
-        roles.append(Qt::EditRole);
-        emit dataChanged(index, index, roles);
-        // once Q_COMPILER_UNIFORM_INIT can be used, change to:
-        // emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
-        return true;
-    }
     return false;
 }
 
@@ -69,8 +65,7 @@ Qt::ItemFlags QWoHostListModel::flags(const QModelIndex &index) const
     if (!index.isValid()){
         return QAbstractListModel::flags(index) | Qt::ItemIsDropEnabled;
     }
-
-    return QAbstractListModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+    return QAbstractListModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
 bool QWoHostListModel::insertRows(int row, int count, const QModelIndex &parent)
@@ -118,6 +113,9 @@ static bool decendingLessThan(const QPair<QString, int> &s1, const QPair<QString
 
 void QWoHostListModel::sort(int column, Qt::SortOrder order)
 {
+#if 1
+    return QAbstractListModel::sort(column, order);
+#else
     emit layoutAboutToBeChanged(QList<QPersistentModelIndex>(), VerticalSortHint);
 
      QVector<QPair<QString, HostInfo> > list;
@@ -148,4 +146,10 @@ void QWoHostListModel::sort(int column, Qt::SortOrder order)
      changePersistentIndexList(oldList, newList);
 
      emit layoutChanged(QList<QPersistentModelIndex>(), VerticalSortHint);
+#endif
+}
+
+Qt::DropActions QWoHostListModel::supportedDropActions() const
+{
+    return QAbstractListModel::supportedDropActions();
 }
