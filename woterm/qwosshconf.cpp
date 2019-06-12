@@ -24,9 +24,6 @@ bool lessThan(HostInfo& a, HostInfo& b) {
 
 void copyHostInfo(HostInfo &dst, const HostInfo &src)
 {
-    if(!src.comment.isEmpty()) {
-        dst.comment = src.comment;
-    }
     if(!src.host.isEmpty()) {
         dst.host = src.host;
     }
