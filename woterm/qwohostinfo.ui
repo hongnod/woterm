@@ -87,6 +87,33 @@
       </layout>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="hboxuser">
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>UserName:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="userName"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QLabel" name="label_7">
@@ -127,16 +154,6 @@
      <item>
       <layout class="QHBoxLayout" name="passLayout">
        <item>
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>UserName:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="userName"/>
-       </item>
-       <item>
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Password:</string>
@@ -145,6 +162,19 @@
        </item>
        <item>
         <widget class="QLineEdit" name="password"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -156,9 +186,6 @@
           <string>IdentifyFile:</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3"/>
        </item>
        <item>
         <widget class="QLineEdit" name="identify"/>

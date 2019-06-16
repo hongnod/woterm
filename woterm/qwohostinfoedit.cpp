@@ -12,6 +12,7 @@ QWoHostInfoEdit::QWoHostInfoEdit(QWidget *parent)
     , m_idx(-1)
 {
     init();
+    setWindowTitle(tr("Add"));
 }
 
 QWoHostInfoEdit::QWoHostInfoEdit(int idx, QWidget *parent)
@@ -20,10 +21,11 @@ QWoHostInfoEdit::QWoHostInfoEdit(int idx, QWidget *parent)
     , m_idx(idx)
 {
     init();
+    setWindowTitle(tr("Modify"));
     HostInfo hi = QWoSshConf::instance()->hostInfo(m_idx);
     ui->hostName->setText(hi.name);
     ui->host->setText(hi.host);
-    ui->port->setText(QString(hi.port));
+    ui->port->setText(QString("%1").arg(hi.port));
     ui->memo->setPlainText(hi.memo);
     ui->userName->setText(hi.user);
     ui->password->setText(hi.password);
