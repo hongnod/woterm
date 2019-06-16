@@ -95,7 +95,7 @@ void QWoSessionManager::onOpenSelectSessions()
     for(int i = 0; i < cnt; i++) {
         QModelIndex mi = m_proxyModel->index(i, 0);
         QString name = mi.data().toString();
-        qDebug() << "name:" << name;
+        qDebug() << "name:" << name << "row:" << mi.row();
         sessions << name;
     }
     emit sessionBatchClicked(sessions);
@@ -124,7 +124,10 @@ void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
     if(name == "") {
         return;
     }
-    qDebug() << "server:" << name;
+    QVariant v = item.data();
+    qDebug() << "server:" << name << "row:" << item.row() << "v:" << v.toString();
+
+
     emit sessionDoubleClicked(name);
 }
 
@@ -175,7 +178,12 @@ void QWoSessionManager::onListViewItemReload()
 
 void QWoSessionManager::onListViewItemModify()
 {
-    QWoHostInfoEdit dlg(this);
+    QVariant target = m_menu->property("itemIndex");
+    if(!target.isValid()) {
+        return;
+    }
+    int idx = target.toInt();
+    QWoHostInfoEdit dlg(idx, this);
     dlg.exec();
     refreshList();
 }
@@ -189,9 +197,9 @@ void QWoSessionManager::onListViewItemAdd()
 
 void QWoSessionManager::onListViewItemDelete()
 {
-    QVariant target = m_menu->property("modeIndex");
+    QVariant target = m_menu->property("itemIndex");
     if(target.isValid()) {
-        QWoSshConf::instance()->remove(target.toString());
+        QWoSshConf::instance()->removeAt(target.toInt());
         refreshList();
     }
 }
@@ -212,7 +220,8 @@ bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
     if(!mi.isValid()) {
         m_list->clearSelection();
     }
-    m_menu->setProperty("modeIndex", target);
+    QVariant idx = mi.data(ITEM_INDEX);
+    m_menu->setProperty("itemIndex", idx);
     m_menu->exec(ev->globalPos());
     return true;
 }

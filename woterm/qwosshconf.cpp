@@ -3,6 +3,8 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QMessageBox>
+#include <QBuffer>
 
 /*
  *  #
@@ -48,7 +50,7 @@ QWoSshConf::QWoSshConf(const QString& conf, QObject *parent)
     :QObject (parent)
     ,m_conf(conf)
 {
-    load();
+    //load();
 }
 
 QWoSshConf *QWoSshConf::instance()
@@ -57,18 +59,9 @@ QWoSshConf *QWoSshConf::instance()
     return &sc;
 }
 
-bool QWoSshConf::load()
+QList<HostInfo> QWoSshConf::parse(const QByteArray& buf)
 {
-    QFile file(m_conf);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return false;
-    }
-    QList<QByteArray> lines;
-    while (!file.atEnd()) {
-        QByteArray line = file.readLine();
-        lines.append(line);
-    }
-
+    QList<QByteArray> lines = buf.split('\n');
     QList<QStringList> blocks;
     QStringList block;
     for(int i = 0; i < lines.length(); i++) {
@@ -147,6 +140,7 @@ bool QWoSshConf::load()
             }
         }
     }
+    QList<HostInfo> hosts;
     for(QHash<QString,HostInfo>::iterator iter = common.begin(); iter != common.end(); iter++) {
         QString name = iter.key();
         HostInfo hi = iter.value();
@@ -166,15 +160,27 @@ bool QWoSshConf::load()
             copyHostInfo(hi, hiTmp);
         }
 
-        m_hosts.push_back(hi);
+        hosts.push_back(hi);
     }
-    std::sort(m_hosts.begin(), m_hosts.end(), lessThan);
-    return true;
+    std::sort(hosts.begin(), hosts.end(), lessThan);
+    return hosts;
 }
 
 bool QWoSshConf::save()
 {
     return exportTo(m_conf);
+}
+
+bool QWoSshConf::refresh()
+{
+    QFile file(m_conf);
+    if(!file.open(QFile::ReadOnly)) {
+      QMessageBox::warning(nullptr, tr("LoadSshConfig"), tr("Failed to open file:")+m_conf, QMessageBox::Ok);
+      return false;
+    }
+    QByteArray buf = file.readAll();
+    m_hosts = parse(buf);
+    return true;
 }
 
 bool QWoSshConf::exportTo(const QString &path)
@@ -223,6 +229,11 @@ bool QWoSshConf::exportTo(const QString &path)
         }
     }
     return true;
+}
+
+void QWoSshConf::removeAt(int idx)
+{
+    m_hosts.removeAt(idx);
 }
 
 void QWoSshConf::remove(const QString &name)

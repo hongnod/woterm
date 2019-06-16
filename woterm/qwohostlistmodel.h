@@ -4,6 +4,8 @@
 
 #include<QAbstractListModel>
 
+#define ITEM_INDEX   (Qt::UserRole+1)
+
 class QWoHostListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -12,6 +14,8 @@ public:
     virtual ~QWoHostListModel() override;
 
     void refreshList();
+    bool find(const QUuid& uid, HostInfo *phi) const;
+
 private:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex sibling(int row, int column, const QModelIndex &idx) const override;

@@ -7,7 +7,7 @@
 QWoHostListModel::QWoHostListModel(QObject *parent)
     : QAbstractListModel (parent)
 {
-    m_hosts = QWoSshConf::instance()->hostList();
+    refreshList();
 }
 
 QWoHostListModel::~QWoHostListModel()
@@ -17,8 +17,10 @@ QWoHostListModel::~QWoHostListModel()
 
 void QWoHostListModel::refreshList()
 {
-    m_hosts = QWoSshConf::instance()->hostList();
-    resetInternalData();
+    if(QWoSshConf::instance()->refresh()){
+        m_hosts = QWoSshConf::instance()->hostList();
+        resetInternalData();
+    }
 }
 
 int QWoHostListModel::rowCount(const QModelIndex &parent) const
@@ -39,19 +41,30 @@ QModelIndex QWoHostListModel::sibling(int row, int column, const QModelIndex &id
 
 QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() < 0 || index.row() >= m_hosts.size()){
+    if (index.row() < 0 || index.row() >= m_hosts.size()) {
         return QVariant();
     }
+    if (!index.isValid()){
+        return QVariant();
+    }
+    const HostInfo& hi = m_hosts.at(index.row());
 
+    if(role == Qt::ToolTipRole) {
+        QString tip = hi.name;
+        if(hi.name != hi.host && !hi.host.isEmpty()) {
+            tip.append("-").append(hi.host);
+        }
+        if(!hi.memo.isEmpty()){
+            tip.append("-").append(hi.memo);
+        }
+        return tip;
+    }
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
-        const HostInfo& hi = m_hosts.at(index.row());
         return QVariant(hi.name);
     }
-
-    if (role == Qt::UserRole + 1) {
-
+    if(role == ITEM_INDEX) {
+        return index.row();
     }
-
     return QVariant();
 }
 

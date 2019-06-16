@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QUuid>
 
 typedef struct{
     QString name;
