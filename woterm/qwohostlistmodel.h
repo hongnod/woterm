@@ -2,7 +2,7 @@
 
 #include "qwoglobal.h"
 
-#include<QAbstractListModel>
+#include <QAbstractListModel>
 
 #define ITEM_INDEX   (Qt::UserRole+1)
 

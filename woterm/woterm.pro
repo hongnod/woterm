@@ -21,6 +21,7 @@ SOURCES += main.cpp \
     qwohostinfolist.cpp \
     qwoutils.cpp \
     qwohostinfoedit.cpp \
+    qwohostsimplelist.cpp \
     qwohostlistmodel.cpp
 
 HEADERS += \
@@ -39,8 +40,10 @@ HEADERS += \
     qwohostinfolist.h \
     qwoutils.h \
     qwohostinfoedit.h \
+    qwohostsimplelist.h \
     qwohostlistmodel.h
 
 FORMS += \
+    qwohostlist.ui \
     qwohostinfolist.ui \
     qwohostinfo.ui

@@ -21,6 +21,8 @@ public:
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
     void onButtonSaveClicked();
+    void onButtonJumpBrowserClicked();
+    void onButtonIdentifyBrowserClicked();
 private:
     void init();
 private:
