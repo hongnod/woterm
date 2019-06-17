@@ -32,10 +32,8 @@ QWoHostInfoEdit::QWoHostInfoEdit(int idx, QWidget *parent)
     ui->identify->setText(hi.identityFile);
     if(!hi.password.isEmpty()) {
         ui->authType->setCurrentText("Password");
-    }else if(!hi.identityFile.isEmpty()) {
-        ui->authType->setCurrentText("IdentifyFile");
     }else{
-        ui->authType->setCurrentText("Password");
+        ui->authType->setCurrentText("IdentifyFile");
     }
 }
 
@@ -59,12 +57,10 @@ void QWoHostInfoEdit::onButtonSaveClicked()
     hi.host = ui->host->text();
     hi.port = ui->port->text().toInt();
     hi.memo = ui->memo->toPlainText();
-    if(ui->authType->currentText() == tr("Password")) {
-        hi.user = ui->userName->text();
-        hi.password = ui->password->text();
-    }else{
-        hi.identityFile = ui->identify->text();
-    }
+    hi.user = ui->userName->text();
+    hi.password = ui->password->text();
+    hi.identityFile = ui->identify->text();
+
     if(hi.name.isEmpty()) {
         QMessageBox::warning(this, tr("Info"), tr("The name can't be empty"));
         return;
