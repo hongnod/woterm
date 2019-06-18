@@ -62,7 +62,7 @@ QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
         return QVariant(hi.name);
     }
-    if(role == ITEM_INDEX) {
+    if(role == ROLE_INDEX) {
         return index.row();
     }
     return QVariant();

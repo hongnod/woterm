@@ -4,7 +4,7 @@
 
 #include <QAbstractListModel>
 
-#define ITEM_INDEX   (Qt::UserRole+1)
+#define ROLE_INDEX   (Qt::UserRole+1)
 
 class QWoHostListModel : public QAbstractListModel
 {

@@ -3,10 +3,12 @@
 #include "qwohostlistmodel.h"
 
 #include <QSortFilterProxyModel>
+#include <QDebug>
 
 QWoHostSimpleList::QWoHostSimpleList(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::QWoHostList)
+    , m_result(-1)
 {
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
@@ -18,13 +20,25 @@ QWoHostSimpleList::QWoHostSimpleList(QWidget *parent)
     ui->hostList->setModel(m_proxyModel);
 
     QObject::connect(ui->rxfind, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
-
+    QObject::connect(ui->hostList, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onListItemDoubleClicked(const QModelIndex&)));
+    QObject::connect(ui->ok, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
     m_model->refreshList();
 }
 
 QWoHostSimpleList::~QWoHostSimpleList()
 {
+    if(m_model){
+        delete m_model;
+    }
+    if(m_proxyModel) {
+        delete m_proxyModel;
+    }
+    delete ui;
+}
 
+int QWoHostSimpleList::result()
+{
+    return m_result;
 }
 
 void QWoHostSimpleList::onEditTextChanged(const QString &txt)
@@ -41,4 +55,21 @@ void QWoHostSimpleList::onEditTextChanged(const QString &txt)
     QRegExp regex(sets.join(".*"), Qt::CaseInsensitive);
     regex.setPatternSyntax(QRegExp::RegExp2);
     m_proxyModel->setFilterRegExp(regex);
+}
+
+void QWoHostSimpleList::onListItemDoubleClicked(const QModelIndex &item)
+{
+    QString name = item.data().toString();
+    if(name == "") {
+        return;
+    }
+    m_result = item.data(ROLE_INDEX).toInt();
+    close();
+}
+
+void QWoHostSimpleList::onOpenSelectSessions()
+{
+    QModelIndex item = ui->hostList->currentIndex();
+    m_result = item.data(ROLE_INDEX).toInt();
+    close();
 }

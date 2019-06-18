@@ -112,5 +112,5 @@ void QWoHostInfoEdit::init()
     QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
     QObject::connect(ui->save, SIGNAL(clicked()),  this, SLOT(onButtonSaveClicked()));
     QObject::connect(ui->identifyBrowser, SIGNAL(clicked()),  this, SLOT(onButtonIdentifyBrowserClicked()));
-    QObject::connect(ui->jumpBrowser, SIGNAL(clicked()),  this, SLOT(onButtonJumpBrowserClicked()));
+    QObject::connect(ui->jumpBrowser, SIGNAL(clicked()),  this, SLOT(onButtonJumpBrowserClicked()), Qt::QueuedConnection);
 }

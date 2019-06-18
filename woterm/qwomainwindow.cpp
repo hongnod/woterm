@@ -72,7 +72,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QAction *edit = m_tool->addAction("Edit");
     QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
 
-    QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const QString&)), this, SLOT(onSessionDoubleClicked(const QString&)));
+    QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const QString&,int)), this, SLOT(onSessionDoubleClicked(const QString&,int)));
     QObject::connect(m_manager, SIGNAL(sessionBatchClicked(const QStringList&)), this, SLOT(onSessionBatchClicked(const QStringList&)));
 
     QTimer::singleShot(1000, this, SLOT(onProcessStartCheck()));
@@ -116,7 +116,7 @@ void QWoMainWindow::onEditConfig()
     QDesktopServices::openUrl(QUrl(cfg, QUrl::TolerantMode));
 }
 
-void QWoMainWindow::onSessionDoubleClicked(const QString &name)
+void QWoMainWindow::onSessionDoubleClicked(const QString &name, int idxInCfg)
 {
     m_shower->openConnection(name);
 }

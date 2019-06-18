@@ -20,7 +20,7 @@ public:
     virtual ~QWoSessionManager();
 signals:
     void aboutToClose(QCloseEvent* event);
-    void sessionDoubleClicked(const QString& session);
+    void sessionDoubleClicked(const QString& session, int idxInCfg);
     void sessionBatchClicked(const QStringList& sessions);
 private:
     void init();

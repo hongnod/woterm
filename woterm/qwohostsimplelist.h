@@ -21,14 +21,18 @@ public:
     explicit QWoHostSimpleList(QWidget *parent = nullptr);
     ~QWoHostSimpleList();
 
+    int result();
 private slots:
     void onEditTextChanged(const QString& txt);
+    void onListItemDoubleClicked(const QModelIndex& item);
+    void onOpenSelectSessions();
 private:
     void init();
 private:
     Ui::QWoHostList *ui;
     QPointer<QWoHostListModel> m_model;
     QPointer<QSortFilterProxyModel> m_proxyModel;
+    int m_result;
 };
 
 #endif // QWOHOSTSIMPLELIST_H

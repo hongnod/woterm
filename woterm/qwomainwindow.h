@@ -22,7 +22,7 @@ private slots:
     void onNewTerm();
     void onOpenTerm();
     void onEditConfig();
-    void onSessionDoubleClicked(const QString& name);
+    void onSessionDoubleClicked(const QString& name, int idxInCfg);
     void onSessionBatchClicked(const QStringList& sessions);
     void onProcessStartCheck();
 

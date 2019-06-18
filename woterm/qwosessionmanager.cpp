@@ -124,11 +124,12 @@ void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
     if(name == "") {
         return;
     }
+    int idxInCfg = item.data(ROLE_INDEX).toInt();
     QVariant v = item.data();
-    qDebug() << "server:" << name << "row:" << item.row() << "v:" << v.toString();
+    qDebug() << "server:" << name << "row:" << item.row() << "v:" << v.toString() << "idxInCfg" << idxInCfg;
 
 
-    emit sessionDoubleClicked(name);
+    emit sessionDoubleClicked(name, idxInCfg);
 }
 
 void QWoSessionManager::onTimeout()
@@ -158,7 +159,8 @@ void QWoSessionManager::onEditReturnPressed()
         idx = m_proxyModel->index(0, 0);
     }
     QString target = idx.data().toString();
-    emit sessionDoubleClicked(target);
+    int idxInCfg = idx.data(ROLE_INDEX).toInt();
+    emit sessionDoubleClicked(target, idxInCfg);
 }
 
 void QWoSessionManager::onListViewItemOpen()
@@ -168,7 +170,8 @@ void QWoSessionManager::onListViewItemOpen()
         idx = m_proxyModel->index(0, 0);
     }
     QString target = idx.data().toString();
-    emit sessionDoubleClicked(target);
+    int idxInCfg = idx.data(ROLE_INDEX).toInt();
+    emit sessionDoubleClicked(target, idxInCfg);
 }
 
 void QWoSessionManager::onListViewItemReload()
@@ -220,7 +223,7 @@ bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
     if(!mi.isValid()) {
         m_list->clearSelection();
     }
-    QVariant idx = mi.data(ITEM_INDEX);
+    QVariant idx = mi.data(ROLE_INDEX);
     m_menu->setProperty("itemIndex", idx);
     m_menu->exec(ev->globalPos());
     return true;
