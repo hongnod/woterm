@@ -90,6 +90,10 @@ void QWoHostInfoEdit::onButtonJumpBrowserClicked()
 {
     QWoHostSimpleList dlg(this);
     dlg.exec();
+    HostInfo hi;
+    if(dlg.result(&hi)) {
+        ui->jump->setText(hi.name);
+    }
 }
 
 void QWoHostInfoEdit::onButtonIdentifyBrowserClicked()

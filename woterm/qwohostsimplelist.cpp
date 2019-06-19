@@ -8,7 +8,6 @@
 QWoHostSimpleList::QWoHostSimpleList(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::QWoHostList)
-    , m_result(-1)
 {
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
@@ -36,9 +35,13 @@ QWoHostSimpleList::~QWoHostSimpleList()
     delete ui;
 }
 
-int QWoHostSimpleList::result()
+bool QWoHostSimpleList::result(HostInfo *phi)
 {
-    return m_result;
+    if(m_result.host.isEmpty()) {
+        return false;
+    }
+    *phi = m_result;
+    return true;
 }
 
 void QWoHostSimpleList::onEditTextChanged(const QString &txt)
@@ -63,13 +66,13 @@ void QWoHostSimpleList::onListItemDoubleClicked(const QModelIndex &item)
     if(name == "") {
         return;
     }
-    m_result = item.data(ROLE_INDEX).toInt();
+    m_result = item.data(ROLE_HOSTINFO).value<HostInfo>();
     close();
 }
 
 void QWoHostSimpleList::onOpenSelectSessions()
 {
     QModelIndex item = ui->hostList->currentIndex();
-    m_result = item.data(ROLE_INDEX).toInt();
+    m_result = item.data(ROLE_HOSTINFO).value<HostInfo>();
     close();
 }

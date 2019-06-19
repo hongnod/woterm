@@ -21,7 +21,7 @@ public:
     explicit QWoHostSimpleList(QWidget *parent = nullptr);
     ~QWoHostSimpleList();
 
-    int result();
+    bool result(HostInfo *phi);
 private slots:
     void onEditTextChanged(const QString& txt);
     void onListItemDoubleClicked(const QModelIndex& item);
@@ -32,7 +32,7 @@ private:
     Ui::QWoHostList *ui;
     QPointer<QWoHostListModel> m_model;
     QPointer<QSortFilterProxyModel> m_proxyModel;
-    int m_result;
+    HostInfo m_result;
 };
 
 #endif // QWOHOSTSIMPLELIST_H
