@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 
 #define ROLE_INDEX   (Qt::UserRole+1)
+#define ROLE_HOSTINFO (Qt::UserRole+2)
 
 class QWoHostListModel : public QAbstractListModel
 {

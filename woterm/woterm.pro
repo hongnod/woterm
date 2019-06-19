@@ -16,8 +16,8 @@ SOURCES += main.cpp \
     qwowidget.cpp \
     qwosessionmanager.cpp \
     aes.cpp \
-    aes_test.cpp \
     qwosshconf.cpp \
+    qwoglobal.cpp \
     qwohostinfolist.cpp \
     qwoutils.cpp \
     qwohostinfoedit.cpp \

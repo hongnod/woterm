@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QWidget>
-
 #include <QPointer>
+#include "qwoglobal.h"
+
 class QLineEdit;
 class QListWidget;
 class QPushButton;
@@ -20,8 +21,8 @@ public:
     virtual ~QWoSessionManager();
 signals:
     void aboutToClose(QCloseEvent* event);
-    void sessionDoubleClicked(const QString& session, int idxInCfg);
-    void sessionBatchClicked(const QStringList& sessions);
+    void sessionDoubleClicked(const HostInfo& hi);
+    void sessionBatchClicked(const QVariantList& his);
 private:
     void init();
     void refreshList();

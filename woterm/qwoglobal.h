@@ -13,3 +13,7 @@ typedef struct{
     QString proxyJump;
     QString memo;
 }HostInfo;
+
+Q_DECLARE_METATYPE(HostInfo)
+
+

@@ -91,12 +91,10 @@ void QWoSessionManager::onOpenSelectSessions()
 {
     int cnt = m_proxyModel->rowCount();
     qDebug() << "rowCount:" << cnt;
-    QStringList sessions;
+    QVariantList sessions;
     for(int i = 0; i < cnt; i++) {
         QModelIndex mi = m_proxyModel->index(i, 0);
-        QString name = mi.data().toString();
-        qDebug() << "name:" << name << "row:" << mi.row();
-        sessions << name;
+        sessions << mi.data(ROLE_HOSTINFO);
     }
     emit sessionBatchClicked(sessions);
 }
@@ -120,16 +118,13 @@ void QWoSessionManager::onEditTextChanged(const QString &txt)
 
 void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
 {
-    QString name = item.data().toString();
-    if(name == "") {
+    HostInfo hi = item.data(ROLE_HOSTINFO).value<HostInfo>();
+    if(hi.name == "") {
         return;
     }
-    int idxInCfg = item.data(ROLE_INDEX).toInt();
-    QVariant v = item.data();
-    qDebug() << "server:" << name << "row:" << item.row() << "v:" << v.toString() << "idxInCfg" << idxInCfg;
+    qDebug() << "server:" << hi.name;
 
-
-    emit sessionDoubleClicked(name, idxInCfg);
+    emit sessionDoubleClicked(hi);
 }
 
 void QWoSessionManager::onTimeout()
@@ -158,9 +153,8 @@ void QWoSessionManager::onEditReturnPressed()
     if(idx.isValid()) {
         idx = m_proxyModel->index(0, 0);
     }
-    QString target = idx.data().toString();
-    int idxInCfg = idx.data(ROLE_INDEX).toInt();
-    emit sessionDoubleClicked(target, idxInCfg);
+    const HostInfo& hi = idx.data(ROLE_HOSTINFO).value<HostInfo>();
+    emit sessionDoubleClicked(hi);
 }
 
 void QWoSessionManager::onListViewItemOpen()
@@ -169,9 +163,8 @@ void QWoSessionManager::onListViewItemOpen()
     if(idx.isValid()) {
         idx = m_proxyModel->index(0, 0);
     }
-    QString target = idx.data().toString();
-    int idxInCfg = idx.data(ROLE_INDEX).toInt();
-    emit sessionDoubleClicked(target, idxInCfg);
+    const HostInfo& hi = idx.data(ROLE_HOSTINFO).value<HostInfo>();
+    emit sessionDoubleClicked(hi);
 }
 
 void QWoSessionManager::onListViewItemReload()

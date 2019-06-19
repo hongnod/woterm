@@ -65,6 +65,11 @@ QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
     if(role == ROLE_INDEX) {
         return index.row();
     }
+    if(role == ROLE_HOSTINFO) {
+        QVariant v;
+        v.setValue(hi);
+        return v;
+    }
     return QVariant();
 }
 

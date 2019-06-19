@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qwoglobal.h"
+
 #include <QMainWindow>
 #include <QPointer>
 
@@ -22,8 +24,8 @@ private slots:
     void onNewTerm();
     void onOpenTerm();
     void onEditConfig();
-    void onSessionDoubleClicked(const QString& name, int idxInCfg);
-    void onSessionBatchClicked(const QStringList& sessions);
+    void onSessionDoubleClicked(const HostInfo& hi);
+    void onSessionBatchClicked(const QVariantList& his);
     void onProcessStartCheck();
 
 private:

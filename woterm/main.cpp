@@ -4,7 +4,9 @@
 #include <QMenuBar>
 #include <QProcess>
 #include <QMessageBox>
+#include <QList>
 
+#include "qwoglobal.h"
 #include "qwomainwindow.h"
 #include "qwotermwidget.h"
 #include "qwosshprocess.h"
