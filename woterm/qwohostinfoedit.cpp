@@ -30,7 +30,7 @@ QWoHostInfoEdit::QWoHostInfoEdit(int idx, QWidget *parent)
     ui->host->setText(hi.host);
     ui->port->setText(QString("%1").arg(hi.port));
     ui->memo->setPlainText(hi.memo);
-    ui->userName->setText(hi.user);
+    ui->userName->setEditText(hi.user);
     ui->password->setText(hi.password);
     ui->identify->setText(hi.identityFile);
     if(!hi.password.isEmpty()) {
@@ -38,7 +38,7 @@ QWoHostInfoEdit::QWoHostInfoEdit(int idx, QWidget *parent)
     }else{
         ui->authType->setCurrentText("IdentifyFile");
     }
-    ui->jump->setText(hi.proxyJump);
+    ui->jump->setEditText(hi.proxyJump);
 }
 
 QWoHostInfoEdit::~QWoHostInfoEdit()
@@ -61,10 +61,10 @@ void QWoHostInfoEdit::onButtonSaveClicked()
     hi.host = ui->host->text();
     hi.port = ui->port->text().toInt();
     hi.memo = ui->memo->toPlainText();
-    hi.user = ui->userName->text();
+    hi.user = ui->userName->currentText();
     hi.password = ui->password->text();
     hi.identityFile = ui->identify->text();
-    hi.proxyJump = ui->jump->text();
+    hi.proxyJump = ui->jump->currentText();
 
     if(hi.name.isEmpty()) {
         QMessageBox::warning(this, tr("Info"), tr("The name can't be empty"));
@@ -92,7 +92,7 @@ void QWoHostInfoEdit::onButtonJumpBrowserClicked()
     dlg.exec();
     HostInfo hi;
     if(dlg.result(&hi)) {
-        ui->jump->setText(hi.name);
+        ui->jump->setEditText(hi.name);
     }
 }
 
