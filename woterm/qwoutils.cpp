@@ -15,8 +15,6 @@ void QWoUtils::setLayoutVisible(QLayout *layout, bool visible)
         QWidget *w = item->widget();
         if(w) {
             w->setVisible(visible);
-        }else{
-            QSpacerItem *spacer = item->spacerItem();
         }
     }
 }
