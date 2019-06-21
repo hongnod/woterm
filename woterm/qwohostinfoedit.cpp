@@ -3,11 +3,13 @@
 #include "qwoutils.h"
 #include "qwosshconf.h"
 #include "qwohostsimplelist.h"
+#include "qwosetting.h"
 
 #include <QMessageBox>
 #include <QPlainTextEdit>
 #include <QFileDialog>
 #include <QDebug>
+#include <QStringListModel>
 
 QWoHostInfoEdit::QWoHostInfoEdit(QWidget *parent)
     : QDialog(parent)
@@ -32,7 +34,7 @@ QWoHostInfoEdit::QWoHostInfoEdit(int idx, QWidget *parent)
     ui->memo->setPlainText(hi.memo);
     ui->userName->setEditText(hi.user);
     ui->password->setText(hi.password);
-    ui->identify->setText(hi.identityFile);
+    ui->identify->setEditText(hi.identityFile);
     if(!hi.password.isEmpty()) {
         ui->authType->setCurrentText("Password");
     }else{
@@ -63,7 +65,7 @@ void QWoHostInfoEdit::onButtonSaveClicked()
     hi.memo = ui->memo->toPlainText();
     hi.user = ui->userName->currentText();
     hi.password = ui->password->text();
-    hi.identityFile = ui->identify->text();
+    hi.identityFile = QDir::toNativeSeparators(ui->identify->currentText());
     hi.proxyJump = ui->jump->currentText();
 
     if(hi.name.isEmpty()) {
@@ -84,6 +86,39 @@ void QWoHostInfoEdit::onButtonSaveClicked()
         return;
     }
     QWoSshConf::instance()->modify(m_idx, hi);
+    if(!hi.identityFile.isEmpty())
+    {
+        QVariant v = QWoSetting::value("history/identifyList");
+        QStringList el = v.toStringList();
+        el.removeAll(hi.identityFile);
+        el.insert(0, hi.identityFile);
+        if(el.length() > 5) {
+            el.removeLast();
+        }
+        QWoSetting::setValue("history/identifyList", el);
+    }
+    if(!hi.user.isEmpty())
+    {
+        QVariant v = QWoSetting::value("history/userNameList");
+        QStringList el = v.toStringList();
+        el.removeAll(hi.user);
+        el.insert(0, hi.user);
+        if(el.length() > 5) {
+            el.removeLast();
+        }
+        QWoSetting::setValue("history/userNameList", el);
+    }
+    if(!hi.proxyJump.isEmpty())
+    {
+        QVariant v = QWoSetting::value("history/proxyJumpList");
+        QStringList el = v.toStringList();
+        el.removeAll(hi.proxyJump);
+        el.insert(0, hi.proxyJump);
+        if(el.length() > 5) {
+            el.removeLast();
+        }
+        QWoSetting::setValue("history/proxyJumpList", el);
+    }
 }
 
 void QWoHostInfoEdit::onButtonJumpBrowserClicked()
@@ -100,7 +135,8 @@ void QWoHostInfoEdit::onButtonIdentifyBrowserClicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"));
     qDebug() << "fileName" << fileName;
-    ui->identify->setText(fileName);
+    fileName = QDir::toNativeSeparators(fileName);
+    ui->identify->setCurrentText(fileName);
 }
 
 void QWoHostInfoEdit::init()
@@ -117,4 +153,25 @@ void QWoHostInfoEdit::init()
     QObject::connect(ui->save, SIGNAL(clicked()),  this, SLOT(onButtonSaveClicked()));
     QObject::connect(ui->identifyBrowser, SIGNAL(clicked()),  this, SLOT(onButtonIdentifyBrowserClicked()));
     QObject::connect(ui->jumpBrowser, SIGNAL(clicked()),  this, SLOT(onButtonJumpBrowserClicked()), Qt::QueuedConnection);
+    {
+        QVariant v = QWoSetting::value("history/identifyList");
+        QStringList el = v.toStringList();
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(el);
+        ui->identify->setModel(model);
+    }
+    {
+        QVariant v = QWoSetting::value("history/userNameList");
+        QStringList el = v.toStringList();
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(el);
+        ui->userName->setModel(model);
+    }
+    {
+        QVariant v = QWoSetting::value("history/proxyJumpList");
+        QStringList el = v.toStringList();
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(el);
+        ui->jump->setModel(model);
+    }
 }
