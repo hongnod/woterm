@@ -6,6 +6,8 @@ include(../qtermwidget/qtermwidget.pri)
 DESTDIR = $$PROJECT_BINDIR
 unix:QMAKE_RPATHDIR+=$$PROJECT_LIBDIR
 SOURCES += main.cpp \
+    qwolocalserver.cpp \
+    qwolocalsocket.cpp \
     qwotermwidget.cpp \
     qwoprocess.cpp \
     qwosshprocess.cpp \
@@ -24,6 +26,8 @@ SOURCES += main.cpp \
     qwohostlistmodel.cpp
 
 HEADERS += \
+    qwolocalserver.h \
+    qwolocalsocket.h \
     qwotermwidget.h \
     qwoprocess.h \
     qwosshprocess.h \
