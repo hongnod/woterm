@@ -13,9 +13,13 @@
 #include "qwosetting.h"
 #include "qwosshconf.h"
 
+#include "qwoipcfunction.h"
+#include "qwoipctest.h"
+
 void test()
 {
-
+    static QWoIpcTest test;
+    test.start();
 }
 
 int main(int argc, char *argv[])

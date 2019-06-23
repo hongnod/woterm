@@ -4,12 +4,12 @@
 #include <QPointer>
 
 class QLocalSocket;
-class QWoLocalSocket : public QObject
+class QWoIpcFunction : public QObject
 {
     Q_OBJECT
 public:
-    QWoLocalSocket(QLocalSocket *socket, QObject *parent=nullptr);
-    virtual ~QWoLocalSocket();
+    explicit QWoIpcFunction(QLocalSocket *socket, QObject *parent=nullptr);
+    virtual ~QWoIpcFunction();
 private:
     QPointer<QLocalSocket> m_socket;
 };
