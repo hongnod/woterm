@@ -1,5 +1,5 @@
 # Woterm
-custom terminal base on qtermwidget and openssl7.9 and other else tool like zmodem.
+custom terminal base on qtermwidget and openssl7.9(do you mean openssh7.9?) and other else tool like zmodem.
 
 ## Overview
 
