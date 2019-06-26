@@ -10,4 +10,6 @@ public:
     QWoIpc();
 };
 
+int WOIPCSHARED_EXPORT ipc_connect(char *name);
+
 #endif // QWOIPC_H
