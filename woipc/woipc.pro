@@ -13,13 +13,16 @@ DESTDIR = $$PWD/../bin
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
-        qwoipc.cpp \
-        qwomain.cpp
+    qwoipc.cpp \
+    qwomain.cpp \
+    qwosocket.cpp
+
 
 HEADERS += \
-        qwomain.h \
-        qwoipc.h \
-        woipc_global.h 
+    qwomain.h \
+    qwoipc.h \
+    woipc_global.h \
+    qwosocket.h
 
 unix {
     target.path = /usr/lib

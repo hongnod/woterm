@@ -1,4 +1,5 @@
 #include "qwomain.h"
+#include "qwosocket.h"
 
 #include <QDebug>
 #include <QEventLoop>
@@ -21,5 +22,8 @@ void QWoMain::run()
     char*** argv = __p___argv();
     int* argc = __p___argc();
     QCoreApplication app(*argc, *argv);
+
+    QWoSocket socket;
+    socket.connect("IpcServer");
     app.exec();
 }
