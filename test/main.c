@@ -24,6 +24,7 @@ int main()
     IpcConnect = (FunIpcConnect)GetProcAddress(hdl, "IpcConnect");
     IpcCall = (FunIpcCall)GetProcAddress(hdl, "IpcCall");
     IpcClose = (FunIpcClose)GetProcAddress(hdl, "IpcClose");
+    IpcInit();
     printf("press c to continue.");
     while(getchar() != 'c') {
         printf("press c to continue.");
