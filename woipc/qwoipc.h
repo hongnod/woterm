@@ -2,6 +2,7 @@
 #define QWOIPC_H
 
 #include "woipc_global.h"
+#include <QThread>
 
 class WOIPCSHARED_EXPORT QWoIpc
 {

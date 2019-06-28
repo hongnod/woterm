@@ -1,10 +1,10 @@
 #include "qwoipc.h"
+#include "qwothread.h"
 
 
 QWoIpc::QWoIpc()
 {
 }
-
 
 int IpcConnect(const char *name, FunIpcCallBack cb)
 {
@@ -23,5 +23,8 @@ bool IpcClose(int hdl)
 
 int IpcInit()
 {
+    static QWoThread thread;
+    thread.start();
     return 1;
 }
+
