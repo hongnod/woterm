@@ -14,10 +14,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         qwoipc.cpp \
-        qwothread.cpp
+        qwomain.cpp
 
 HEADERS += \
-        qwothread.h \
+        qwomain.h \
         qwoipc.h \
         woipc_global.h 
 

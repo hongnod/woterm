@@ -1,5 +1,5 @@
 #include "qwoipc.h"
-#include "qwothread.h"
+#include "qwomain.h"
 
 
 QWoIpc::QWoIpc()
@@ -23,7 +23,7 @@ bool IpcClose(int hdl)
 
 int IpcInit()
 {
-    static QWoThread thread;
+    static QWoMain thread;
     thread.start();
     return 1;
 }
