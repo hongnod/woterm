@@ -3,11 +3,13 @@
 #include <QLocalSocket>
 #include <QByteArray>
 
+#include "qwoipc.h"
+
 class QWoSocket : public QObject
 {
     Q_OBJECT
 public:
-    explicit QWoSocket(QObject *parent=nullptr);
+    explicit QWoSocket(FunIpcCallBack cb, QObject *parent=nullptr);
     virtual ~QWoSocket();
 
     void connect(const QString& name);
@@ -21,6 +23,7 @@ private slots:
 
 private:
     QPointer<QLocalSocket> m_socket;
+    FunIpcCallBack m_cb;
 };
 
 bool qSendTo(QLocalSocket *socket, const QStringList &funArgs);

@@ -18,12 +18,9 @@ QWoMain::~QWoMain()
 
 void QWoMain::run()
 {
-    qDebug() << "QWoThread";
     char*** argv = __p___argv();
     int* argc = __p___argc();
     QCoreApplication app(*argc, *argv);
-
-    QWoSocket socket;
-    socket.connect("IpcServer");
+    qDebug() << "start app thread";
     app.exec();
 }

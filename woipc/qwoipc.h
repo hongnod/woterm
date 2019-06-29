@@ -11,7 +11,7 @@ public:
     QWoIpc();
 };
 
-typedef void (*FunIpcCallBack)(int hdl, char *funName, char *argv[]);
+typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 
 #ifdef __cplusplus
 extern "C" {

@@ -41,8 +41,9 @@ QStringList qRecvFrom(QLocalSocket *socket)
 }
 
 
-QWoSocket::QWoSocket(QObject *parent)
-    :QObject (parent)
+QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
+    : QObject(parent)
+    , m_cb(cb)
 {
     m_socket = new QLocalSocket(parent);
     QObject::connect(m_socket, SIGNAL(connected()), this, SLOT(onConnected()));
