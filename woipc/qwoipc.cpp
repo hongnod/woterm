@@ -1,8 +1,9 @@
 #include "qwoipc.h"
 #include "qwomain.h"
-#include "qwosocket.h"
 
 #include <QCoreApplication>
+
+static QWoMain gmain;
 
 QWoIpc::QWoIpc()
 {
@@ -10,11 +11,7 @@ QWoIpc::QWoIpc()
 
 int IpcConnect(const char *name, FunIpcCallBack cb)
 {
-    QThread *thread = QCoreApplication::instance()->thread();
-    QWoSocket *socket = new QWoSocket(cb, thread);
-    socket->moveToThread(thread);
-    socket->connect(name);
-    return 0;
+    return gmain.connect(name, cb);
 }
 
 int IpcCall(int hdl, const char *funName, char *argv[])
@@ -29,9 +26,8 @@ bool IpcClose(int hdl)
 
 int IpcInit()
 {
-    static QWoMain thread;
-    thread.start();
-    thread.wait(1000);
+    gmain.start();
+    gmain.wait(1000);
     return 1;
 }
 

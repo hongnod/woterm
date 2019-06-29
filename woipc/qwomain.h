@@ -1,6 +1,12 @@
 #pragma once
 
+#include "qwoipc.h"
+
 #include <QThread>
+#include <QLocalSocket>
+#include <QMap>
+#include <QPointer>
+
 
 class QWoMain : public QThread
 {
@@ -8,6 +14,28 @@ class QWoMain : public QThread
 public:
     explicit QWoMain(QObject *parent=nullptr);
     virtual ~QWoMain();
+    void init();
+
+    int connect(const QString& name, FunIpcCallBack cb);
+    bool send(int id, const QStringList& funArgs);
+
+private:
+signals:
+    void ready(int id,const QString& name);
+
+private slots:
+    void onConnected();
+    void onDisconnected();
+    void onError(QLocalSocket::LocalSocketError socketError);
+    void onReadyRead();
+    void onReady(int id, const QString& name);
+
 protected:
     virtual void run();
+private:
+    QMap<int, QPointer<QLocalSocket>> m_locals;
+    QMap<int, FunIpcCallBack> m_cbs;
 };
+
+bool qSendTo(QLocalSocket *socket, const QStringList &funArgs);
+QStringList qRecvFrom(QLocalSocket *socket);
