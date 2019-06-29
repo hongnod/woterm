@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <Windows.h>
 
-typedef void (*FunIpcCallBack)(int hdl, char *funName, char *argv[]);
+typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 typedef int (*FunIpcConnect)(const char* name, FunIpcCallBack cb);
 typedef int (*FunIpcCall)(int hdl, const char* funName, char *argv[]);
 typedef int (*FunIpcClose)(int hdl);
@@ -11,6 +11,10 @@ static FunIpcInit IpcInit;
 static FunIpcConnect IpcConnect;
 static FunIpcCall IpcCall;
 static FunIpcClose IpcClose;
+
+void MyIpcCallBack(int hdl, char *funArgv[], int argc) {
+    printf("%d - %s - %d", hdl, funArgv[0], argc);
+}
 
 int main()
 {
@@ -25,6 +29,7 @@ int main()
     IpcCall = (FunIpcCall)GetProcAddress(hdl, "IpcCall");
     IpcClose = (FunIpcClose)GetProcAddress(hdl, "IpcClose");
     IpcInit();
+    IpcConnect("IpcServer", MyIpcCallBack);
     printf("press c to continue.");
     while(getchar() != 'c') {
         printf("press c to continue.");

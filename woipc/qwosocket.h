@@ -15,11 +15,16 @@ public:
     void connect(const QString& name);
     bool send(const QStringList& funArgs);
 
+private:
+signals:
+    void start(const QString& name);
+
 private slots:
     void onConnected();
     void onDisconnected();
     void onError(QLocalSocket::LocalSocketError socketError);
     void onReadyRead();
+    void onStart(const QString& name);
 
 private:
     QPointer<QLocalSocket> m_socket;

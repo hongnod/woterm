@@ -50,6 +50,8 @@ QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
     QObject::connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
     QObject::connect(m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
     QObject::connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    bool ok = QObject::connect(this, SIGNAL(start(const QString&)), this, SLOT(onStart(const QString&)), Qt::QueuedConnection);
+    qDebug() << ok;
 }
 
 QWoSocket::~QWoSocket()
@@ -59,7 +61,7 @@ QWoSocket::~QWoSocket()
 
 void QWoSocket::connect(const QString &name)
 {
-    m_socket->connectToServer(name);
+    emit start(name);
 }
 
 bool QWoSocket::send(const QStringList& funArgs)
@@ -97,4 +99,9 @@ void QWoSocket::onReadyRead()
     QStringList funArgs;
     funArgs << "sendMessage" << "a" << "bd" << QString("%1").arg(i);
     qSendTo(local, funArgs);
+}
+
+void QWoSocket::onStart(const QString& name)
+{
+    m_socket->connectToServer(name);
 }
