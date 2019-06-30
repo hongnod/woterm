@@ -1,17 +1,18 @@
 #include "qwoipc.h"
 #include "qwomain.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <process.h>
+
 #include <QCoreApplication>
 
-static QWoMain gmain;
-
-QWoIpc::QWoIpc()
-{
-}
+static QWoApp woApp;
 
 int IpcConnect(const char *name, FunIpcCallBack cb)
 {
-    return gmain.connect(name, cb);
+    return QWoMain::instance()->connect(name, cb);
 }
 
 int IpcCall(int hdl, const char *funName, char *argv[])
@@ -26,8 +27,20 @@ bool IpcClose(int hdl)
 
 int IpcInit()
 {
-    gmain.start();
-    gmain.wait(1000);
+    if(woApp.isRunning()) {
+        return 0;
+    }
+    woApp.start();
+    woApp.wait(1000);
     return 1;
 }
 
+void QWoApp::run()
+{
+    char*** argv = __p___argv();
+    int* argc = __p___argc();
+    QCoreApplication app(*argc, *argv);
+    qDebug() << "start app thread";
+    QWoMain::instance()->init();
+    app.exec();
+}

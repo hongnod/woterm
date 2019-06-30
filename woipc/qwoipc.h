@@ -2,14 +2,8 @@
 #define QWOIPC_H
 
 #include "woipc_global.h"
+
 #include <QThread>
-
-class WOIPCSHARED_EXPORT QWoIpc
-{
-
-public:
-    QWoIpc();
-};
 
 typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 
@@ -26,5 +20,12 @@ int WOIPCSHARED_EXPORT IpcInit(void);
 #ifdef __cplusplus
 }
 #endif
+
+class QWoApp : public QThread
+{
+    Q_OBJECT
+private:
+    virtual void run();
+};
 
 #endif // QWOIPC_H

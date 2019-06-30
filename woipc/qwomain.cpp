@@ -6,6 +6,9 @@
 #include <QLocalSocket>
 #include <QDataStream>
 
+#include <stdlib.h>
+#include <stdio.h>
+
 bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
 {
     QByteArray buf;
@@ -44,7 +47,7 @@ QStringList qRecvFrom(QLocalSocket *socket)
 #define SOCKET_LOCALID ("localid")
 
 QWoMain::QWoMain(QObject *parent)
-    : QThread (parent)
+    : QObject(parent)
 {
 
 }
@@ -52,6 +55,12 @@ QWoMain::QWoMain(QObject *parent)
 QWoMain::~QWoMain()
 {
 
+}
+
+QWoMain *QWoMain::instance()
+{
+    static QWoMain main;
+    return &main;
 }
 
 void QWoMain::init()
@@ -67,6 +76,7 @@ int QWoMain::connect(const QString &name, FunIpcCallBack cb)
     m_locals.insert(lsid, local);
     m_cbs.insert(lsid, cb);
     local->setProperty(SOCKET_LOCALID, lsid);
+    local->moveToThread(QCoreApplication::instance()->thread());
     QObject::connect(local, SIGNAL(connected()), this, SLOT(onConnected()));
     QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
     QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
@@ -106,9 +116,7 @@ void QWoMain::onReadyRead()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     QStringList data = qRecvFrom(local);
-    if(data.length() <= 0) {
-        return;
-    }
+
     qDebug() << data;
     static int i = 0;
     i++;
@@ -124,14 +132,4 @@ void QWoMain::onReady(int id, const QString &name)
     }
     QLocalSocket *local = m_locals[id];
     local->connectToServer(name);
-}
-
-void QWoMain::run()
-{
-    char*** argv = __p___argv();
-    int* argc = __p___argc();
-    QCoreApplication app(*argc, *argv);
-    init();
-    qDebug() << "start app thread";
-    app.exec();
 }
