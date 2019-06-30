@@ -26,7 +26,7 @@ public:
 
 private:
 signals:
-    void ipcReady(int id,const QString& name);
+    void ipcConnect(int id,const QString& name);
     void ipcSend(int id, const QStringList &funArgs);
     void ipcClose(int id);
 
@@ -35,7 +35,7 @@ private slots:
     void onDisconnected();
     void onError(QLocalSocket::LocalSocketError socketError);
     void onReadyRead();
-    void onIpcReady(int id, const QString& name);
+    void onIpcConnect(int id, const QString& name);
 
     void onIpcSend(int id, const QStringList &funArgs);
     void onIpcClose(int id);

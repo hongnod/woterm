@@ -67,27 +67,19 @@ QWoMain *QWoMain::instance()
 void QWoMain::init()
 {
     QObject::connect(this, SIGNAL(ipcClose(int)), this, SLOT(onIpcClose(int)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(ipcReady(int,const QString&)), this, SLOT(onIpcReady(int,const QString&)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(ipcConnect(int,const QString&)), this, SLOT(onIpcConnect(int,const QString&)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(ipcSend(int,const QStringList&)), this, SLOT(onIpcSend(int,const QStringList&)), Qt::QueuedConnection);
 }
 
 int QWoMain::connect(const QString &name, FunIpcCallBack cb)
 {
     static int cntid = 1001;
-    QLocalSocket *local = new QLocalSocket(this);
     int lsid = cntid++;
-    m_locals.insert(lsid, local);
     m_cbs.insert(lsid, cb);
-    local->setProperty(SOCKET_LOCALID, lsid);
-    local->moveToThread(QCoreApplication::instance()->thread());
-    QObject::connect(local, SIGNAL(connected()), this, SLOT(onConnected()));
-    QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
-    QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
-    QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-    emit ipcReady(lsid, name);
+    emit ipcConnect(lsid, name);
     QMutex mtx;
     mtx.lock();
-    m_cond.wait(&mtx, 3000);
+    m_cond.wait(&mtx, 5000);
     mtx.unlock();
     return lsid;
 }
@@ -117,14 +109,18 @@ void QWoMain::onDisconnected()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     local->deleteLater();
-    m_cond.wakeAll();
+    int id = local->property(SOCKET_LOCALID).toInt();
+    m_locals.remove(id);
+    m_cbs.remove(id);
 }
 
 void QWoMain::onError(QLocalSocket::LocalSocketError socketError)
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     local->deleteLater();
-    m_cond.wakeAll();
+    int id = local->property(SOCKET_LOCALID).toInt();
+    m_locals.remove(id);
+    m_cbs.remove(id);
 }
 
 void QWoMain::onReadyRead()
@@ -150,13 +146,21 @@ void QWoMain::onReadyRead()
     }
 }
 
-void QWoMain::onIpcReady(int id, const QString &name)
+void QWoMain::onIpcConnect(int id, const QString &name)
 {
+    QLocalSocket *local = new QLocalSocket(this);
+    m_locals.insert(id, local);
+    local->setProperty(SOCKET_LOCALID, id);
+    local->moveToThread(QCoreApplication::instance()->thread());
+    QObject::connect(local, SIGNAL(connected()), this, SLOT(onConnected()));
+    QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+    QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
+    QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     if(!m_locals.contains(id)) {
         return;
     }
-    QLocalSocket *local = m_locals[id];
     local->connectToServer(name);
+    m_cond.wakeAll();
 }
 
 void QWoMain::onIpcSend(int id, const QStringList &funArgs)
