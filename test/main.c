@@ -40,8 +40,6 @@ int main()
     IpcClose = (FunIpcClose)GetProcAddress(hdl, "IpcClose");
     IpcInit();
     int id = IpcConnect("IpcServer", MyIpcCallBack);
-    Sleep(1000);
-
     for(int i = 0; i < 1; i++) {
         char name[10];
         sprintf(name, "%d", i);
@@ -55,7 +53,6 @@ int main()
         printf("press c to continue.");
     }
     IpcClose(id);
-    Sleep(1000);
     FreeLibrary(hdl);
     printf("exit now.");
     return 0;

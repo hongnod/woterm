@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QLocalSocket>
 #include <QDataStream>
+#include <QMutex>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -84,6 +85,10 @@ int QWoMain::connect(const QString &name, FunIpcCallBack cb)
     QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
     QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     emit ipcReady(lsid, name);
+    QMutex mtx;
+    mtx.lock();
+    m_cond.wait(&mtx, 3000);
+    mtx.unlock();
     return lsid;
 }
 
@@ -95,24 +100,31 @@ void QWoMain::send(int id, const QStringList &funArgs)
 void QWoMain::close(int id)
 {
     emit ipcClose(id);
+    QMutex mtx;
+    mtx.lock();
+    m_cond.wait(&mtx, 3000);
+    mtx.unlock();
 }
 
 void QWoMain::onConnected()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     qSendTo(local, QStringList() << "sendMessage" << "A" << "b" << "cd");
+    m_cond.wakeAll();
 }
 
 void QWoMain::onDisconnected()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     local->deleteLater();
+    m_cond.wakeAll();
 }
 
 void QWoMain::onError(QLocalSocket::LocalSocketError socketError)
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     local->deleteLater();
+    m_cond.wakeAll();
 }
 
 void QWoMain::onReadyRead()
@@ -167,4 +179,5 @@ void QWoMain::onIpcClose(int id)
     QLocalSocket *local = m_locals[id];
     local->disconnectFromServer();
     local->close();
+    m_cond.wakeAll();
 }

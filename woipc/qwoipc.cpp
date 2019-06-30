@@ -7,6 +7,7 @@
 #include <process.h>
 
 #include <QCoreApplication>
+#include <QMutex>
 
 static QWoApp woApp;
 
@@ -37,8 +38,16 @@ int IpcInit()
         return 0;
     }
     woApp.start();
-    woApp.wait(1000);
     return 1;
+}
+
+void QWoApp::start()
+{
+    QMutex mtx;
+    mtx.lock();
+    QThread::start();
+    m_cond.wait(&mtx, 3000);
+    mtx.unlock();
 }
 
 void QWoApp::run()
@@ -48,5 +57,6 @@ void QWoApp::run()
     QCoreApplication app(*argc, *argv);
     qDebug() << "start app thread";
     QWoMain::instance()->init();
+    m_cond.wakeOne();
     app.exec();
 }

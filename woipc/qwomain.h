@@ -6,6 +6,7 @@
 #include <QLocalSocket>
 #include <QMap>
 #include <QPointer>
+#include <QWaitCondition>
 
 
 class QWoMain : public QObject
@@ -42,6 +43,7 @@ private slots:
 private:
     QMap<int, QPointer<QLocalSocket>> m_locals;
     QMap<int, FunIpcCallBack> m_cbs;
+    QWaitCondition m_cond;
 };
 
 

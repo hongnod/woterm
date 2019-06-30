@@ -4,6 +4,7 @@
 #include "woipc_global.h"
 
 #include <QThread>
+#include <QWaitCondition>
 
 typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 
@@ -24,8 +25,12 @@ int WOIPCSHARED_EXPORT IpcInit(void);
 class QWoApp : public QThread
 {
     Q_OBJECT
+public:
+    void start();
 private:
     virtual void run();
+private:
+    QWaitCondition m_cond;
 };
 
 #endif // QWOIPC_H
