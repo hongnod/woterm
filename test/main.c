@@ -13,7 +13,12 @@ static FunIpcCall IpcCall;
 static FunIpcClose IpcClose;
 
 void MyIpcCallBack(int hdl, char *funArgv[], int argc) {
-    printf("%d - %s - %d", hdl, funArgv[0], argc);
+    char buf[512] = {0};
+    for(int i =0; i < argc; i++) {
+        strcat_s(buf, 512, ",");
+        strcat_s(buf, 512, funArgv[i]);
+    }
+    printf("\r\n%s", buf);
 }
 
 int main()
