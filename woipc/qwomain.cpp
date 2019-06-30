@@ -65,7 +65,8 @@ QWoMain *QWoMain::instance()
 
 void QWoMain::init()
 {
-    QObject::connect(this, SIGNAL(ready(int,const QString&)), this, SLOT(onReady(int,const QString&)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(ipcClose(int)), this, SLOT(onIpcClose(int)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(ipcReady(int,const QString&)), this, SLOT(onIpcReady(int,const QString&)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(ipcSend(int,const QStringList&)), this, SLOT(onIpcSend(int,const QStringList&)), Qt::QueuedConnection);
 }
 
@@ -82,13 +83,18 @@ int QWoMain::connect(const QString &name, FunIpcCallBack cb)
     QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
     QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
     QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-    emit ready(lsid, name);
+    emit ipcReady(lsid, name);
     return lsid;
 }
 
 void QWoMain::send(int id, const QStringList &funArgs)
 {
     emit ipcSend(id, funArgs);
+}
+
+void QWoMain::close(int id)
+{
+    emit ipcClose(id);
 }
 
 void QWoMain::onConnected()
@@ -132,7 +138,7 @@ void QWoMain::onReadyRead()
     }
 }
 
-void QWoMain::onReady(int id, const QString &name)
+void QWoMain::onIpcReady(int id, const QString &name)
 {
     if(!m_locals.contains(id)) {
         return;
@@ -151,4 +157,14 @@ void QWoMain::onIpcSend(int id, const QStringList &funArgs)
         return;
     }
     qSendTo(local, funArgs);
+}
+
+void QWoMain::onIpcClose(int id)
+{
+    if(!m_locals.contains(id)) {
+        return;
+    }
+    QLocalSocket *local = m_locals[id];
+    local->disconnectFromServer();
+    local->close();
 }

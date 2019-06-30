@@ -27,6 +27,7 @@ bool IpcCall(int hdl, char *argv[], int argc)
 
 bool IpcClose(int hdl)
 {
+    QWoMain::instance()->close(hdl);
     return false;
 }
 

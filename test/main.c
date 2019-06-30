@@ -54,6 +54,8 @@ int main()
     while(getchar() != 'c') {
         printf("press c to continue.");
     }
+    IpcClose(id);
+    Sleep(1000);
     FreeLibrary(hdl);
     printf("exit now.");
     return 0;
