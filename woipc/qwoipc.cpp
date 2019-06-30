@@ -8,6 +8,7 @@
 
 #include <QCoreApplication>
 #include <QMutex>
+#include <QDebug>
 
 static QWoApp woApp;
 

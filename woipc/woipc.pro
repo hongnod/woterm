@@ -14,12 +14,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     qwoipc.cpp \
-    qwomain.cpp
+    qwomain.cpp \
+    qwosocket.cpp
 
 
 HEADERS += \
     qwomain.h \
     qwoipc.h \
+    qwosocket.h \
     woipc_global.h
 
 unix {
