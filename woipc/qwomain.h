@@ -14,11 +14,6 @@ class QWoMain : public QObject
 public:
     explicit QWoMain(QObject *parent=nullptr);
     virtual ~QWoMain();
-
-    static QWoMain *instance();
-
-    void init();
-
     int connect(const QString& name, FunIpcCallBack cb);
     void send(int id, const QStringList& funArgs);
     void close(int id);

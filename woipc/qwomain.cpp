@@ -24,16 +24,6 @@ QWoMain::~QWoMain()
 
 }
 
-QWoMain *QWoMain::instance()
-{
-    static QWoMain main;
-    return &main;
-}
-
-void QWoMain::init()
-{
-}
-
 int QWoMain::connect(const QString &name, FunIpcCallBack cb)
 {
     QWoSocket *local = new QWoSocket(cb);
@@ -52,7 +42,7 @@ void QWoMain::send(int id, const QStringList &funArgs)
 
 void QWoMain::close(int id)
 {
-    QWoSocket *local = m_locals.value(id);
+    QWoSocket *local = m_locals.take(id);
     if(local) {
         local->close();
     }

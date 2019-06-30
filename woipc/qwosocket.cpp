@@ -82,12 +82,14 @@ void QWoSocket::close()
     mtx.lock();
     m_cond.wait(&mtx, 5000);
     mtx.unlock();
+    deleteLater();
 }
 
 void QWoSocket::onConnected()
 {
+    static int pingCount = 0;
     QStringList funArgs;
-    funArgs << "ping";
+    funArgs << "ping" << QString("%1").arg(pingCount++);
     send(funArgs);
     m_cond.wakeAll();
 }

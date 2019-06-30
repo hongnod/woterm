@@ -23,8 +23,6 @@ signals:
     void ipcSend(const QStringList& funArgs);
     void ipcClose();
 
-    void ipcDisconnect();
-
 private slots:
     void onConnected();
 

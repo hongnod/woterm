@@ -11,10 +11,11 @@
 #include <QDebug>
 
 static QWoApp woApp;
+static QWoMain woMain;
 
 int IpcConnect(const char *name, FunIpcCallBack cb)
 {
-    return QWoMain::instance()->connect(name, cb);
+    return woMain.connect(name, cb);
 }
 
 bool IpcCall(int hdl, char *argv[], int argc)
@@ -23,13 +24,13 @@ bool IpcCall(int hdl, char *argv[], int argc)
     for(int i = 0; i < argc; i++) {
         args.push_back(argv[i]);
     }
-    QWoMain::instance()->send(hdl, args);
+    woMain.send(hdl, args);
     return true;
 }
 
 bool IpcClose(int hdl)
 {
-    QWoMain::instance()->close(hdl);
+    woMain.close(hdl);
     return false;
 }
 
@@ -57,7 +58,12 @@ void QWoApp::run()
     int* argc = __p___argc();
     QCoreApplication app(*argc, *argv);
     qDebug() << "start app thread";
-    QWoMain::instance()->init();
     m_cond.wakeOne();
     app.exec();
+}
+
+void IpcExit()
+{
+    woApp.exit(0);
+    woApp.wait(5000);
 }

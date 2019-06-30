@@ -16,6 +16,7 @@ int WOIPCSHARED_EXPORT IpcConnect(const char* name, FunIpcCallBack cb);
 bool WOIPCSHARED_EXPORT IpcCall(int hdl, char *argv[], int argc);
 bool WOIPCSHARED_EXPORT IpcClose(int hdl);
 int WOIPCSHARED_EXPORT IpcInit(void);
+void WOIPCSHARED_EXPORT IpcExit(void);
 
 
 #ifdef __cplusplus
