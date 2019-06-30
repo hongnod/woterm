@@ -114,7 +114,7 @@ void QWoMain::onReadyRead()
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     QStringList data = qRecvFrom(local);
     QVariant vid = local->property(SOCKET_LOCALID);
-    if(!vid.isValid()) {
+    if(!vid.isValid() || data.isEmpty()) {
         return;
     }
     int id = vid.toInt();
@@ -122,7 +122,7 @@ void QWoMain::onReadyRead()
     char *argv[100] = {};
     for(int i = 0; i < data.count(); i++) {
         std::string v = data.at(i).toStdString();
-        argv[i] = reinterpret_cast<char*>(malloc(v.length()+1));
+        argv[i] = reinterpret_cast<char*>(malloc(v.length()+20));
         strcpy_s(argv[i], v.length()+1, v.c_str());
     }
     cb(id, argv, data.count());

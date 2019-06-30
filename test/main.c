@@ -14,10 +14,15 @@ static FunIpcClose IpcClose;
 
 void MyIpcCallBack(int hdl, char *funArgv[], int argc) {
     char buf[512] = {0};
-    for(int i =0; i < argc; i++) {
+    strcat_s(buf, 512, funArgv[0]);
+    for(int i = 1; i < argc; i++) {
         strcat_s(buf, 512, ",");
         strcat_s(buf, 512, funArgv[i]);
     }
+    static int idx = 0;
+    idx++;
+    sprintf(funArgv[argc-1], "%d", idx);
+    IpcCall(hdl, funArgv, argc);
     printf("\r\n%s", buf);
 }
 
@@ -37,7 +42,7 @@ int main()
     int id = IpcConnect("IpcServer", MyIpcCallBack);
     Sleep(1000);
 
-    for(int i = 0; i < 1000; i++) {
+    for(int i = 0; i < 1; i++) {
         char name[10];
         sprintf(name, "%d", i);
         char *argv[] = {"sendMessage", "a", "c", name};
