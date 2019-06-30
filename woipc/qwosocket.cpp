@@ -110,6 +110,9 @@ void QWoSocket::onReadyRead()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     QStringList data = qRecvFrom(local);
+    if(data.isEmpty()) {
+        return;
+    }
     char *argv[100] = {};
     for(int i = 0; i < data.count(); i++) {
         std::string v = data.at(i).toStdString();
@@ -126,6 +129,7 @@ void QWoSocket::onReadyRead()
 void QWoSocket::onIpcConnect(const QString &name)
 {
     m_socket = new QLocalSocket(this);
+    QObject::connect(m_socket, SIGNAL(connected()), this, SLOT(onConnected()));
     QObject::connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
     QObject::connect(m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
     QObject::connect(m_socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
