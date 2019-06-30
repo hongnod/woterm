@@ -12,4 +12,5 @@ public:
     static QString zmodemRZPath();
     static QString sshProgramPath();
     static QString sshServerListPath();
+    static QString ipcProgramPath();
 };

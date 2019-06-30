@@ -16,6 +16,41 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 
+bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
+{
+    QByteArray buf;
+    QDataStream in(&buf, QIODevice::WriteOnly);
+    in << funArgs;
+    int length = buf.length();
+    socket->write((char*)&length, sizeof(int));
+    return socket->write(buf.data(), length) > 0;
+}
+
+QStringList qRecvFrom(QLocalSocket *socket)
+{
+    QByteArray buf;
+    int length;
+    if(socket->bytesAvailable() < 4) {
+        return QStringList();
+    }
+    if(socket->read((char*)&length, sizeof(int)) != sizeof(int)){
+        return QStringList();
+    }
+    buf.resize(length);
+    int trycnt = 10;
+    while(socket->bytesAvailable() < length && trycnt > 0) {
+        socket->waitForReadyRead(100);
+        trycnt--;
+    }
+    if(socket->read((char*)buf.data(), length) != length) {
+        return QStringList();
+    }
+    QStringList funArgs;
+    QDataStream out(buf);
+    out >> funArgs;
+    return funArgs;
+}
+
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     : QWoProcess (parent)
 {
@@ -39,6 +74,12 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
         QApplication::exit(0);
         return;
     }
+    QString ipc = QWoSetting::ipcProgramPath();
+    if(ipc.isEmpty()) {
+        QMessageBox::critical(m_term, "ipc", "can't find ipc program.");
+        QApplication::exit(0);
+        return;
+    }
     m_target = target;
     setProgram(program);
     QStringList args;
@@ -51,7 +92,8 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     m_server = new QLocalServer(this);
     m_server->listen(name);
     QStringList env = environment();
-    env << "TERM_MSG_CHANNEL="+name;
+    env << "TERM_MSG_IPC_NAME="+name;
+    env << "TERM_MSG_IPC_PROGRAM="+ipc;
     setEnvironment(env);
 
     QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));    
@@ -107,11 +149,11 @@ bool QWoSshProcess::isRzCommand(const QByteArray &ba)
 
 void QWoSshProcess::onNewConnection()
 {
-    QLocalSocket* local = m_server->nextPendingConnection();
-    local->setTextModeEnabled(true);
-    QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
-    QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
-    QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
+    m_ipc = m_server->nextPendingConnection();
+    m_ipc->setTextModeEnabled(true);
+    QObject::connect(m_ipc, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
+    QObject::connect(m_ipc, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
+    QObject::connect(m_ipc, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
 }
 
 void QWoSshProcess::onClientError(QLocalSocket::LocalSocketError socketError)
@@ -133,21 +175,13 @@ void QWoSshProcess::onClientDisconnected()
 void QWoSshProcess::onClientReadyRead()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
-    char buf[512];
-    buf[3] = '\0';
-    local->read(buf, 3);
-    int len = QString(buf).toInt();
-    buf[len] = '\0';
-    local->read(buf, len);
-    QString data(buf);
-    if(data.startsWith("isread")) {
-        local->setObjectName("reader");
-        m_reader = local;
-    }else if (data.startsWith("iswrite")) {
-        local->setObjectName("writer");
-        m_writer = local;
-        updateTermSize();
-    }else if (data.startsWith("getwinsize")) {
+    QStringList funArgs = qRecvFrom(local);
+    if(funArgs.length() <= 0) {
+        return;
+    }
+    if(funArgs[0] == "ping") {
+
+    }else if(funArgs[0] == "getwinsize") {
         updateTermSize();
     }
 }
@@ -254,15 +288,13 @@ void QWoSshProcess::onZmodemReadyReadStandardError()
 
 void QWoSshProcess::updateTermSize()
 {
-    if(m_writer == nullptr) {
-        return;
-    }
     int linecnt = m_term->screenLinesCount();
     int column = m_term->screenColumnsCount();
-    QString fun = QString("setwinsize(%1,%2)").arg(column).arg(linecnt);
-    QByteArray cmd = QString("%1%2").arg(fun.size(), 3, 10, QChar('0')).arg(fun).toUtf8();
-    //qDebug() << "length:" << cmd.length() << "cmd:" << cmd.data();
-    m_writer->write(cmd);
+    QStringList funArgs;
+    funArgs << "setwinsize" << QString("%1").arg(column) << QString("%1").arg(linecnt);
+    if(m_ipc) {
+        qSendTo(m_ipc, funArgs);
+    }
 }
 
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)

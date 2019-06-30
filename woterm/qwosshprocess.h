@@ -48,8 +48,7 @@ private:
     bool isRzCommand(const QByteArray& data);
 private:
     QPointer<QLocalServer> m_server;
-    QPointer<QLocalSocket> m_reader;
-    QPointer<QLocalSocket> m_writer;
+    QPointer<QLocalSocket> m_ipc;
     QPointer<QAction> m_zmodemDupl;
     QPointer<QAction> m_zmodemSend;
     QPointer<QAction> m_zmodemRecv;

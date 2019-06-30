@@ -31,6 +31,7 @@ QString QWoSetting::zmodemSZPath()
 #ifdef Q_OS_WIN
         path.append(".exe");
 #endif
+        path = QDir::toNativeSeparators(path);
         if(!QFile::exists(path)){
             return "";
         }
@@ -47,6 +48,7 @@ QString QWoSetting::zmodemRZPath()
 #ifdef Q_OS_WIN
         path.append(".exe");
 #endif
+        path = QDir::toNativeSeparators(path);
         if(!QFile::exists(path)){
             return "";
         }
@@ -63,6 +65,7 @@ QString QWoSetting::sshProgramPath()
 #ifdef Q_OS_WIN
         path.append(".exe");
 #endif
+        path = QDir::toNativeSeparators(path);
         if(!QFile::exists(path)){
             return "";
         }
@@ -76,6 +79,24 @@ QString QWoSetting::sshServerListPath()
     path = QWoSetting::value("ssh/serverList").toString();
     if(!QFile::exists(path)) {
         path = QDir::cleanPath(QApplication::applicationDirPath() + "/../config");
+        path = QDir::toNativeSeparators(path);
+        if(!QFile::exists(path)){
+            return "";
+        }
+    }
+    return path;
+}
+
+QString QWoSetting::ipcProgramPath()
+{
+    QString path;
+    path = QWoSetting::value("ipc/program").toString();
+    if(!QFile::exists(path)) {
+        path = QDir::cleanPath(QApplication::applicationDirPath() + "/woipc");
+#ifdef Q_OS_WIN
+        path.append(".dll");
+#endif
+        path = QDir::toNativeSeparators(path);
         if(!QFile::exists(path)){
             return "";
         }
