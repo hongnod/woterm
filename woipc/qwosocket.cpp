@@ -45,7 +45,7 @@ QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
     :QObject (parent)
     ,m_cb(cb)
 {
-    static int icnt = 0;
+    static int icnt = 1001;
     m_id = icnt++;
     bool ok = QObject::connect(this, SIGNAL(ipcClose()), this, SLOT(onIpcClose()), Qt::QueuedConnection);
     bool ok2 = QObject::connect(this, SIGNAL(ipcConnect(const QString&)), this, SLOT(onIpcConnect(const QString&)), Qt::QueuedConnection);
@@ -84,16 +84,12 @@ void QWoSocket::close()
     mtx.unlock();
 }
 
-int QWoSocket::socketId()
-{
-    return m_id;
-}
-
 void QWoSocket::onConnected()
 {
     QStringList funArgs;
     funArgs << "ping";
     send(funArgs);
+    m_cond.wakeAll();
 }
 
 void QWoSocket::onDisconnected()

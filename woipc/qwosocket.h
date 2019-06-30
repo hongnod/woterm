@@ -18,8 +18,6 @@ public:
     int connect(const QString& name);
     void send(const QStringList& funArgs);
     void close();
-    int socketId();
-
 signals:
     void ipcConnect(const QString& name);
     void ipcSend(const QStringList& funArgs);
