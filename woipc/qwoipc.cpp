@@ -15,9 +15,14 @@ int IpcConnect(const char *name, FunIpcCallBack cb)
     return QWoMain::instance()->connect(name, cb);
 }
 
-int IpcCall(int hdl, const char *funName, char *argv[])
+bool IpcCall(int hdl, char *argv[], int argc)
 {
-    return 0;
+    QStringList args;
+    for(int i = 0; i < argc; i++) {
+        args.push_back(argv[i]);
+    }
+    QWoMain::instance()->send(hdl, args);
+    return true;
 }
 
 bool IpcClose(int hdl)

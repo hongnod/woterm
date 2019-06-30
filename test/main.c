@@ -3,7 +3,7 @@
 
 typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 typedef int (*FunIpcConnect)(const char* name, FunIpcCallBack cb);
-typedef int (*FunIpcCall)(int hdl, const char* funName, char *argv[]);
+typedef int (*FunIpcCall)(int hdl, char *argv[], int argc);
 typedef int (*FunIpcClose)(int hdl);
 typedef int (*FunIpcInit)(void);
 
@@ -29,7 +29,17 @@ int main()
     IpcCall = (FunIpcCall)GetProcAddress(hdl, "IpcCall");
     IpcClose = (FunIpcClose)GetProcAddress(hdl, "IpcClose");
     IpcInit();
-    IpcConnect("IpcServer", MyIpcCallBack);
+    int id = IpcConnect("IpcServer", MyIpcCallBack);
+    Sleep(1000);
+
+    for(int i = 0; i < 1000; i++) {
+        char name[10];
+        sprintf(name, "%d", i);
+        char *argv[] = {"sendMessage", "a", "c", name};
+        int argc = sizeof(argv) / sizeof(argv[0]);
+        Sleep(10);
+        IpcCall(id, argv, argc);
+    }
     printf("press c to continue.");
     while(getchar() != 'c') {
         printf("press c to continue.");

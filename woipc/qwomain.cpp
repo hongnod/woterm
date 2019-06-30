@@ -66,6 +66,7 @@ QWoMain *QWoMain::instance()
 void QWoMain::init()
 {
     QObject::connect(this, SIGNAL(ready(int,const QString&)), this, SLOT(onReady(int,const QString&)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(ipcSend(int,const QStringList&)), this, SLOT(onIpcSend(int,const QStringList&)), Qt::QueuedConnection);
 }
 
 int QWoMain::connect(const QString &name, FunIpcCallBack cb)
@@ -85,13 +86,9 @@ int QWoMain::connect(const QString &name, FunIpcCallBack cb)
     return lsid;
 }
 
-bool QWoMain::send(int id, const QStringList &funArgs)
+void QWoMain::send(int id, const QStringList &funArgs)
 {
-    if(!m_locals.contains(id)) {
-        return false;
-    }
-    QLocalSocket *local = m_locals[id];
-    return qSendTo(local, funArgs);
+    emit ipcSend(id, funArgs);
 }
 
 void QWoMain::onConnected()
@@ -117,12 +114,7 @@ void QWoMain::onReadyRead()
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
     QStringList data = qRecvFrom(local);
 
-    qDebug() << data;
-    static int i = 0;
-    i++;
-    QStringList funArgs;
-    funArgs << "sendMessage" << "a" << "bd" << QString("%1").arg(i);
-    qSendTo(local, funArgs);
+
 }
 
 void QWoMain::onReady(int id, const QString &name)
@@ -132,4 +124,16 @@ void QWoMain::onReady(int id, const QString &name)
     }
     QLocalSocket *local = m_locals[id];
     local->connectToServer(name);
+}
+
+void QWoMain::onIpcSend(int id, const QStringList &funArgs)
+{
+    if(!m_locals.contains(id)) {
+        return;
+    }
+    QLocalSocket *local = m_locals[id];
+    if(!local->isWritable()) {
+        return;
+    }
+    qSendTo(local, funArgs);
 }

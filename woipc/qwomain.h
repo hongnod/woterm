@@ -20,11 +20,12 @@ public:
     void init();
 
     int connect(const QString& name, FunIpcCallBack cb);
-    bool send(int id, const QStringList& funArgs);
+    void send(int id, const QStringList& funArgs);
 
 private:
 signals:
     void ready(int id,const QString& name);
+    void ipcSend(int id, const QStringList &funArgs);
 
 private slots:
     void onConnected();
@@ -32,6 +33,8 @@ private slots:
     void onError(QLocalSocket::LocalSocketError socketError);
     void onReadyRead();
     void onReady(int id, const QString& name);
+
+    void onIpcSend(int id, const QStringList &funArgs);
 
 private:
     QMap<int, QPointer<QLocalSocket>> m_locals;
