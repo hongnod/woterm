@@ -30,7 +30,7 @@ QStringList qRecvFrom(QLocalSocket *socket)
 {
     QByteArray buf;
     int length;
-    if(socket->bytesAvailable() < 4) {
+    if(socket->peek((char*)&length, sizeof(int)) < 4) {
         return QStringList();
     }
     if(socket->read((char*)&length, sizeof(int)) != sizeof(int)){
@@ -38,7 +38,7 @@ QStringList qRecvFrom(QLocalSocket *socket)
     }
     buf.resize(length);
     int trycnt = 10;
-    while(socket->bytesAvailable() < length && trycnt > 0) {
+    while(socket->peek(buf.data(), length) < length && trycnt > 0) {
         socket->waitForReadyRead(100);
         trycnt--;
     }
@@ -175,14 +175,16 @@ void QWoSshProcess::onClientDisconnected()
 void QWoSshProcess::onClientReadyRead()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
-    QStringList funArgs = qRecvFrom(local);
-    if(funArgs.length() <= 0) {
-        return;
-    }
-    if(funArgs[0] == "ping") {
+    while(1){
+        QStringList funArgs = qRecvFrom(local);
+        if(funArgs.length() <= 0) {
+            return;
+        }
+        if(funArgs[0] == "ping") {
 
-    }else if(funArgs[0] == "getwinsize") {
-        updateTermSize();
+        }else if(funArgs[0] == "getwinsize") {
+            updateTermSize();
+        }
     }
 }
 
@@ -293,6 +295,7 @@ void QWoSshProcess::updateTermSize()
     QStringList funArgs;
     funArgs << "setwinsize" << QString("%1").arg(column) << QString("%1").arg(linecnt);
     if(m_ipc) {
+        qDebug() << funArgs;
         qSendTo(m_ipc, funArgs);
     }
 }

@@ -19,7 +19,7 @@ QStringList qRecvFrom(QLocalSocket *socket)
 {
     QByteArray buf;
     int length;
-    if(socket->bytesAvailable() < 4) {
+    if(socket->peek((char*)&length, sizeof(int)) < 4) {
         return QStringList();
     }
     if(socket->read((char*)&length, sizeof(int)) != sizeof(int)){
@@ -27,7 +27,7 @@ QStringList qRecvFrom(QLocalSocket *socket)
     }
     buf.resize(length);
     int trycnt = 10;
-    while(socket->bytesAvailable() < length && trycnt > 0) {
+    while(socket->peek(buf.data(), length) < length && trycnt > 0) {
         socket->waitForReadyRead(100);
         trycnt--;
     }
@@ -39,7 +39,6 @@ QStringList qRecvFrom(QLocalSocket *socket)
     out >> funArgs;
     return funArgs;
 }
-
 
 QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
     :QObject (parent)
@@ -107,20 +106,22 @@ void QWoSocket::onError(QLocalSocket::LocalSocketError socketError)
 void QWoSocket::onReadyRead()
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
-    QStringList data = qRecvFrom(local);
-    if(data.isEmpty()) {
-        return;
-    }
-    char *argv[100] = {};
-    for(int i = 0; i < data.count(); i++) {
-        std::string v = data.at(i).toStdString();
-        argv[i] = reinterpret_cast<char*>(malloc(v.length()+20));
-        strcpy_s(argv[i], v.length()+1, v.c_str());
-    }
-    m_cb(m_id, argv, data.count());
-    for(int i = 0; i < data.count(); i++) {
-        free(argv[i]);
-        argv[i] = nullptr;
+    while(1) {
+        QStringList data = qRecvFrom(local);
+        if(data.isEmpty()) {
+            return;
+        }
+        char *argv[100] = {};
+        for(int i = 0; i < data.count(); i++) {
+            std::string v = data.at(i).toStdString();
+            argv[i] = reinterpret_cast<char*>(malloc(v.length()+20));
+            strcpy_s(argv[i], v.length()+1, v.c_str());
+        }
+        m_cb(m_id, argv, data.count());
+        for(int i = 0; i < data.count(); i++) {
+            free(argv[i]);
+            argv[i] = nullptr;
+        }
     }
 }
 
