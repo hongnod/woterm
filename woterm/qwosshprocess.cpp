@@ -211,10 +211,13 @@ void QWoSshProcess::onClientReadyRead()
         if(funArgs.length() <= 0) {
             return;
         }
+        qDebug() << funArgs;
         if(funArgs[0] == "ping") {
 
         }else if(funArgs[0] == "getwinsize") {
             updateTermSize();
+        }else if(funArgs[0] == "updatepassword") {
+           qDebug() << funArgs;
         }
     }
 }
