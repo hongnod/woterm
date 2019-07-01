@@ -1,12 +1,15 @@
 #pragma once
 
 #include "qwoipc.h"
+#include "ipchelper.h"
 
 #include <QThread>
 #include <QLocalSocket>
 #include <QMap>
 #include <QPointer>
 #include <QWaitCondition>
+#include <QDataStream>
+
 
 class QWoSocket : public QObject
 {
@@ -36,6 +39,10 @@ private slots:
 private:
     const FunIpcCallBack m_cb;
     int m_id;
+
+    QPointer<FunArgReader> m_reader;
+    QPointer<FunArgWriter> m_writer;
+
     QPointer<QLocalSocket> m_socket;
     QWaitCondition m_cond;
 };

@@ -5,72 +5,6 @@
 #include <QCoreApplication>
 #include <QTimer>
 
-
-bool qWrite(QLocalSocket *socket, char* data, int len) {
-    int nleft = len;
-    char *buf = data;
-    while(nleft > 0) {
-        int n = socket->write(buf, nleft);
-        if(n < 0) {
-            return false;
-        }
-        nleft -= n;
-        buf += n;
-    }
-    return true;
-}
-
-bool qRead(QLocalSocket *socket, char* data, int len) {
-    int nleft = len;
-    char *buf = data;
-    while(nleft > 0) {
-        int n = socket->read(buf, nleft);
-        if(n < 0) {
-            return false;
-        }
-        if(n == 0) {
-            if(!socket->waitForReadyRead()) {
-                return false;
-            }
-        }
-        nleft -= n;
-        buf += n;
-    }
-    return true;
-}
-
-bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
-{
-    QByteArray buf;
-    QDataStream in(&buf, QIODevice::WriteOnly);
-    in << funArgs;
-    int length = buf.length();
-    if(!qWrite(socket, (char*)&length, sizeof(int))){
-        return false;
-    }
-    return qWrite(socket, buf.data(), length);
-}
-
-QStringList qRecvFrom(QLocalSocket *socket)
-{
-    QByteArray buf;
-    int length;
-    if(socket->bytesAvailable() <= 0) {
-        return QStringList();
-    }
-    if(!qRead(socket, (char*)&length, sizeof(int))) {
-        return QStringList();
-    }
-    buf.resize(length);
-    if(!qRead(socket, buf.data(), length)) {
-        return QStringList();
-    }
-    QStringList funArgs;
-    QDataStream out(buf);
-    out >> funArgs;
-    return funArgs;
-}
-
 QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
     :QObject (parent)
     ,m_cb(cb)
@@ -85,7 +19,15 @@ QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
 
 QWoSocket::~QWoSocket()
 {
-
+    if(m_writer) {
+        delete m_writer;
+    }
+    if(m_reader) {
+        delete m_reader;
+    }
+    if(m_socket) {
+        delete m_socket;
+    }
 }
 
 int QWoSocket::connect(const QString &name)
@@ -136,9 +78,9 @@ void QWoSocket::onError(QLocalSocket::LocalSocketError socketError)
 
 void QWoSocket::onReadyRead()
 {
-    QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
+    m_reader->readAll();
     while(1) {
-        QStringList data = qRecvFrom(local);
+        QStringList data = m_reader->next();
         if(data.isEmpty()) {
             return;
         }
@@ -159,6 +101,9 @@ void QWoSocket::onReadyRead()
 void QWoSocket::onIpcConnect(const QString &name)
 {
     m_socket = new QLocalSocket(this);
+    m_reader = new FunArgReader(m_socket, this);
+    m_writer = new FunArgWriter(m_socket, this);
+
     QObject::connect(m_socket, SIGNAL(connected()), this, SLOT(onConnected()));
     QObject::connect(m_socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
     QObject::connect(m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onError(QLocalSocket::LocalSocketError)));
@@ -168,14 +113,7 @@ void QWoSocket::onIpcConnect(const QString &name)
 
 void QWoSocket::onIpcSend(const QStringList &funArgs)
 {
-    if(!m_socket->isWritable()) {
-        return;
-    }
-    if(!qSendTo(m_socket, funArgs)) {
-        if(!m_socket->isValid()) {
-            m_cb(m_id, -1, nullptr, 0);
-        }
-    }
+    m_writer->write(funArgs);
 }
 
 void QWoSocket::onIpcClose()
