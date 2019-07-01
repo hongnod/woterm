@@ -180,7 +180,8 @@ bool QWoSshProcess::isRzCommand(const QByteArray &ba)
 void QWoSshProcess::onNewConnection()
 {
     m_ipc = m_server->nextPendingConnection();
-    m_ipc->setTextModeEnabled(true);
+    m_reader = new FunArgReader(m_ipc, this);
+    m_writer = new FunArgWriter(m_ipc, this);
     QObject::connect(m_ipc, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
     QObject::connect(m_ipc, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
     QObject::connect(m_ipc, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
@@ -204,9 +205,9 @@ void QWoSshProcess::onClientDisconnected()
 
 void QWoSshProcess::onClientReadyRead()
 {
-    QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
-    while(1){
-        QStringList funArgs = qRecvFrom(local);
+    m_reader->readAll();
+    while(1) {
+        QStringList funArgs = m_reader->next();
         if(funArgs.length() <= 0) {
             return;
         }
@@ -326,7 +327,7 @@ void QWoSshProcess::updateTermSize()
     funArgs << "setwinsize" << QString("%1").arg(column) << QString("%1").arg(linecnt);
     if(m_ipc) {
         qDebug() << funArgs;
-        qSendTo(m_ipc, funArgs);
+        m_writer->write(funArgs);
     }
 }
 

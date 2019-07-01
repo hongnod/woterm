@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qwoprocess.h"
+#include "ipchelper.h"
 
 #include <QPointer>
 #include <QLocalSocket>
@@ -48,7 +49,11 @@ private:
     bool isRzCommand(const QByteArray& data);
 private:
     QPointer<QLocalServer> m_server;
+
     QPointer<QLocalSocket> m_ipc;
+    QPointer<FunArgReader> m_reader;
+    QPointer<FunArgWriter> m_writer;
+
     QPointer<QAction> m_zmodemDupl;
     QPointer<QAction> m_zmodemSend;
     QPointer<QAction> m_zmodemRecv;
