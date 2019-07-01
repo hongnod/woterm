@@ -28,6 +28,11 @@ bool qRead(QLocalSocket *socket, char* data, int len) {
         if(n < 0) {
             return false;
         }
+        if(n == 0) {
+            if(!socket->waitForReadyRead()) {
+                return false;
+            }
+        }
         nleft -= n;
         buf += n;
     }
@@ -50,7 +55,7 @@ QStringList qRecvFrom(QLocalSocket *socket)
 {
     QByteArray buf;
     int length;
-    if(socket->bytesAvailable() == 0) {
+    if(socket->bytesAvailable() <= 0) {
         return QStringList();
     }
     if(!qRead(socket, (char*)&length, sizeof(int))) {
