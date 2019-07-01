@@ -3,6 +3,7 @@
 #include <QDataStream>
 #include <QMutex>
 #include <QCoreApplication>
+#include <QTimer>
 
 
 bool qWrite(QLocalSocket *socket, char* data, int len) {
@@ -24,6 +25,14 @@ bool qRead(QLocalSocket *socket, char* data, int len) {
     char *buf = data;
     while(nleft > 0) {
         int n = socket->read(buf, nleft);
+        if(n == 0) {
+            if(!socket->isValid()) {
+                return false;
+            }
+            QEventLoop loop;
+            QTimer::singleShot(1000, &loop, SLOT(quit()));
+            loop.exec();
+        }
         if(n < 0) {
             return false;
         }
@@ -32,6 +41,7 @@ bool qRead(QLocalSocket *socket, char* data, int len) {
     }
     return true;
 }
+
 
 bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
 {

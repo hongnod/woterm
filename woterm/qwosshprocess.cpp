@@ -35,6 +35,14 @@ bool qRead(QLocalSocket *socket, char* data, int len) {
     char *buf = data;
     while(nleft > 0) {
         int n = socket->read(buf, nleft);
+        if(n == 0) {
+            if(!socket->isValid()) {
+                return false;
+            }
+//            QEventLoop loop;
+//            QTimer::singleShot(1000, &loop, SLOT(quit()));
+//            loop.exec();
+        }
         if(n < 0) {
             return false;
         }
