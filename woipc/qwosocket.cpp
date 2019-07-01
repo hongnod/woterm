@@ -25,14 +25,6 @@ bool qRead(QLocalSocket *socket, char* data, int len) {
     char *buf = data;
     while(nleft > 0) {
         int n = socket->read(buf, nleft);
-        if(n == 0) {
-            if(!socket->isValid()) {
-                return false;
-            }
-            QEventLoop loop;
-            QTimer::singleShot(1000, &loop, SLOT(quit()));
-            loop.exec();
-        }
         if(n < 0) {
             return false;
         }
@@ -41,7 +33,6 @@ bool qRead(QLocalSocket *socket, char* data, int len) {
     }
     return true;
 }
-
 
 bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
 {
@@ -59,6 +50,9 @@ QStringList qRecvFrom(QLocalSocket *socket)
 {
     QByteArray buf;
     int length;
+    if(socket->bytesAvailable() == 0) {
+        return QStringList();
+    }
     if(!qRead(socket, (char*)&length, sizeof(int))) {
         return QStringList();
     }
@@ -127,7 +121,7 @@ void QWoSocket::onConnected()
 
 void QWoSocket::onDisconnected()
 {
-    m_cb(m_id, -3, nullptr, 0);
+    m_cb(m_id, -1, nullptr, 0);
 }
 
 void QWoSocket::onError(QLocalSocket::LocalSocketError socketError)
@@ -141,9 +135,6 @@ void QWoSocket::onReadyRead()
     while(1) {
         QStringList data = qRecvFrom(local);
         if(data.isEmpty()) {
-            if(!m_socket->isValid()) {
-                m_cb(m_id, -1, nullptr, 0);
-            }
             return;
         }
         char *argv[100] = {};
