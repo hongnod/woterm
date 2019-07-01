@@ -16,33 +16,55 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 
+bool qWrite(QLocalSocket *socket, char* data, int len) {
+    int nleft = len;
+    char *buf = data;
+    while(nleft > 0) {
+        int n = socket->write(buf, nleft);
+        if(n < 0) {
+            return false;
+        }
+        nleft -= n;
+        buf += n;
+    }
+    return true;
+}
+
+bool qRead(QLocalSocket *socket, char* data, int len) {
+    int nleft = len;
+    char *buf = data;
+    while(nleft > 0) {
+        int n = socket->read(buf, nleft);
+        if(n < 0) {
+            return false;
+        }
+        nleft -= n;
+        buf += n;
+    }
+    return true;
+}
+
 bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
 {
     QByteArray buf;
     QDataStream in(&buf, QIODevice::WriteOnly);
     in << funArgs;
     int length = buf.length();
-    socket->write((char*)&length, sizeof(int));
-    return socket->write(buf.data(), length) > 0;
+    if(!qWrite(socket, (char*)&length, sizeof(int))){
+        return false;
+    }
+    return qWrite(socket, buf.data(), length);
 }
 
 QStringList qRecvFrom(QLocalSocket *socket)
 {
     QByteArray buf;
     int length;
-    if(socket->peek((char*)&length, sizeof(int)) < 4) {
-        return QStringList();
-    }
-    if(socket->read((char*)&length, sizeof(int)) != sizeof(int)){
+    if(!qRead(socket, (char*)&length, sizeof(int))) {
         return QStringList();
     }
     buf.resize(length);
-    int trycnt = 10;
-    while(socket->peek(buf.data(), length) < length && trycnt > 0) {
-        socket->waitForReadyRead(100);
-        trycnt--;
-    }
-    if(socket->read((char*)buf.data(), length) != length) {
+    if(!qRead(socket, buf.data(), length)) {
         return QStringList();
     }
     QStringList funArgs;

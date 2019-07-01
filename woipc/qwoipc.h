@@ -6,7 +6,7 @@
 #include <QThread>
 #include <QWaitCondition>
 
-typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
+typedef void (*FunIpcCallBack)(int hdl, int err, char *argv[], int argc);
 
 #ifdef __cplusplus
 extern "C" {

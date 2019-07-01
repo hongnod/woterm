@@ -39,7 +39,3 @@ private:
     QPointer<QLocalSocket> m_socket;
     QWaitCondition m_cond;
 };
-
-
-bool qSendTo(QLocalSocket *socket, const QStringList &funArgs);
-QStringList qRecvFrom(QLocalSocket *socket);
