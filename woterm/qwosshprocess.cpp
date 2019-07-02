@@ -1,6 +1,7 @@
 #include "qwosshprocess.h"
 #include "qwoevent.h"
 #include "qwosetting.h"
+#include "qwosshconf.h"
 
 #include <qtermwidget.h>
 
@@ -16,70 +17,6 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 
-bool qWrite(QLocalSocket *socket, char* data, int len) {
-    int nleft = len;
-    char *buf = data;
-    while(nleft > 0) {
-        int n = socket->write(buf, nleft);
-        if(n < 0) {
-            return false;
-        }
-        nleft -= n;
-        buf += n;
-    }
-    return true;
-}
-
-bool qRead(QLocalSocket *socket, char* data, int len) {
-    int nleft = len;
-    char *buf = data;
-    while(nleft > 0) {
-        int n = socket->read(buf, nleft);
-        if(n < 0) {
-            return false;
-        }
-        if(n == 0) {
-            if(!socket->waitForReadyRead()) {
-                return false;
-            }
-        }
-        nleft -= n;
-        buf += n;
-    }
-    return true;
-}
-
-bool qSendTo(QLocalSocket *socket, const QStringList &funArgs)
-{
-    QByteArray buf;
-    QDataStream in(&buf, QIODevice::WriteOnly);
-    in << funArgs;
-    int length = buf.length();
-    if(!qWrite(socket, (char*)&length, sizeof(int))){
-        return false;
-    }
-    return qWrite(socket, buf.data(), length);
-}
-
-QStringList qRecvFrom(QLocalSocket *socket)
-{
-    QByteArray buf;
-    int length;
-    if(socket->bytesAvailable() <= 0) {
-        return QStringList();
-    }
-    if(!qRead(socket, (char*)&length, sizeof(int))) {
-        return QStringList();
-    }
-    buf.resize(length);
-    if(!qRead(socket, buf.data(), length)) {
-        return QStringList();
-    }
-    QStringList funArgs;
-    QDataStream out(buf);
-    out >> funArgs;
-    return funArgs;
-}
 
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     : QWoProcess (parent)
@@ -217,7 +154,7 @@ void QWoSshProcess::onClientReadyRead()
         }else if(funArgs[0] == "getwinsize") {
             updateTermSize();
         }else if(funArgs[0] == "updatepassword") {
-           qDebug() << funArgs;
+            updatePassword(funArgs[1]);
         }
     }
 }
@@ -332,6 +269,11 @@ void QWoSshProcess::updateTermSize()
         qDebug() << funArgs;
         m_writer->write(funArgs);
     }
+}
+
+void QWoSshProcess::updatePassword(const QString &pwd)
+{
+    QWoSshConf::instance()->updatePassword(m_target, pwd);
 }
 
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)

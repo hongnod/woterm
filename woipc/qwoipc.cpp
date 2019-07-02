@@ -34,8 +34,31 @@ bool IpcClose(int hdl)
     return false;
 }
 
+void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg){
+    return;
+    QByteArray localMsg = msg.toLocal8Bit();
+    switch (type) {
+    case QtDebugMsg:
+      fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      break;
+    case QtInfoMsg:
+      fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      break;
+    case QtWarningMsg:
+      fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      break;
+    case QtCriticalMsg:
+      fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      break;
+    case QtFatalMsg:
+      fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+      break;
+    }
+}
+
 int IpcInit()
 {
+    qInstallMessageHandler(myMessageOutput);
     if(woApp.isRunning()) {
         return 0;
     }
@@ -65,5 +88,5 @@ void QWoApp::run()
 void IpcExit()
 {
     woApp.exit(0);
-    woApp.wait(5000);
+    woApp.terminate();
 }

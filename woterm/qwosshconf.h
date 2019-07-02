@@ -19,6 +19,7 @@ public:
     void remove(const QString& name);
     void append(const HostInfo& hi);
     void modify(int idx, const HostInfo& hi);
+    void updatePassword(const QString& name, const QString& password);
 
     QList<HostInfo> hostList() const;
     QStringList hostNameList() const;
