@@ -47,4 +47,5 @@ HEADERS += \
 FORMS += \
     qwohostlist.ui \
     qwohostinfolist.ui \
-    qwohostinfo.ui
+    qwohostinfo.ui \
+    qwomainwindow.ui

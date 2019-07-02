@@ -12,11 +12,17 @@ class QToolBar;
 class QWoShower;
 class QWoSessionManager;
 
+namespace Ui {
+class QWoMainWindow;
+}
+
+
 class QWoMainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit QWoMainWindow(QWidget *parent=nullptr);
+    virtual ~QWoMainWindow();
     static QWoMainWindow *instance();
 protected:
     void closeEvent(QCloseEvent *event);
@@ -29,11 +35,8 @@ private slots:
     void onProcessStartCheck();
 
 private:
-    QPointer<QMenuBar> m_memuBar;
-    QPointer<QToolBar> m_tool;
-    QPointer<QVBoxLayout> m_layout;
+    Ui::QWoMainWindow *ui;
     QPointer<QTabBar> m_tab;
     QPointer<QWoSessionManager> m_manager;
     QPointer<QWoShower> m_shower;
-
 };

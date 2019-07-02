@@ -5,6 +5,7 @@
 #include "qwosshprocess.h"
 #include "qwotermwidget.h"
 #include "qwosessionmanager.h"
+#include "ui_qwomainwindow.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -20,20 +21,16 @@
 
 QWoMainWindow::QWoMainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , ui(new Ui::QWoMainWindow)
 {
+    ui->setupUi(this);
     QByteArray geom = QWoSetting::value("woterm/geometry").toByteArray();
-    restoreGeometry(geom);
+    restoreGeometry(geom);    
 
-    QMenuBar *menuBar = new QMenuBar(this);
-    QMenu *actionsMenu = new QMenu("Actions", menuBar);
-    menuBar->addMenu(actionsMenu);
-    actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
-    actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
-    setMenuBar(menuBar);
-
-    m_tool = new QToolBar("ToolBar", this);
-    addToolBar(m_tool);
-    m_tool->hide();
+    //QMenu *actionsMenu = new QMenu("Actions", ui->menuBar);
+    //ui->menuBar->addMenu(actionsMenu);
+    //actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
+    //actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
 
     QDockWidget* dock = new QDockWidget("SessionManager", this);
     addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -54,27 +51,33 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tab->setUsesScrollButtons(true);
     m_shower = new QWoShower(m_tab, this);
 
-    m_layout = new QVBoxLayout(central);
-    central->setLayout(m_layout);
-    m_layout->setSpacing(0);
-    m_layout->setMargin(0);
+    QVBoxLayout *layout = new QVBoxLayout(central);
+    central->setLayout(layout);
+    layout->setSpacing(0);
+    layout->setMargin(0);
 
-    m_layout->addWidget(m_tab);
-    m_layout->addWidget(m_shower);
+    layout->addWidget(m_tab);
+    layout->addWidget(m_shower);
 
-    QAction *newTerm = m_tool->addAction("New");
+    QToolBar *tool = ui->mainToolBar;
+    QAction *newTerm = tool->addAction("New");
     QObject::connect(newTerm, SIGNAL(triggered()), this, SLOT(onNewTerm()));
 
-    QAction *openTerm = m_tool->addAction("Open");
+    QAction *openTerm = tool->addAction("Open");
     QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
 
-    QAction *edit = m_tool->addAction("Edit");
+    QAction *edit = tool->addAction("Edit");
     QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
 
     QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const HostInfo&)), this, SLOT(onSessionDoubleClicked(const HostInfo&)));
     QObject::connect(m_manager, SIGNAL(sessionBatchClicked(const QVariantList&)), this, SLOT(onSessionBatchClicked(const QVariantList&)));
 
     QTimer::singleShot(1000, this, SLOT(onProcessStartCheck()));
+}
+
+QWoMainWindow::~QWoMainWindow()
+{
+    delete ui;
 }
 
 QWoMainWindow *QWoMainWindow::instance()
