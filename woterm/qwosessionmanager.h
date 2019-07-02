@@ -11,6 +11,7 @@ class QWoHostListModel;
 class QSortFilterProxyModel;
 class QListView;
 class QMenu;
+class QPlainTextEdit;
 
 
 class QWoSessionManager : public QWidget
@@ -31,6 +32,7 @@ private slots:
     void onOpenSelectSessions();
     void onEditTextChanged(const QString& txt);
     void onListItemDoubleClicked(const QModelIndex& item);
+    void onListItemPressed(const QModelIndex& item);
     void onTimeout();
     void onEditReturnPressed();
     void onListViewItemOpen();
@@ -48,6 +50,7 @@ private:
     QPointer<QSortFilterProxyModel> m_proxyModel;
     QPointer<QLineEdit> m_input;
     QPointer<QListView> m_list;
+    QPointer<QPlainTextEdit> m_info;
     int m_countLeft;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_itemOpen;

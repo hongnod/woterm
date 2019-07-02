@@ -30,7 +30,6 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
     actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
     setMenuBar(menuBar);
-    menuBar->hide();
 
     m_tool = new QToolBar("ToolBar", this);
     addToolBar(m_tool);

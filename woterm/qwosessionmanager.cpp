@@ -21,6 +21,7 @@
 #include <QModelIndexList>
 #include <QMenu>
 #include <QAction>
+#include <QPlainTextEdit>
 
 QWoSessionManager::QWoSessionManager(QWidget *parent)
     : QWidget(parent)
@@ -34,13 +35,16 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     layout->addLayout(hlayout);
     m_list = new QListView(this);
     m_input = new QLineEdit(this);
+    m_info = new QPlainTextEdit(this);
     QPushButton *all = new QPushButton("all", this);
     all->setMaximumWidth(25);
     all->hide();
     hlayout->addWidget(m_input);
     hlayout->addWidget(all);
     layout->addWidget(m_list);
-
+    layout->addWidget(m_info);
+    m_info->setReadOnly(true);
+    m_info->setFixedHeight(150);
     m_list->installEventFilter(this);
     //m_list->setSelectionMode(QAbstractItemView::MultiSelection);
 
@@ -58,6 +62,7 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     QObject::connect(m_input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
     QObject::connect(m_list, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
     QObject::connect(m_list, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onListItemDoubleClicked(const QModelIndex&)));
+    QObject::connect(m_list, SIGNAL(pressed(const QModelIndex&)), this, SLOT(onListItemPressed(const QModelIndex&)));
     QTimer *timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start(1000);
@@ -124,7 +129,22 @@ void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
     }
     qDebug() << "server:" << hi.name;
 
+    onListItemPressed(item);
     emit sessionDoubleClicked(hi);
+}
+
+void QWoSessionManager::onListItemPressed(const QModelIndex &item)
+{
+    HostInfo hi = item.data(ROLE_HOSTINFO).value<HostInfo>();
+    if(hi.name == "") {
+        return;
+    }
+    QString info;
+    info.append(QString("%1 : %2\r\n").arg(tr("name")).arg(hi.name));
+    info.append(QString("%1 : %2\r\n").arg(tr("host")).arg(hi.host));
+    info.append(QString("%1 : %2").arg(tr("memo")).arg(hi.memo));
+
+    m_info->setPlainText(info);
 }
 
 void QWoSessionManager::onTimeout()
