@@ -79,7 +79,7 @@ void QWoApp::run()
 {
     char*** argv = __p___argv();
     int* argc = __p___argc();
-    QCoreApplication app(*argc, *argv);
+    static QCoreApplication app(*argc, *argv);
     qDebug() << "start app thread";
     m_cond.wakeOne();
     app.exec();
