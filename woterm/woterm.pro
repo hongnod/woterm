@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     qwoutils.cpp \
     qwohostinfoedit.cpp \
     qwohostsimplelist.cpp \
-    qwohostlistmodel.cpp
+    qwohostlistmodel.cpp \
+    qwosessionproperty.cpp
 
 HEADERS += \
     ipchelper.h \
@@ -42,10 +43,12 @@ HEADERS += \
     qwoutils.h \
     qwohostinfoedit.h \
     qwohostsimplelist.h \
-    qwohostlistmodel.h
+    qwohostlistmodel.h \
+    qwosessionproperty.h
 
 FORMS += \
     qwohostlist.ui \
     qwohostinfolist.ui \
     qwohostinfo.ui \
-    qwomainwindow.ui
+    qwomainwindow.ui \
+    qwosessionproperty.ui

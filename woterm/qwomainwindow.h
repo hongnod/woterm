@@ -34,6 +34,18 @@ private slots:
     void onSessionBatchClicked(const QVariantList& his);
     void onProcessStartCheck();
 
+private slots:
+    void onActionNewTriggered();
+    void onActionOpenTriggered();
+    void onActionDisconnectTriggered();
+    void onActionReconnectTriggered();
+    void onActionReconnectAllTriggered();
+    void onActionImportTriggered();
+    void onActionExportTriggered();
+    void onActionTransferTriggered();
+    void onActionLogTriggered();
+    void onActionExitTriggered();
+
 private:
     Ui::QWoMainWindow *ui;
     QPointer<QTabBar> m_tab;

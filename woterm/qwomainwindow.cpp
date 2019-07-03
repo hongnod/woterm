@@ -143,3 +143,53 @@ void QWoMainWindow::onProcessStartCheck()
         m_shower->openConnection(args.at(i));
     }
 }
+
+void QWoMainWindow::onActionNewTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionOpenTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionDisconnectTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionReconnectTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionReconnectAllTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionImportTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionExportTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionTransferTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionLogTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionExitTriggered()
+{
+
+}
