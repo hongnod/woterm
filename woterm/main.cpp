@@ -20,7 +20,7 @@ void test()
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    static QApplication app(argc, argv);
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
     QApplication::setStyle("Fusion");
