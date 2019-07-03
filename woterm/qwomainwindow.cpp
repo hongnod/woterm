@@ -19,6 +19,8 @@
 #include <QDir>
 #include <QDockWidget>
 
+Q_GLOBAL_STATIC(QWoMainWindow, mainWindow)
+
 QWoMainWindow::QWoMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::QWoMainWindow)
@@ -82,8 +84,7 @@ QWoMainWindow::~QWoMainWindow()
 
 QWoMainWindow *QWoMainWindow::instance()
 {
-     static QWoMainWindow win;
-     return &win;
+     return mainWindow;
 }
 
 void QWoMainWindow::closeEvent(QCloseEvent *event)
