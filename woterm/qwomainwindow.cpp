@@ -6,6 +6,7 @@
 #include "qwotermwidget.h"
 #include "qwosessionmanager.h"
 #include "ui_qwomainwindow.h"
+#include "qwosessionproperty.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -27,7 +28,19 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     QByteArray geom = QWoSetting::value("woterm/geometry").toByteArray();
-    restoreGeometry(geom);    
+    restoreGeometry(geom);
+
+    QObject::connect(ui->actionDisconect, SIGNAL(triggered()), this, SLOT(onActionDisconnectTriggered()));
+    QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(onActionExitTriggered()));
+    QObject::connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
+    QObject::connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onActionImportTriggered()));
+    QObject::connect(ui->actionLog, SIGNAL(triggered()), this, SLOT(onActionLogTriggered()));
+    QObject::connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(onActionNewTriggered()));
+    QObject::connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(onActionOpenTriggered()));
+    QObject::connect(ui->actionReconnect, SIGNAL(triggered()), this, SLOT(onActionReconnectTriggered()));
+    QObject::connect(ui->actionReconnectAll, SIGNAL(triggered()), this, SLOT(onActionReconnectAllTriggered()));
+    QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(onActionSaveTriggered()));
+    QObject::connect(ui->actionTransfer, SIGNAL(triggered()), this, SLOT(onActionTransferTriggered()));
 
     //QMenu *actionsMenu = new QMenu("Actions", ui->menuBar);
     //ui->menuBar->addMenu(actionsMenu);
@@ -146,7 +159,8 @@ void QWoMainWindow::onProcessStartCheck()
 
 void QWoMainWindow::onActionNewTriggered()
 {
-
+    QWoSessionProperty dlg;
+    dlg.exec();
 }
 
 void QWoMainWindow::onActionOpenTriggered()
@@ -175,6 +189,11 @@ void QWoMainWindow::onActionImportTriggered()
 }
 
 void QWoMainWindow::onActionExportTriggered()
+{
+
+}
+
+void QWoMainWindow::onActionSaveTriggered()
 {
 
 }

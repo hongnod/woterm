@@ -42,6 +42,7 @@ private slots:
     void onActionReconnectAllTriggered();
     void onActionImportTriggered();
     void onActionExportTriggered();
+    void onActionSaveTriggered();
     void onActionTransferTriggered();
     void onActionLogTriggered();
     void onActionExitTriggered();

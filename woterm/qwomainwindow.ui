@@ -32,7 +32,7 @@
     <addaction name="separator"/>
     <addaction name="actionDisconect"/>
     <addaction name="actionReconnect"/>
-    <addaction name="actionReconnect_All"/>
+    <addaction name="actionReconnectAll"/>
     <addaction name="separator"/>
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
@@ -147,7 +147,7 @@
     <string>Reconnect</string>
    </property>
   </action>
-  <action name="actionReconnect_All">
+  <action name="actionReconnectAll">
    <property name="text">
     <string>Reconnect All</string>
    </property>
