@@ -484,7 +484,6 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="unused"/>
          <widget class="QWidget" name="Endpoint"/>
          <widget class="QWidget" name="keyboard"/>
          <widget class="QWidget" name="vtMode"/>
