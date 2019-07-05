@@ -2,6 +2,7 @@
 #define QWOSESSIONPROPERTY_H
 
 #include <QDialog>
+#include <QStandardItemModel>
 
 namespace Ui {
 class QWoSessionProperty;
@@ -17,6 +18,7 @@ public:
 
 private:
     Ui::QWoSessionProperty *ui;
+    QStandardItemModel m_model;
 };
 
 #endif // QWOSESSIONPROPERTY_H
