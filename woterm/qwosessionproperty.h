@@ -16,6 +16,9 @@ public:
     explicit QWoSessionProperty(QWidget *parent = nullptr);
     ~QWoSessionProperty();
 
+private slots:
+    void onTreeItemClicked(const QModelIndex& index);
+
 private:
     Ui::QWoSessionProperty *ui;
     QStandardItemModel m_model;

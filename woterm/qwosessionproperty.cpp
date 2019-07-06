@@ -8,27 +8,45 @@ QWoSessionProperty::QWoSessionProperty(QWidget *parent) :
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
     ui->setupUi(this);
+    setWindowTitle(tr("Session Property"));
 
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
-    QStandardItem *itemA = new QStandardItem("A");
-    m_model.appendRow(itemA);
-    itemA->appendRow(new QStandardItem("A1"));
-    itemA->appendRow(new QStandardItem("A2"));
+    QStandardItem *connect = new QStandardItem(tr("Connect"));
+    m_model.appendRow(connect);
+    connect->appendRow(new QStandardItem(tr("Authentication")));
 
-    QStandardItem *itemB = new QStandardItem("B");
-    itemB->appendRow(new QStandardItem("B1"));
-    itemB->appendRow(new QStandardItem("B2"));
-    m_model.appendRow(itemB);
+    QStandardItem *terminal = new QStandardItem(tr("Terminal"));
+    m_model.appendRow(terminal);
 
 
-    QStandardItem *itemC = new QStandardItem("C");
-    itemC->appendRow(new QStandardItem("C1"));
-    itemC->appendRow(new QStandardItem("C2"));
-    m_model.appendRow(itemC);
+    QStandardItem *appearance = new QStandardItem(tr("Appearance"));
+    m_model.appendRow(appearance);
+
+    QStandardItem *fileTransfre = new QStandardItem(tr("FileTransfer"));
+    m_model.appendRow(fileTransfre);
+
+
+    QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
 }
 
 QWoSessionProperty::~QWoSessionProperty()
 {
     delete ui;
+}
+
+void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
+{
+    QString name = idx.data().toString();
+    if(name == tr("Connect")) {
+        ui->stacked->setCurrentWidget(ui->connectWidget);
+    }else if(name == tr("Authentication")){
+        ui->stacked->setCurrentWidget(ui->authenticationWidget);
+    }else if(name == tr("Terminal")){
+        ui->stacked->setCurrentWidget(ui->terminalWidget);
+    }else if(name == tr("Appearance")){
+        ui->stacked->setCurrentWidget(ui->appearanceWidget);
+    }else if(name == tr("FileTransfer")){
+        ui->stacked->setCurrentWidget(ui->fileTransferWidget);
+    }
 }
