@@ -15,6 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include($$PWD/aes/aes.pri)
 
 SOURCES += \
+    qwoaes.cpp \
     ipchelper.cpp \
     qwoipc.cpp \
     qwomain.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 
 
 HEADERS += \
+    qwoaes.h \
     ipchelper.h \
     qwomain.h \
     qwoipc.h \

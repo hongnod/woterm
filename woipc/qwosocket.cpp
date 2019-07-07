@@ -9,7 +9,7 @@ QWoSocket::QWoSocket(FunIpcCallBack cb, QObject *parent)
     :QObject (parent)
     ,m_cb(cb)
 {
-    static int icnt = 1001;
+    static QAtomicInt icnt = 1001;
     m_id = icnt++;
     bool ok = QObject::connect(this, SIGNAL(ipcClose()), this, SLOT(onIpcClose()), Qt::QueuedConnection);
     bool ok2 = QObject::connect(this, SIGNAL(ipcConnect(const QString&)), this, SLOT(onIpcConnect(const QString&)), Qt::QueuedConnection);

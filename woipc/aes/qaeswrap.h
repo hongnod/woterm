@@ -26,7 +26,7 @@ public:
         PKCS7
     };
 public:
-    QAesWrap(const QByteArray & passwprd,const QByteArray & salt,AesBit bit);
+    QAesWrap(const QByteArray & passwprd,const QByteArray & salt, AesBit bit);
 
     bool encrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7) const;
     bool decrypt(const QByteArray & in, QByteArray & out, AesMode mode,PaddingMode pad = PKCS7) const;
