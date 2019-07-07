@@ -12,6 +12,8 @@ DESTDIR = $$PWD/../bin
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+include($$PWD/aes/aes.pri)
+
 SOURCES += \
     ipchelper.cpp \
     qwoipc.cpp \
