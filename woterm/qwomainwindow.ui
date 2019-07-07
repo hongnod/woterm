@@ -37,6 +37,7 @@
     <addaction name="actionImport"/>
     <addaction name="actionExport"/>
     <addaction name="separator"/>
+    <addaction name="actionDefault"/>
     <addaction name="actionTransfer"/>
     <addaction name="actionLog"/>
     <addaction name="actionExit"/>
@@ -150,6 +151,11 @@
   <action name="actionReconnectAll">
    <property name="text">
     <string>Reconnect All</string>
+   </property>
+  </action>
+  <action name="actionDefault">
+   <property name="text">
+    <string>Default Property</string>
    </property>
   </action>
  </widget>

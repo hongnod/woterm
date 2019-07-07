@@ -578,7 +578,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_2"/>
+              <widget class="QLineEdit" name="szUpload"/>
              </item>
             </layout>
            </item>
@@ -592,7 +592,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_3"/>
+              <widget class="QLineEdit" name="rzDown"/>
              </item>
             </layout>
            </item>

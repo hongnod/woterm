@@ -41,6 +41,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QObject::connect(ui->actionReconnectAll, SIGNAL(triggered()), this, SLOT(onActionReconnectAllTriggered()));
     QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(onActionSaveTriggered()));
     QObject::connect(ui->actionTransfer, SIGNAL(triggered()), this, SLOT(onActionTransferTriggered()));
+    QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionDefaultTriggered()));
 
     //QMenu *actionsMenu = new QMenu("Actions", ui->menuBar);
     //ui->menuBar->addMenu(actionsMenu);
@@ -88,6 +89,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QObject::connect(m_manager, SIGNAL(sessionBatchClicked(const QVariantList&)), this, SLOT(onSessionBatchClicked(const QVariantList&)));
 
     QTimer::singleShot(1000, this, SLOT(onProcessStartCheck()));
+
 }
 
 QWoMainWindow::~QWoMainWindow()
@@ -159,7 +161,7 @@ void QWoMainWindow::onProcessStartCheck()
 
 void QWoMainWindow::onActionNewTriggered()
 {
-    QWoSessionProperty dlg;
+    QWoSessionProperty dlg(SPTYPE_NEW, this);
     dlg.exec();
 }
 
@@ -211,4 +213,10 @@ void QWoMainWindow::onActionLogTriggered()
 void QWoMainWindow::onActionExitTriggered()
 {
 
+}
+
+void QWoMainWindow::onActionDefaultTriggered()
+{
+    QWoSessionProperty dlg(SPTYPE_DEFAULT, this);
+    dlg.exec();
 }

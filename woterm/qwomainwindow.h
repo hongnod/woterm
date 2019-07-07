@@ -46,6 +46,7 @@ private slots:
     void onActionTransferTriggered();
     void onActionLogTriggered();
     void onActionExitTriggered();
+    void onActionDefaultTriggered();
 
 private:
     Ui::QWoMainWindow *ui;

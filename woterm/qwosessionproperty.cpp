@@ -1,9 +1,12 @@
 #include "qwosessionproperty.h"
 #include "ui_qwosessionproperty.h"
 
-QWoSessionProperty::QWoSessionProperty(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::QWoSessionProperty)
+#include "qwosetting.h"
+
+QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
+    : QDialog(parent)
+    , m_type(type)
+    , ui(new Ui::QWoSessionProperty)
 {
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
@@ -28,6 +31,16 @@ QWoSessionProperty::QWoSessionProperty(QWidget *parent) :
 
 
     QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
+
+    QObject::connect(ui->connect, SIGNAL(clicked()), this, SLOT(onReadyToConnect()));
+    QObject::connect(ui->save, SIGNAL(clicked()), this, SLOT(onReadyToSave()));
+    QObject::connect(ui->cancel, SIGNAL(clicked()), this, SLOT(close()));
+
+    initDefault();
+
+    if(m_type == SPTYPE_DEFAULT) {
+        ui->connect->hide();
+    }
 }
 
 QWoSessionProperty::~QWoSessionProperty()
@@ -49,4 +62,29 @@ void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
     }else if(name == tr("FileTransfer")){
         ui->stacked->setCurrentWidget(ui->fileTransferWidget);
     }
+}
+
+void QWoSessionProperty::onReadyToConnect()
+{
+
+}
+
+void QWoSessionProperty::onReadyToSave()
+{
+
+}
+
+void QWoSessionProperty::initDefault()
+{
+    QVariant val = QWoSetting::value("property/default");
+    QVariantMap mdata = val.toMap();
+    QString szPathUpload = mdata["zmodemPathUpload"].toString();
+    QString rzPathDown = mdata["zmodemPathDown"].toString();
+    ui->szUpload->setText(szPathUpload);
+    ui->rzDown->setText(rzPathDown);
+}
+
+void QWoSessionProperty::saveDefaultConfig()
+{
+
 }
