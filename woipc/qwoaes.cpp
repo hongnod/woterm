@@ -62,16 +62,23 @@ bool AesEncode(int hdl, const char *pin, int len, const char *pout, int *plen)
 {
     QByteArray in(pin, len);
     QByteArray out(pout, *plen);
-    *plen
+    if(len < *plen) {
+        return false;
+    }
     return woAes.encrypt(hdl, in, out);
 }
 
 bool AesDecode(int hdl, const char *pin, int len, const char *pout, int *plen)
 {
-
+    QByteArray in(pin, len);
+    QByteArray out(pout, *plen);
+    if(len > *plen) {
+        return false;
+    }
+    return woAes.decrypt(hdl, in, out);
 }
 
 void AesDelete(int hdl)
 {
-
+    return woAes.destroy(hdl);
 }
