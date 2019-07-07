@@ -15,11 +15,11 @@ QWoAes::~QWoAes()
 
 }
 
-int QWoAes::create(const QByteArray &passwprd)
+int QWoAes::create(const QByteArray &password)
 {
     static QAtomicInt aint = 5100;
     int icnt = aint++;
-    QAesWrap *aes = new QAesWrap(passwprd, FIX_SALTS_STRING, QAesWrap::AES_256);
+    QAesWrap *aes = new QAesWrap(password, FIX_SALTS_STRING, QAesWrap::AES_256);
     m_aes.insert(icnt, aes);
     return icnt;
 }
@@ -30,7 +30,7 @@ bool QWoAes::encrypt(int hdl, const QByteArray &in, QByteArray &out)
     if(aes == nullptr) {
         return false;
     }
-    return aes->encrypt(in, out, QAesWrap::AES_CTR, QAesWrap::None);
+    return aes->encrypt(in, out, QAesWrap::AES_CTR);
 }
 
 bool QWoAes::decrypt(int hdl, const QByteArray &in, QByteArray &out)
@@ -39,7 +39,7 @@ bool QWoAes::decrypt(int hdl, const QByteArray &in, QByteArray &out)
     if(aes == nullptr) {
         return false;
     }
-    return aes->decrypt(in, out, QAesWrap::AES_CTR, QAesWrap::None);
+    return aes->decrypt(in, out, QAesWrap::AES_CTR);
 }
 
 void QWoAes::destroy(int hdl)

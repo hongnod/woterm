@@ -15,7 +15,7 @@ public:
     explicit QWoAes(QObject *parent=nullptr);
     virtual ~QWoAes();
 
-    int create(const QByteArray & passwprd);
+    int create(const QByteArray & password);
     bool encrypt(int hdl, const QByteArray& in, QByteArray& out);
     bool decrypt(int hdl, const QByteArray& in, QByteArray& out);
     void destroy(int hdl);
