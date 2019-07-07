@@ -21,6 +21,7 @@ public:
     ~QWoSessionProperty();
 
 private slots:
+    void onAuthCurrentIndexChanged(const QString & txt);
     void onTreeItemClicked(const QModelIndex& index);
     void onReadyToConnect();
     void onReadyToSave();

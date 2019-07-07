@@ -2,9 +2,11 @@
 #include "ui_qwosessionproperty.h"
 
 #include "qwosetting.h"
+#include "qwoutils.h"
 
 #include <QFileDialog>
 #include <QDebug>
+#include <QIntValidator>
 
 QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     : QDialog(parent)
@@ -15,6 +17,10 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
     ui->setupUi(this);
     setWindowTitle(tr("Session Property"));
+
+    QIntValidator *validator = new QIntValidator();
+    validator->setRange(1, 65535);
+    ui->port->setValidator(validator);
 
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
@@ -35,6 +41,8 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
 
     QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
 
+    QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
+
     QObject::connect(ui->connect, SIGNAL(clicked()), this, SLOT(onReadyToConnect()));
     QObject::connect(ui->save, SIGNAL(clicked()), this, SLOT(onReadyToSave()));
     QObject::connect(ui->cancel, SIGNAL(clicked()), this, SLOT(close()));
@@ -52,6 +60,14 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
 QWoSessionProperty::~QWoSessionProperty()
 {
     delete ui;
+}
+
+void QWoSessionProperty::onAuthCurrentIndexChanged(const QString &txt)
+{
+    bool isPass = txt == tr("Password");
+
+    QWoUtils::setLayoutVisible(ui->passLayout, isPass);
+    QWoUtils::setLayoutVisible(ui->identifyLayout, !isPass);
 }
 
 void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
@@ -106,6 +122,8 @@ void QWoSessionProperty::initDefault()
     QString rzPathDown = mdata["zmodemPathDown"].toString();
     ui->szUpload->setText(szPathUpload);
     ui->rzDown->setText(rzPathDown);
+    ui->port->setText(mdata.value("port", 22).toString());
+    onAuthCurrentIndexChanged("Password");
 }
 
 void QWoSessionProperty::saveDefaultConfig()
