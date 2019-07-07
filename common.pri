@@ -1,5 +1,6 @@
-PROJECT_BINDIR = $$PWD/bin
-PROJECT_LIBDIR = $$PWD/bin
+PROJECT_DIR = $$PWD
+PROJECT_BINDIR = $$PROJECT_DIR/bin
+PROJECT_LIBDIR = $$PROJECT_DIR/bin
 
 TRANSLATIONS += \
     $$PROJECT_BINDIR/translations/qtermwidget_el.ts \
