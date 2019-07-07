@@ -38,7 +38,6 @@ HEADERS += \
     qwoshower.h \
     qwowidget.h \
     qwosessionmanager.h \
-    aes.h \
     qwosshconf.h \
     qwoglobal.h \
     qwohostinfolist.h \
