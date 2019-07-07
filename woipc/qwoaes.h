@@ -20,7 +20,7 @@ public:
     bool decrypt(int hdl, const QByteArray& in, QByteArray& out);
     void destroy(int hdl);
 private:
-    QMap<int, QPointer<QAesWrap>> m_aes;
+    QMap<int, QAesWrap*> m_aes;
 };
 
 #ifdef __cplusplus

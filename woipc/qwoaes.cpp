@@ -26,7 +26,7 @@ int QWoAes::create(const QByteArray &passwprd)
 
 bool QWoAes::encrypt(int hdl, const QByteArray &in, QByteArray &out)
 {
-    QPointer<QAesWrap> aes = m_aes.value(hdl);
+    QAesWrap *aes = m_aes.value(hdl);
     if(aes == nullptr) {
         return false;
     }
@@ -35,7 +35,7 @@ bool QWoAes::encrypt(int hdl, const QByteArray &in, QByteArray &out)
 
 bool QWoAes::decrypt(int hdl, const QByteArray &in, QByteArray &out)
 {
-    QPointer<QAesWrap> aes = m_aes.value(hdl);
+    QAesWrap *aes = m_aes.value(hdl);
     if(aes == nullptr) {
         return false;
     }
@@ -44,7 +44,7 @@ bool QWoAes::decrypt(int hdl, const QByteArray &in, QByteArray &out)
 
 void QWoAes::destroy(int hdl)
 {
-    QPointer<QAesWrap> aes = m_aes.take(hdl);
+    QAesWrap *aes = m_aes.take(hdl);
     if(aes == nullptr) {
         return;
     }
