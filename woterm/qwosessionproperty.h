@@ -24,6 +24,8 @@ private slots:
     void onTreeItemClicked(const QModelIndex& index);
     void onReadyToConnect();
     void onReadyToSave();
+    void onSzDirBrowser();
+    void onRzDirBrowser();
 
 
 private:

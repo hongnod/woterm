@@ -578,7 +578,18 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="szUpload"/>
+              <widget class="QLineEdit" name="szUpload">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="szDirBrowser">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -592,7 +603,18 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="rzDown"/>
+              <widget class="QLineEdit" name="rzDown">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="rzDirBrowser">
+               <property name="text">
+                <string>...</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

@@ -3,6 +3,9 @@
 
 #include "qwosetting.h"
 
+#include <QFileDialog>
+#include <QDebug>
+
 QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     : QDialog(parent)
     , m_type(type)
@@ -35,6 +38,9 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QObject::connect(ui->connect, SIGNAL(clicked()), this, SLOT(onReadyToConnect()));
     QObject::connect(ui->save, SIGNAL(clicked()), this, SLOT(onReadyToSave()));
     QObject::connect(ui->cancel, SIGNAL(clicked()), this, SLOT(close()));
+
+    QObject::connect(ui->szDirBrowser, SIGNAL(clicked()), this, SLOT(onSzDirBrowser()));
+    QObject::connect(ui->rzDirBrowser, SIGNAL(clicked()), this, SLOT(onRzDirBrowser()));
 
     initDefault();
 
@@ -72,6 +78,24 @@ void QWoSessionProperty::onReadyToConnect()
 void QWoSessionProperty::onReadyToSave()
 {
 
+}
+
+void QWoSessionProperty::onSzDirBrowser()
+{
+    QString path = ui->szUpload->text();
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), path, QFileDialog::ShowDirsOnly);
+    qDebug() << "fileName" << fileName;
+    fileName = QDir::toNativeSeparators(fileName);
+    ui->szUpload->setText(fileName);
+}
+
+void QWoSessionProperty::onRzDirBrowser()
+{
+    QString path = ui->rzDown->text();
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), path, QFileDialog::ShowDirsOnly);
+    qDebug() << "fileName" << fileName;
+    fileName = QDir::toNativeSeparators(fileName);
+    ui->rzDown->setText(fileName);
 }
 
 void QWoSessionProperty::initDefault()
