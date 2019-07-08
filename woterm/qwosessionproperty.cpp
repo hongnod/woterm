@@ -50,6 +50,8 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QObject::connect(ui->szDirBrowser, SIGNAL(clicked()), this, SLOT(onSzDirBrowser()));
     QObject::connect(ui->rzDirBrowser, SIGNAL(clicked()), this, SLOT(onRzDirBrowser()));
 
+    QObject::connect(ui->identifyBrowser, SIGNAL(clicked()),  this, SLOT(onIdentifyBrowserClicked()));
+
     initDefault();
 
     if(m_type == SPTYPE_DEFAULT) {
@@ -84,6 +86,11 @@ void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
     }else if(name == tr("FileTransfer")){
         ui->stacked->setCurrentWidget(ui->fileTransferWidget);
     }
+}
+
+void QWoSessionProperty::onIdentifyBrowserClicked()
+{
+
 }
 
 void QWoSessionProperty::onReadyToConnect()
