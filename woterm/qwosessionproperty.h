@@ -24,6 +24,7 @@ private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
     void onTreeItemClicked(const QModelIndex& index);
     void onIdentifyBrowserClicked();
+    void onJumpBrowserClicked();
     void onReadyToConnect();
     void onReadyToSave();
     void onSzDirBrowser();
@@ -32,6 +33,7 @@ private slots:
 
 private:
     void initDefault();
+    void initHistory();
     void saveDefaultConfig();
 private:
     const int m_type;

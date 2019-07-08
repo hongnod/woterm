@@ -1,5 +1,6 @@
 #include "qwosessionproperty.h"
 #include "ui_qwosessionproperty.h"
+#include "qwohostsimplelist.h"
 
 #include "qwosetting.h"
 #include "qwoutils.h"
@@ -7,6 +8,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QIntValidator>
+#include <QStringListModel>
 
 QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     : QDialog(parent)
@@ -18,9 +20,13 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("Session Property"));
 
+    ui->tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     QIntValidator *validator = new QIntValidator();
     validator->setRange(1, 65535);
     ui->port->setValidator(validator);
+
+    ui->fontChooser->setFontFilters(QFontComboBox::MonospacedFonts);
 
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
@@ -51,8 +57,11 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QObject::connect(ui->rzDirBrowser, SIGNAL(clicked()), this, SLOT(onRzDirBrowser()));
 
     QObject::connect(ui->identifyBrowser, SIGNAL(clicked()),  this, SLOT(onIdentifyBrowserClicked()));
+    QObject::connect(ui->jumpBrowser, SIGNAL(clicked()),  this, SLOT(onJumpBrowserClicked()));
 
+    initHistory();
     initDefault();
+
 
     if(m_type == SPTYPE_DEFAULT) {
         ui->connect->hide();
@@ -90,7 +99,20 @@ void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
 
 void QWoSessionProperty::onIdentifyBrowserClicked()
 {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"));
+    qDebug() << "fileName" << fileName;
+    fileName = QDir::toNativeSeparators(fileName);
+    ui->identify->setCurrentText(fileName);
+}
 
+void QWoSessionProperty::onJumpBrowserClicked()
+{
+    QWoHostSimpleList dlg(this);
+    dlg.exec();
+    HostInfo hi;
+    if(dlg.result(&hi)) {
+        ui->jump->setEditText(hi.name);
+    }
 }
 
 void QWoSessionProperty::onReadyToConnect()
@@ -108,8 +130,10 @@ void QWoSessionProperty::onSzDirBrowser()
     QString path = ui->szUpload->text();
     QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), path, QFileDialog::ShowDirsOnly);
     qDebug() << "fileName" << fileName;
-    fileName = QDir::toNativeSeparators(fileName);
-    ui->szUpload->setText(fileName);
+    if(!fileName.isEmpty()) {
+        fileName = QDir::toNativeSeparators(fileName);
+        ui->szUpload->setText(fileName);
+    }
 }
 
 void QWoSessionProperty::onRzDirBrowser()
@@ -117,20 +141,60 @@ void QWoSessionProperty::onRzDirBrowser()
     QString path = ui->rzDown->text();
     QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), path, QFileDialog::ShowDirsOnly);
     qDebug() << "fileName" << fileName;
-    fileName = QDir::toNativeSeparators(fileName);
-    ui->rzDown->setText(fileName);
+    if(!fileName.isEmpty()) {
+        fileName = QDir::toNativeSeparators(fileName);
+        ui->rzDown->setText(fileName);
+    }
 }
 
 void QWoSessionProperty::initDefault()
 {
+    QDir home = QDir::home();
     QVariant val = QWoSetting::value("property/default");
     QVariantMap mdata = val.toMap();
-    QString szPathUpload = mdata["zmodemPathUpload"].toString();
-    QString rzPathDown = mdata["zmodemPathDown"].toString();
+    QString szPathUpload = mdata.value("zmodemPathUpload", QDir::toNativeSeparators(home.path())).toString();
+    QString rzPathDown = mdata.value("zmodemPathDown", QDir::toNativeSeparators(home.path())).toString();
     ui->szUpload->setText(szPathUpload);
     ui->rzDown->setText(rzPathDown);
     ui->port->setText(mdata.value("port", 22).toString());
-    onAuthCurrentIndexChanged("Password");
+    QString password = mdata.value("password").toString();
+    QString identify = mdata.value("identifyFIle").toString();
+    ui->password->setText(password);
+    ui->identify->setCurrentText(identify);
+    if(!password.isEmpty() || identify.isEmpty()) {
+        ui->authType->setCurrentText("Password");
+        onAuthCurrentIndexChanged("Password");
+    }else if(!identify.isEmpty()){
+        ui->authType->setCurrentText("IdentifyFile");
+        onAuthCurrentIndexChanged("IdentifyFile");
+    }
+    QString userName = mdata.value("userName").toString();
+    ui->userName->setEditText(userName);
+}
+
+void QWoSessionProperty::initHistory()
+{
+    {
+        QVariant v = QWoSetting::value("history/identifyList");
+        QStringList el = v.toStringList();
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(el);
+        ui->identify->setModel(model);
+    }
+    {
+        QVariant v = QWoSetting::value("history/userNameList");
+        QStringList el = v.toStringList();
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(el);
+        ui->userName->setModel(model);
+    }
+    {
+        QVariant v = QWoSetting::value("history/proxyJumpList");
+        QStringList el = v.toStringList();
+        QStringListModel *model = new QStringListModel(this);
+        model->setStringList(el);
+        ui->jump->setModel(model);
+    }
 }
 
 void QWoSessionProperty::saveDefaultConfig()
