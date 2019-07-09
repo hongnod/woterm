@@ -2,11 +2,15 @@
 #define QWOSESSIONPROPERTY_H
 
 #include <QDialog>
+#include <QPointer>
 #include <QStandardItemModel>
 
 namespace Ui {
 class QWoSessionProperty;
 }
+
+class QTermWidget;
+class QStringListModel;
 
 #define SPTYPE_DEFAULT    (1)
 #define SPTYPE_MODIFY     (2)
@@ -22,6 +26,7 @@ public:
 
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
+    void onColorCurrentIndexChanged(const QString & txt);
     void onTreeItemClicked(const QModelIndex& index);
     void onIdentifyBrowserClicked();
     void onJumpBrowserClicked();
@@ -39,6 +44,8 @@ private:
     const int m_type;
     Ui::QWoSessionProperty *ui;
     QStandardItemModel m_model;
+    QPointer<QStringListModel> m_modelPreview;
+    QPointer<QTermWidget> m_preview;
 };
 
 #endif // QWOSESSIONPROPERTY_H

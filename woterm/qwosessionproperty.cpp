@@ -1,6 +1,7 @@
 #include "qwosessionproperty.h"
 #include "ui_qwosessionproperty.h"
 #include "qwohostsimplelist.h"
+#include "qtermwidget.h"
 
 #include "qwosetting.h"
 #include "qwoutils.h"
@@ -21,6 +22,18 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     setWindowTitle(tr("Session Property"));
 
     ui->tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    m_modelPreview = new QStringListModel(this);
+    ui->schema->setModel(m_modelPreview);
+    m_preview = new QTermWidget(this);
+    QStringList colors = m_preview->availableColorSchemes();
+    m_modelPreview->setStringList(colors);
+    ui->previewLayout->addWidget(m_preview);
+    if(!colors.isEmpty()) {
+        m_preview->setColorScheme(colors[0]);
+    }
+
+    QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
     QIntValidator *validator = new QIntValidator();
     validator->setRange(1, 65535);
@@ -79,6 +92,36 @@ void QWoSessionProperty::onAuthCurrentIndexChanged(const QString &txt)
 
     QWoUtils::setLayoutVisible(ui->passLayout, isPass);
     QWoUtils::setLayoutVisible(ui->identifyLayout, !isPass);
+}
+
+/*
+Ps = 3 0  -> Set foreground color to Black.
+            Ps = 3 1  -> Set foreground color to Red.
+            Ps = 3 2  -> Set foreground color to Green.
+            Ps = 3 3  -> Set foreground color to Yellow.
+            Ps = 3 4  -> Set foreground color to Blue.
+            Ps = 3 5  -> Set foreground color to Magenta.
+            Ps = 3 6  -> Set foreground color to Cyan.
+            Ps = 3 7  -> Set foreground color to White.
+            Ps = 3 9  -> Set foreground color to default, ECMA-48 3rd.
+            Ps = 4 0  -> Set background color to Black.
+            Ps = 4 1  -> Set background color to Red.
+            Ps = 4 2  -> Set background color to Green.
+            Ps = 4 3  -> Set background color to Yellow.
+            Ps = 4 4  -> Set background color to Blue.
+            Ps = 4 5  -> Set background color to Magenta.
+            Ps = 4 6  -> Set background color to Cyan.
+            Ps = 4 7  -> Set background color to White.
+            Ps = 4 9  -> Set background color to default, ECMA-48 3rd.
+*/
+void QWoSessionProperty::onColorCurrentIndexChanged(const QString &txt)
+{
+    m_preview->setColorScheme(txt);
+    m_preview->clear();
+    QByteArray seqTxt = "\033[31mRed \033[32mGreen \033[33mYellow \033[34mBlue \033[35mMagenta \033[36mCyan \033[37mWhite \033[39mDefault";
+    seqTxt.append("\r\n");
+    seqTxt.append("\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue \033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
+    m_preview->parseSequenceText(seqTxt);
 }
 
 void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
