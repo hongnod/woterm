@@ -27,6 +27,12 @@ public:
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
     void onColorCurrentIndexChanged(const QString & txt);
+    void onCurrentFontChanged(const QFont &font);
+
+    void onBlockCursorToggled(bool checked);
+    void onUnderlineCursorToggled(bool checked);
+    void onBeamCursorToggled(bool checked);
+
     void onTreeItemClicked(const QModelIndex& index);
     void onIdentifyBrowserClicked();
     void onJumpBrowserClicked();

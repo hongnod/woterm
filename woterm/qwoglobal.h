@@ -16,4 +16,12 @@ typedef struct{
 
 Q_DECLARE_METATYPE(HostInfo)
 
+#ifdef Q_OS_MACOS
+#define DEFAULT_FONT_FAMILY                   "Menlo"
+#elif defined(Q_OS_WIN)
+//#define DEFAULT_FONT_FAMILY                   "Lucida Console"
+#define DEFAULT_FONT_FAMILY                   "Courier New"
+#else
+#define DEFAULT_FONT_FAMILY                   "Monospace"
+#endif
 

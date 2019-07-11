@@ -1,20 +1,13 @@
 #include "qwotermwidget.h"
 #include "qwoprocess.h"
 #include "qwosetting.h"
+#include "qwoglobal.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QMenu>
 #include <QClipboard>
 
-#ifdef Q_OS_MACOS
-#define DEFAULT_FONT_FAMILY                   "Menlo"
-#elif defined(Q_OS_WIN)
-//#define DEFAULT_FONT_FAMILY                   "Lucida Console"
-#define DEFAULT_FONT_FAMILY                   "Courier New"
-#else
-#define DEFAULT_FONT_FAMILY                   "Monospace"
-#endif
 
 QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     : QTermWidget (parent)

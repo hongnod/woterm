@@ -21,8 +21,6 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("Session Property"));
 
-    ui->tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
     m_modelPreview = new QStringListModel(this);
     ui->schema->setModel(m_modelPreview);
     m_preview = new QTermWidget(this);
@@ -39,29 +37,27 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     validator->setRange(1, 65535);
     ui->port->setValidator(validator);
 
+    ui->fontChooser->setEditable(false);
     ui->fontChooser->setFontFilters(QFontComboBox::MonospacedFonts);
+    QObject::connect(ui->fontChooser, SIGNAL(currentFontChanged(const QFont&)), this, SLOT(onCurrentFontChanged(const QFont&)));
 
+    ui->tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
     QStandardItem *connect = new QStandardItem(tr("Connect"));
     m_model.appendRow(connect);
     connect->appendRow(new QStandardItem(tr("Authentication")));
-
     QStandardItem *terminal = new QStandardItem(tr("Terminal"));
     m_model.appendRow(terminal);
-
-
     QStandardItem *appearance = new QStandardItem(tr("Appearance"));
     m_model.appendRow(appearance);
-
     QStandardItem *fileTransfre = new QStandardItem(tr("FileTransfer"));
     m_model.appendRow(fileTransfre);
-
-
     QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
 
-    QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
+    QObject::connect(ui->blockCursor, SIGNAL(toggled(bool)), this, SLOT(onBlockCursorToggled(bool)));
 
+    QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
     QObject::connect(ui->connect, SIGNAL(clicked()), this, SLOT(onReadyToConnect()));
     QObject::connect(ui->save, SIGNAL(clicked()), this, SLOT(onReadyToSave()));
     QObject::connect(ui->cancel, SIGNAL(clicked()), this, SLOT(close()));
@@ -123,6 +119,26 @@ void QWoSessionProperty::onColorCurrentIndexChanged(const QString &txt)
     seqTxt.append("\r\n\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue");
     seqTxt.append("\r\n\033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
     m_preview->parseSequenceText(seqTxt);
+}
+
+void QWoSessionProperty::onCurrentFontChanged(const QFont &font)
+{
+    m_preview->setTerminalFont(font);
+}
+
+void QWoSessionProperty::onBlockCursorToggled(bool checked)
+{
+
+}
+
+void QWoSessionProperty::onUnderlineCursorToggled(bool checked)
+{
+
+}
+
+void QWoSessionProperty::onBeamCursorToggled(bool checked)
+{
+
 }
 
 void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
@@ -220,6 +236,9 @@ void QWoSessionProperty::initDefault()
     }else{
         ui->schema->setCurrentText(color);
     }
+    QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
+    QFont font(fontName);
+    ui->fontChooser->setCurrentFont(font);
 }
 
 void QWoSessionProperty::initHistory()

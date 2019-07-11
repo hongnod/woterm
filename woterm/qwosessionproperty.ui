@@ -599,21 +599,21 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_13">
                 <item>
-                 <widget class="QRadioButton" name="radioButton">
+                 <widget class="QRadioButton" name="blockCursor">
                   <property name="text">
                    <string>Block Cursor</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_3">
+                 <widget class="QRadioButton" name="underlineCursor">
                   <property name="text">
                    <string>IBeam Cursor</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_2">
+                 <widget class="QRadioButton" name="beamCursor">
                   <property name="text">
                    <string>Underline Cursor</string>
                   </property>
