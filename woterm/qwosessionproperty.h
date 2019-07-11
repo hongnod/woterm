@@ -33,6 +33,8 @@ private slots:
     void onUnderlineCursorToggled(bool checked);
     void onBeamCursorToggled(bool checked);
 
+    void onFontValueChanged(int i);
+
     void onTreeItemClicked(const QModelIndex& index);
     void onIdentifyBrowserClicked();
     void onJumpBrowserClicked();

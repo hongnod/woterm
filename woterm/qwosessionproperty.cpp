@@ -56,6 +56,8 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
 
     QObject::connect(ui->blockCursor, SIGNAL(toggled(bool)), this, SLOT(onBlockCursorToggled(bool)));
+    QObject::connect(ui->underlineCursor, SIGNAL(toggled(bool)), this, SLOT(onUnderlineCursorToggled(bool)));
+    QObject::connect(ui->beamCursor, SIGNAL(toggled(bool)), this, SLOT(onBeamCursorToggled(bool)));
 
     QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
     QObject::connect(ui->connect, SIGNAL(clicked()), this, SLOT(onReadyToConnect()));
@@ -67,6 +69,8 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
 
     QObject::connect(ui->identifyBrowser, SIGNAL(clicked()),  this, SLOT(onIdentifyBrowserClicked()));
     QObject::connect(ui->jumpBrowser, SIGNAL(clicked()),  this, SLOT(onJumpBrowserClicked()));
+
+    QObject::connect(ui->fontSize, SIGNAL(valueChanged(int)), this, SLOT(onFontValueChanged(int)));
 
     initHistory();
     initDefault();
@@ -123,22 +127,31 @@ void QWoSessionProperty::onColorCurrentIndexChanged(const QString &txt)
 
 void QWoSessionProperty::onCurrentFontChanged(const QFont &font)
 {
-    m_preview->setTerminalFont(font);
+    QFont f = font;
+    f.setPointSize(ui->fontSize->value());
+    m_preview->setTerminalFont(f);
 }
 
 void QWoSessionProperty::onBlockCursorToggled(bool checked)
 {
-
+    m_preview->setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::BlockCursor);
 }
 
 void QWoSessionProperty::onUnderlineCursorToggled(bool checked)
 {
-
+    m_preview->setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::UnderlineCursor);
 }
 
 void QWoSessionProperty::onBeamCursorToggled(bool checked)
 {
+    m_preview->setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::IBeamCursor);
+}
 
+void QWoSessionProperty::onFontValueChanged(int i)
+{
+    QFont f = m_preview->getTerminalFont();
+    f.setPointSize(i);
+    m_preview->setTerminalFont(f);
 }
 
 void QWoSessionProperty::onTreeItemClicked(const QModelIndex &idx)
@@ -239,6 +252,15 @@ void QWoSessionProperty::initDefault()
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
     QFont font(fontName);
     ui->fontChooser->setCurrentFont(font);
+
+    QString cursorName = mdata.value("cursorName", "block").toString();
+    if(cursorName.isEmpty() || cursorName == "block") {
+        ui->blockCursor->setChecked(true);
+    }else if(cursorName == "underline") {
+        ui->underlineCursor->setChecked(true);
+    }else {
+        ui->beamCursor->setChecked(true);
+    }
 }
 
 void QWoSessionProperty::initHistory()
