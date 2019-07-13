@@ -21,19 +21,8 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     font.setPointSize(10);
     setTerminalFont(font);
     setScrollBarPosition(QTermWidget::ScrollBarRight);
-    setColorScheme("Linux");
-    setKeyBindings("linux");
-
-    const auto arguments = QApplication::arguments();
-    for (const QString& arg : arguments)
-    {
-        if (availableColorSchemes().contains(arg)){
-            setColorScheme(arg);
-        }
-        if (availableKeyBindings().contains(arg)){
-            setKeyBindings(arg);
-        }
-    }
+    setColorScheme(DEFAULT_COLOR_SCHEMA);
+    setKeyBindings(DEFAULT_KEYBOARD_BINDING);
 
 #if 0
     QTimer *timer = new QTimer(this);

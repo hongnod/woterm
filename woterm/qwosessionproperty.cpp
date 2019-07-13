@@ -243,12 +243,9 @@ void QWoSessionProperty::initDefault()
     }
     QString userName = mdata.value("userName").toString();
     ui->userName->setEditText(userName);
-    QString color = mdata.value("colorSchema").toString();
-    if(color.isEmpty()) {
-        ui->schema->setCurrentIndex(0);
-    }else{
-        ui->schema->setCurrentText(color);
-    }
+    QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
+    ui->schema->setCurrentText(schema);
+    QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
     QFont font(fontName);
     ui->fontChooser->setCurrentFont(font);
