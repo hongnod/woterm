@@ -27,9 +27,6 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QStringList colors = m_preview->availableColorSchemes();
     m_modelPreview->setStringList(colors);
     ui->previewLayout->addWidget(m_preview);
-    if(!colors.isEmpty()) {
-        m_preview->setColorScheme(colors[0]);
-    }
 
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
@@ -55,9 +52,9 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     m_model.appendRow(fileTransfre);
     QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
 
-    QObject::connect(ui->blockCursor, SIGNAL(toggled(bool)), this, SLOT(onBlockCursorToggled(bool)));
-    QObject::connect(ui->underlineCursor, SIGNAL(toggled(bool)), this, SLOT(onUnderlineCursorToggled(bool)));
-    QObject::connect(ui->beamCursor, SIGNAL(toggled(bool)), this, SLOT(onBeamCursorToggled(bool)));
+    QObject::connect(ui->blockCursor, SIGNAL(toggled(bool)), this, SLOT(onBlockCursorToggled()));
+    QObject::connect(ui->underlineCursor, SIGNAL(toggled(bool)), this, SLOT(onUnderlineCursorToggled()));
+    QObject::connect(ui->beamCursor, SIGNAL(toggled(bool)), this, SLOT(onBeamCursorToggled()));
 
     QObject::connect(ui->authType, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onAuthCurrentIndexChanged(const QString &)));
     QObject::connect(ui->connect, SIGNAL(clicked()), this, SLOT(onReadyToConnect()));
@@ -123,6 +120,7 @@ void QWoSessionProperty::onColorCurrentIndexChanged(const QString &txt)
     seqTxt.append("\r\n\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue");
     seqTxt.append("\r\n\033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
     m_preview->parseSequenceText(seqTxt);
+    m_preview->setBlinkingCursor(true);
 }
 
 void QWoSessionProperty::onCurrentFontChanged(const QFont &font)
@@ -130,21 +128,25 @@ void QWoSessionProperty::onCurrentFontChanged(const QFont &font)
     QFont f = font;
     f.setPointSize(ui->fontSize->value());
     m_preview->setTerminalFont(f);
+    m_preview->setBlinkingCursor(true);
 }
 
-void QWoSessionProperty::onBlockCursorToggled(bool checked)
+void QWoSessionProperty::onBlockCursorToggled()
 {
     m_preview->setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::BlockCursor);
+    m_preview->setBlinkingCursor(true);
 }
 
-void QWoSessionProperty::onUnderlineCursorToggled(bool checked)
+void QWoSessionProperty::onUnderlineCursorToggled()
 {
     m_preview->setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::UnderlineCursor);
+    m_preview->setBlinkingCursor(true);
 }
 
-void QWoSessionProperty::onBeamCursorToggled(bool checked)
+void QWoSessionProperty::onBeamCursorToggled()
 {
     m_preview->setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::IBeamCursor);
+    m_preview->setBlinkingCursor(true);
 }
 
 void QWoSessionProperty::onFontValueChanged(int i)

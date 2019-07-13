@@ -666,14 +666,14 @@
                 <item>
                  <widget class="QRadioButton" name="underlineCursor">
                   <property name="text">
-                   <string>IBeam Cursor</string>
+                   <string>Underline Cursor</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QRadioButton" name="beamCursor">
                   <property name="text">
-                   <string>Underline Cursor</string>
+                   <string>IBeam Cursor</string>
                   </property>
                  </widget>
                 </item>

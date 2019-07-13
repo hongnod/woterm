@@ -29,9 +29,9 @@ private slots:
     void onColorCurrentIndexChanged(const QString & txt);
     void onCurrentFontChanged(const QFont &font);
 
-    void onBlockCursorToggled(bool checked);
-    void onUnderlineCursorToggled(bool checked);
-    void onBeamCursorToggled(bool checked);
+    void onBlockCursorToggled();
+    void onUnderlineCursorToggled();
+    void onBeamCursorToggled();
 
     void onFontValueChanged(int i);
 
@@ -43,11 +43,11 @@ private slots:
     void onSzDirBrowser();
     void onRzDirBrowser();
 
-
 private:
     void initDefault();
     void initHistory();
     void saveDefaultConfig();
+
 private:
     const int m_type;
     Ui::QWoSessionProperty *ui;
