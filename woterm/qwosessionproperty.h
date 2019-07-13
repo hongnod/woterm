@@ -47,6 +47,10 @@ private:
     void initDefault();
     void initHistory();
     void saveDefaultConfig();
+    void setFixPreviewString();
+
+private slots:
+    void onTimeout();
 
 private:
     const int m_type;

@@ -27,6 +27,10 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QStringList colors = m_preview->availableColorSchemes();
     m_modelPreview->setStringList(colors);
     ui->previewLayout->addWidget(m_preview);
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    timer->start(1000);
+
 
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
@@ -114,13 +118,6 @@ Ps = 3 0  -> Set foreground color to Black.
 void QWoSessionProperty::onColorCurrentIndexChanged(const QString &txt)
 {
     m_preview->setColorScheme(txt);
-    m_preview->clear();
-    QByteArray seqTxt = "\033[31mRed \033[32mGreen \033[33mYellow \033[34mBlue";
-    seqTxt.append("\r\n\033[35mMagenta \033[36mCyan \033[37mWhite \033[39mDefault");
-    seqTxt.append("\r\n\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue");
-    seqTxt.append("\r\n\033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
-    m_preview->parseSequenceText(seqTxt);
-    m_preview->setBlinkingCursor(true);
 }
 
 void QWoSessionProperty::onCurrentFontChanged(const QFont &font)
@@ -290,4 +287,20 @@ void QWoSessionProperty::initHistory()
 void QWoSessionProperty::saveDefaultConfig()
 {
 
+}
+
+void QWoSessionProperty::setFixPreviewString()
+{
+    m_preview->clear();
+    QByteArray seqTxt = "\033[31mRed \033[32mGreen \033[33mYellow \033[34mBlue";
+    seqTxt.append("\r\n\033[35mMagenta \033[36mCyan \033[37mWhite \033[39mDefault");
+    seqTxt.append("\r\n\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue");
+    seqTxt.append("\r\n\033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
+    m_preview->parseSequenceText(seqTxt);
+    m_preview->setBlinkingCursor(true);
+}
+
+void QWoSessionProperty::onTimeout()
+{
+    setFixPreviewString();
 }
