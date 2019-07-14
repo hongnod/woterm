@@ -18,8 +18,9 @@ QWoHostListModel::~QWoHostListModel()
 void QWoHostListModel::refreshList()
 {
     if(QWoSshConf::instance()->refresh()){
+        emit beginResetModel();
         m_hosts = QWoSshConf::instance()->hostList();
-        resetInternalData();
+        emit endResetModel();
     }
 }
 
