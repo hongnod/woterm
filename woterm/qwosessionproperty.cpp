@@ -31,12 +31,10 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start(1000);
 
-
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
-    QIntValidator *validator = new QIntValidator();
-    validator->setRange(1, 65535);
-    ui->port->setValidator(validator);
+    ui->port->setValidator(new QIntValidator(1, 65535));
+    ui->lineSize->setValidator(new QIntValidator(DEFAULT_HISTORY_LINE_LENGTH, 65535));
 
     ui->fontChooser->setEditable(false);
     ui->fontChooser->setFontFilters(QFontComboBox::MonospacedFonts);
@@ -257,6 +255,8 @@ void QWoSessionProperty::initDefault()
     }else {
         ui->beamCursor->setChecked(true);
     }
+    QString line = mdata.value("historyLine", QString("%1").arg(DEFAULT_HISTORY_LINE_LENGTH)).toString();
+    ui->lineSize->setText(line);
 }
 
 void QWoSessionProperty::initHistory()
