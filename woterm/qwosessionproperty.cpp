@@ -229,40 +229,28 @@ void QWoSessionProperty::initDefault()
     QDir home = QDir::home();
     QVariant val = QWoSetting::value("property/default");
     QVariantMap mdata = val.toMap();
-    QString szPathUpload = mdata.value("zmodemPathUpload", QDir::toNativeSeparators(home.path())).toString();
-    QString rzPathDown = mdata.value("zmodemPathDown", QDir::toNativeSeparators(home.path())).toString();
+    QString szPathUpload = mdata.value("szPath", QDir::toNativeSeparators(home.path())).toString();
+    QString rzPathDown = mdata.value("rzPath", QDir::toNativeSeparators(home.path())).toString();
     ui->szUpload->setText(szPathUpload);
     ui->rzDown->setText(rzPathDown);
-    ui->port->setText(mdata.value("port", 22).toString());
-    QString password = mdata.value("password").toString();
-    QString identify = mdata.value("identifyFIle").toString();
-    ui->password->setText(password);
-    ui->identify->setCurrentText(identify);
-    if(!password.isEmpty() || identify.isEmpty()) {
-        ui->authType->setCurrentText("Password");
-        onAuthCurrentIndexChanged("Password");
-    }else if(!identify.isEmpty()){
-        ui->authType->setCurrentText("IdentifyFile");
-        onAuthCurrentIndexChanged("IdentifyFile");
-    }
-    QString userName = mdata.value("userName").toString();
-    ui->userName->setEditText(userName);
+    ui->port->setText("22");
     QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
     ui->schema->setCurrentText(schema);
     QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
+    ui->keyBind->setCurrentText(binding);
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
     QFont font(fontName);
     ui->fontChooser->setCurrentFont(font);
 
-    QString cursorName = mdata.value("cursorName", "block").toString();
-    if(cursorName.isEmpty() || cursorName == "block") {
+    QString cursorType = mdata.value("cursorType", "block").toString();
+    if(cursorType.isEmpty() || cursorType == "block") {
         ui->blockCursor->setChecked(true);
-    }else if(cursorName == "underline") {
+    }else if(cursorType == "underline") {
         ui->underlineCursor->setChecked(true);
     }else {
         ui->beamCursor->setChecked(true);
     }
-    QString line = mdata.value("historyLine", QString("%1").arg(DEFAULT_HISTORY_LINE_LENGTH)).toString();
+    QString line = mdata.value("historyLength", QString("%1").arg(DEFAULT_HISTORY_LINE_LENGTH)).toString();
     ui->lineSize->setText(line);
 }
 
@@ -293,7 +281,27 @@ void QWoSessionProperty::initHistory()
 
 void QWoSessionProperty::saveDefaultConfig()
 {
+    QVariantMap mdata;
+    mdata["szPath"] = ui->szUpload->text();
+    mdata["rzPath"] = ui->rzDown->text();
+    mdata["colorSchema"] = ui->schema->currentText();
+    mdata["keyBinding"] = ui->keyBind->currentText();
+    mdata["fontName"] = ui->fontChooser->font().family();
+    if(ui->blockCursor->isChecked()) {
+        mdata["cursorType"] = "block";
+    }else if(ui->underlineCursor->isChecked()) {
+        mdata["cursorType"] = "underline";
+    }else {
+        mdata["cursorType"] = "beam";
+    }
+    mdata["historyLength"] = ui->lineSize->text();
+    if(m_type == SPTYPE_DEFAULT) {
+        QWoSetting::setValue("property/default", mdata);
+    }else if(m_type == SPTYPE_MODIFY){
 
+    }else{
+
+    }
 }
 
 void QWoSessionProperty::setFixPreviewString()
