@@ -31,6 +31,10 @@ private:
     void contextMenuEvent(QContextMenuEvent *event);
     void closeEvent(QCloseEvent *event);
 private:
+    void initDefault();
+    void initCustom();
+    void resetProperty(QVariantMap data);
+private:
     QPointer<QWoProcess> m_process;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;

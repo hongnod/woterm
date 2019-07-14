@@ -161,7 +161,7 @@ void QWoMainWindow::onProcessStartCheck()
 
 void QWoMainWindow::onActionNewTriggered()
 {
-    QWoSessionProperty dlg(SPTYPE_NEW, this);
+    QWoSessionProperty dlg(-1, this);
     dlg.exec();
 }
 
@@ -217,6 +217,6 @@ void QWoMainWindow::onActionExitTriggered()
 
 void QWoMainWindow::onActionDefaultTriggered()
 {
-    QWoSessionProperty dlg(SPTYPE_DEFAULT, this);
+    QWoSessionProperty dlg(-2, this);
     dlg.exec();
 }

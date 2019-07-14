@@ -121,6 +121,8 @@ QList<HostInfo> QWoSshConf::parse(const QByteArray& buf)
                 hi.password = item.mid(9).trimmed();
             }else if(item.startsWith("ProxyJump")) {
                 hi.proxyJump = item.mid(9).trimmed();
+            }else if(item.startsWith("Property")) {
+                hi.property = item.mid(8).trimmed();
             }else if(item.startsWith("#")) {
                 memos.push_back(item.mid(1));
             }
@@ -225,6 +227,10 @@ bool QWoSshConf::exportTo(const QString &path)
         }
         if(!hi.proxyJump.isEmpty()) {
             QString line(QString("  ProxyJump %1\n").arg(hi.proxyJump));
+            file.write(line.toUtf8());
+        }
+        if(!hi.property.isEmpty()) {
+            QString line(QString("  ProxyJump %1\n").arg(hi.property));
             file.write(line.toUtf8());
         }
     }

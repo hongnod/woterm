@@ -1,6 +1,8 @@
 #ifndef QWOSESSIONPROPERTY_H
 #define QWOSESSIONPROPERTY_H
 
+#include "qwoglobal.h"
+
 #include <QDialog>
 #include <QPointer>
 #include <QStandardItemModel>
@@ -12,16 +14,13 @@ class QWoSessionProperty;
 class QTermWidget;
 class QStringListModel;
 
-#define SPTYPE_DEFAULT    (1)
-#define SPTYPE_MODIFY     (2)
-#define SPTYPE_NEW        (3)
 
 class QWoSessionProperty : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit QWoSessionProperty(int type, QWidget *parent = nullptr);
+    explicit QWoSessionProperty(int idx, QWidget *parent = nullptr);
     ~QWoSessionProperty();
 
 private slots:
@@ -47,14 +46,17 @@ private slots:
 private:
     void initDefault();
     void initHistory();
-    void saveDefaultConfig();
+    void initCustom();
+    void resetProerty(QVariantMap mdata);
+    void saveConfig();
+    void saveHistory();
     void setFixPreviewString();
 
 private slots:
     void onTimeout();
 
 private:
-    const int m_type;
+    const int m_idx;
     Ui::QWoSessionProperty *ui;
     QStandardItemModel m_model;
     QPointer<QTermWidget> m_preview;

@@ -5,15 +5,17 @@
 
 #include "qwosetting.h"
 #include "qwoutils.h"
+#include "qwosshconf.h"
 
 #include <QFileDialog>
 #include <QDebug>
 #include <QIntValidator>
 #include <QStringListModel>
+#include <QMessageBox>
 
-QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
+QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     : QDialog(parent)
-    , m_type(type)
+    , m_idx(idx)
     , ui(new Ui::QWoSessionProperty)
 {
     Qt::WindowFlags flags = windowFlags();
@@ -77,9 +79,10 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
 
     initHistory();
     initDefault();
+    initCustom();
 
 
-    if(m_type == SPTYPE_DEFAULT) {
+    if(m_idx < -1) {
         ui->connect->hide();
     }
 }
@@ -201,7 +204,7 @@ void QWoSessionProperty::onReadyToConnect()
 
 void QWoSessionProperty::onReadyToSave()
 {
-    saveDefaultConfig();
+    saveConfig();
     close();
 }
 
@@ -229,36 +232,9 @@ void QWoSessionProperty::onRzDirBrowser()
 
 void QWoSessionProperty::initDefault()
 {
-    QDir home = QDir::home();
     QVariant val = QWoSetting::value("property/default");
     QVariantMap mdata = val.toMap();
-    QString szPathUpload = mdata.value("szPath", QDir::toNativeSeparators(home.path())).toString();
-    QString rzPathDown = mdata.value("rzPath", QDir::toNativeSeparators(home.path())).toString();
-    ui->szUpload->setText(szPathUpload);
-    ui->rzDown->setText(rzPathDown);
-    ui->port->setText("22");
-    QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
-    ui->schema->setCurrentText(schema);
-    QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
-    ui->keyBind->setCurrentText(binding);
-    QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
-    int fontSize = mdata.value("fontSize", DEFAULT_FONT_SIZE).toInt();
-    ui->fontSize->setValue(fontSize);
-    QFont font(fontName, fontSize);
-    ui->fontChooser->setCurrentFont(font);
-
-
-    QString cursorType = mdata.value("cursorType", "block").toString();
-    if(cursorType.isEmpty() || cursorType == "block") {
-        ui->blockCursor->setChecked(true);
-    }else if(cursorType == "underline") {
-        ui->underlineCursor->setChecked(true);
-    }else {
-        ui->beamCursor->setChecked(true);
-    }
-    QString line = mdata.value("historyLength", QString("%1").arg(DEFAULT_HISTORY_LINE_LENGTH)).toString();
-    ui->lineSize->setText(line);
-
+    resetProerty(mdata);
     ui->userName->setEditText("");
     ui->identify->setEditText("");
     ui->jump->setEditText("");
@@ -289,7 +265,49 @@ void QWoSessionProperty::initHistory()
     }
 }
 
-void QWoSessionProperty::saveDefaultConfig()
+void QWoSessionProperty::initCustom()
+{
+    if(m_idx < 0) {
+        return;
+    }
+    HostInfo hi = QWoSshConf::instance()->hostInfo(m_idx);
+    QVariant v = QWoUtils::qBase64ToVariant(hi.property);
+    QVariantMap mdata = v.toMap();
+    resetProerty(mdata);
+}
+
+void QWoSessionProperty::resetProerty(QVariantMap mdata)
+{
+    QDir home = QDir::home();
+    QString szPathUpload = mdata.value("szPath", QDir::toNativeSeparators(home.path())).toString();
+    QString rzPathDown = mdata.value("rzPath", QDir::toNativeSeparators(home.path())).toString();
+    ui->szUpload->setText(szPathUpload);
+    ui->rzDown->setText(rzPathDown);
+    ui->port->setText("22");
+    QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
+    ui->schema->setCurrentText(schema);
+    QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
+    ui->keyBind->setCurrentText(binding);
+    QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
+    int fontSize = mdata.value("fontSize", DEFAULT_FONT_SIZE).toInt();
+    ui->fontSize->setValue(fontSize);
+    QFont font(fontName, fontSize);
+    ui->fontChooser->setCurrentFont(font);
+
+
+    QString cursorType = mdata.value("cursorType", "block").toString();
+    if(cursorType.isEmpty() || cursorType == "block") {
+        ui->blockCursor->setChecked(true);
+    }else if(cursorType == "underline") {
+        ui->underlineCursor->setChecked(true);
+    }else {
+        ui->beamCursor->setChecked(true);
+    }
+    QString line = mdata.value("historyLength", QString("%1").arg(DEFAULT_HISTORY_LINE_LENGTH)).toString();
+    ui->lineSize->setText(line);
+}
+
+void QWoSessionProperty::saveConfig()
 {
     QVariantMap mdata;
     mdata["szPath"] = ui->szUpload->text();
@@ -306,12 +324,79 @@ void QWoSessionProperty::saveDefaultConfig()
         mdata["cursorType"] = "beam";
     }
     mdata["historyLength"] = ui->lineSize->text();
-    if(m_type == SPTYPE_DEFAULT) {
-        QWoSetting::setValue("property/default", mdata);
-    }else if(m_type == SPTYPE_MODIFY){
+    QString property = QWoUtils::qVariantToBase64(mdata);
+    if(m_idx < -1) {
+        QWoSetting::setValue("property/default", property);
+    }else {
+        HostInfo hi;
+        hi.property = property;
+        hi.name = ui->hostName->text();
+        hi.host = ui->host->text();
+        hi.port = ui->port->text().toInt();
+        hi.memo = ui->memo->toPlainText();
+        hi.user = ui->userName->currentText();
+        hi.password = ui->password->text();
+        hi.identityFile = QDir::toNativeSeparators(ui->identify->currentText());
+        hi.proxyJump = ui->jump->currentText();
 
-    }else{
+        if(hi.name.isEmpty()) {
+            QMessageBox::warning(this, tr("Info"), tr("The name can't be empty"));
+            return;
+        }
+        if(hi.host.isEmpty()) {
+            QMessageBox::warning(this, tr("Info"), tr("The host can't be empty"));
+            return;
+        }
+        if(hi.port < 10 | hi.port > 65535) {
+            QMessageBox::warning(this, tr("Info"), tr("The port should be at [10,65535]"));
+            return;
+        }
+        if(m_idx > -1) {
+            QWoSshConf::instance()->modify(m_idx, hi);
+        }else{
+            QWoSshConf::instance()->append(hi);
+        }
+    }
+    saveHistory();
+}
 
+void QWoSessionProperty::saveHistory()
+{
+    QString identityFile = QDir::toNativeSeparators(ui->identify->currentText());
+    if(!identityFile.isEmpty())
+    {
+        QVariant v = QWoSetting::value("history/identifyList");
+        QStringList el = v.toStringList();
+        el.removeAll(identityFile);
+        el.insert(0, identityFile);
+        if(el.length() > 5) {
+            el.removeLast();
+        }
+        QWoSetting::setValue("history/identifyList", el);
+    }
+    QString user = ui->userName->currentText();
+    if(!user.isEmpty())
+    {
+        QVariant v = QWoSetting::value("history/userNameList");
+        QStringList el = v.toStringList();
+        el.removeAll(user);
+        el.insert(0, user);
+        if(el.length() > 5) {
+            el.removeLast();
+        }
+        QWoSetting::setValue("history/userNameList", el);
+    }
+    QString proxyJump = ui->jump->currentText();
+    if(!proxyJump.isEmpty())
+    {
+        QVariant v = QWoSetting::value("history/proxyJumpList");
+        QStringList el = v.toStringList();
+        el.removeAll(proxyJump);
+        el.insert(0, proxyJump);
+        if(el.length() > 5) {
+            el.removeLast();
+        }
+        QWoSetting::setValue("history/proxyJumpList", el);
     }
 }
 

@@ -6,6 +6,8 @@
 #include <QSpacerItem>
 #include <QDebug>
 #include <QBoxLayout>
+#include <QDataStream>
+#include <QByteArray>
 
 void QWoUtils::setLayoutVisible(QLayout *layout, bool visible)
 {
@@ -17,4 +19,21 @@ void QWoUtils::setLayoutVisible(QLayout *layout, bool visible)
             w->setVisible(visible);
         }
     }
+}
+
+QString QWoUtils::qVariantToBase64(const QVariant& v)
+{
+    QByteArray buf;
+    QDataStream in(&buf, QIODevice::WriteOnly);
+    in << v;
+    return QString(buf.toBase64());
+}
+
+QVariant QWoUtils::qBase64ToVariant(const QString& v)
+{
+    QByteArray buf = QByteArray::fromBase64(v.toUtf8());
+    QDataStream out(buf);
+    QVariant data;
+    out >> data;
+    return out;
 }

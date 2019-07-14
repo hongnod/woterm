@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QVariantMap>
 
 typedef struct{
     QString name;
@@ -12,6 +13,7 @@ typedef struct{
     QString identityFile;
     QString proxyJump;
     QString memo;
+    QString property;
 }HostInfo;
 
 Q_DECLARE_METATYPE(HostInfo)

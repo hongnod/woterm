@@ -18,17 +18,15 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
     QFont font = QApplication::font();
     font.setFamily(DEFAULT_FONT_FAMILY);
-    font.setPointSize(10);
+    font.setPointSize(DEFAULT_FONT_SIZE);
     setTerminalFont(font);
     setScrollBarPosition(QTermWidget::ScrollBarRight);
     setColorScheme(DEFAULT_COLOR_SCHEMA);
     setKeyBindings(DEFAULT_KEYBOARD_BINDING);
 
-#if 0
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
-    timer->start(5000);
-#endif
+    initDefault();
+    initCustom();
+
 
     QObject::connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
@@ -51,17 +49,6 @@ QWoProcess *QWoTermWidget::process()
 void QWoTermWidget::onTimeout()
 {
     qDebug() << "onTimeout()";
-
-    parseSequenceText("\x1B[?3l");
-    parseSequenceText("\x1B[?3h");
-    parseSequenceText("jEh你好abc");
-    parseSequenceText("\033[31mHello\033[0m World");
-    parseSequenceText("error");
-    char buf[] = { 0x0d, 0x0a, 0x1b, 0x5b, 0x30, 0x6d, 0x1b, 0x5b, 0x30, 0x31, 0x3b, 0x33, 0x34, 0x6d, 0x63, 0x6f, 0x6e, 0x66, 0x1b, 0x5b, 0x30, 0x6d, 0x20,
-                   0x20, 0x1b, 0x5b, 0x30, 0x31, 0x3b, 0x33, 0x34, 0x6d, 0x76, 0x6f, 0x6c, 0x75, 0x6d, 0x65, 0x1b, 0x5b, 0x30, 0x6d, 0x0d, 0x0a, 0x1b, 0x5d,
-                   0x30, 0x3b, 0x61, 0x62, 0x63, 0x40, 0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x68, 0x6f, 0x73, 0x74, 0x3a, 0x7e, 0x07, 0x5b, 0x61, 0x62, 0x63, 0x40,
-                   0x6c, 0x6f, 0x63, 0x61, 0x6c, 0x68, 0x6f, 0x73, 0x74, 0x20, 0x7e, 0x5d, 0x24, 0x20, 0x00};
-    parseSequenceText(buf);
 }
 
 void QWoTermWidget::onReadyReadStandardOutput()
@@ -132,4 +119,38 @@ void QWoTermWidget::closeEvent(QCloseEvent *event)
         return;
     }
     QTermWidget::closeEvent(event);
+}
+
+void QWoTermWidget::initDefault()
+{
+    QVariant val = QWoSetting::value("property/default");
+    QVariantMap mdata = val.toMap();
+    resetProperty(mdata);
+}
+
+void QWoTermWidget::initCustom()
+{
+    QVariant val = QWoSetting::value("property/default");
+    QVariantMap mdata = val.toMap();
+    resetProperty(mdata);
+}
+
+void QWoTermWidget::resetProperty(QVariantMap mdata)
+{
+    QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
+    QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
+    QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
+    int fontSize = mdata.value("fontSize", DEFAULT_FONT_SIZE).toInt();
+    QFont ft(fontName, fontSize);
+    setTerminalFont(ft);
+    QString cursorType = mdata.value("cursorType", "block").toString();
+    if(cursorType.isEmpty() || cursorType == "block") {
+        setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::BlockCursor);
+    }else if(cursorType == "underline") {
+        setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::UnderlineCursor);
+    }else {
+        setKeyboardCursorShape(Konsole::Emulation::KeyboardCursorShape::IBeamCursor);
+    }
+    int lines = mdata.value("historyLength", DEFAULT_HISTORY_LINE_LENGTH).toInt();
+    setHistorySize(lines);
 }
