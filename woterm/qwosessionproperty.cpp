@@ -28,10 +28,12 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     timer->start(1000);
 
     QStringList schemas = m_preview->availableColorSchemes();
+    schemas.sort();
     ui->schema->setModel(new QStringListModel(schemas, this));
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
     QStringList binds = m_preview->availableKeyBindings();
+    binds.sort();
     ui->keyBind->setModel(new QStringListModel(binds, this));
     QObject::connect(ui->keyBind, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onKeyBindCurrentIndexChanged(const QString &)));
 
@@ -199,7 +201,8 @@ void QWoSessionProperty::onReadyToConnect()
 
 void QWoSessionProperty::onReadyToSave()
 {
-
+    saveDefaultConfig();
+    close();
 }
 
 void QWoSessionProperty::onSzDirBrowser()
@@ -239,8 +242,11 @@ void QWoSessionProperty::initDefault()
     QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
     ui->keyBind->setCurrentText(binding);
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
-    QFont font(fontName);
+    int fontSize = mdata.value("fontSize", DEFAULT_FONT_SIZE).toInt();
+    ui->fontSize->setValue(fontSize);
+    QFont font(fontName, fontSize);
     ui->fontChooser->setCurrentFont(font);
+
 
     QString cursorType = mdata.value("cursorType", "block").toString();
     if(cursorType.isEmpty() || cursorType == "block") {
@@ -252,6 +258,10 @@ void QWoSessionProperty::initDefault()
     }
     QString line = mdata.value("historyLength", QString("%1").arg(DEFAULT_HISTORY_LINE_LENGTH)).toString();
     ui->lineSize->setText(line);
+
+    ui->userName->setEditText("");
+    ui->identify->setEditText("");
+    ui->jump->setEditText("");
 }
 
 void QWoSessionProperty::initHistory()
@@ -286,7 +296,8 @@ void QWoSessionProperty::saveDefaultConfig()
     mdata["rzPath"] = ui->rzDown->text();
     mdata["colorSchema"] = ui->schema->currentText();
     mdata["keyBinding"] = ui->keyBind->currentText();
-    mdata["fontName"] = ui->fontChooser->font().family();
+    mdata["fontName"] = ui->fontChooser->currentFont().family();
+    mdata["fontSize"] = ui->fontSize->value();
     if(ui->blockCursor->isChecked()) {
         mdata["cursorType"] = "block";
     }else if(ui->underlineCursor->isChecked()) {

@@ -24,7 +24,7 @@ Q_DECLARE_METATYPE(HostInfo)
 #else
 #define DEFAULT_FONT_FAMILY "Monospace"
 #endif
-
+#define DEFAULT_FONT_SIZE (10)
 #define DEFAULT_COLOR_SCHEMA "Linux"
 #define DEFAULT_KEYBOARD_BINDING "linux"
 #define DEFAULT_HISTORY_LINE_LENGTH  (1000)
