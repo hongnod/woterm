@@ -130,6 +130,7 @@ void Session::addView(TerminalDisplay * widget)
     _views.append(widget);
 
     if ( _emulation != 0 ) {
+        connect( widget , SIGNAL(keyPressedSignal(QKeyEvent *)), _emulation, SLOT(sendKeyEvent(QKeyEvent *)) );
         // connect emulation - view signals and slots
         connect( widget , SIGNAL(mouseSignal(int,int,int,int)) , _emulation, SLOT(sendMouseEvent(int,int,int,int)) );
         connect( widget , SIGNAL(sendStringToEmu(const char *)) , _emulation, SLOT(sendString(const char *)) );

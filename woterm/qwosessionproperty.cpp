@@ -21,17 +21,19 @@ QWoSessionProperty::QWoSessionProperty(int type, QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("Session Property"));
 
-    m_modelPreview = new QStringListModel(this);
-    ui->schema->setModel(m_modelPreview);
     m_preview = new QTermWidget(this);
-    QStringList colors = m_preview->availableColorSchemes();
-    m_modelPreview->setStringList(colors);
     ui->previewLayout->addWidget(m_preview);
     QTimer *timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
     timer->start(1000);
 
+    QStringList schemas = m_preview->availableColorSchemes();
+    ui->schema->setModel(new QStringListModel(schemas, this));
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
+
+    QStringList binds = m_preview->availableKeyBindings();
+    ui->keyBind->setModel(new QStringListModel(binds, this));
+    QObject::connect(ui->keyBind, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onKeyBindCurrentIndexChanged(const QString &)));
 
     ui->port->setValidator(new QIntValidator(1, 65535));
     ui->lineSize->setValidator(new QIntValidator(DEFAULT_HISTORY_LINE_LENGTH, 65535));
@@ -116,6 +118,11 @@ Ps = 3 0  -> Set foreground color to Black.
 void QWoSessionProperty::onColorCurrentIndexChanged(const QString &txt)
 {
     m_preview->setColorScheme(txt);
+}
+
+void QWoSessionProperty::onKeyBindCurrentIndexChanged(const QString &txt)
+{
+    m_preview->setKeyBindings(txt);
 }
 
 void QWoSessionProperty::onCurrentFontChanged(const QFont &font)

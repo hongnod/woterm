@@ -27,6 +27,7 @@ public:
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
     void onColorCurrentIndexChanged(const QString & txt);
+    void onKeyBindCurrentIndexChanged(const QString & txt);
     void onCurrentFontChanged(const QFont &font);
 
     void onBlockCursorToggled();
@@ -56,7 +57,6 @@ private:
     const int m_type;
     Ui::QWoSessionProperty *ui;
     QStandardItemModel m_model;
-    QPointer<QStringListModel> m_modelPreview;
     QPointer<QTermWidget> m_preview;
 };
 
