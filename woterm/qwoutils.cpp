@@ -35,5 +35,5 @@ QVariant QWoUtils::qBase64ToVariant(const QString& v)
     QDataStream out(buf);
     QVariant data;
     out >> data;
-    return out;
+    return data;
 }

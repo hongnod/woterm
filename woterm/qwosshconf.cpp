@@ -230,7 +230,7 @@ bool QWoSshConf::exportTo(const QString &path)
             file.write(line.toUtf8());
         }
         if(!hi.property.isEmpty()) {
-            QString line(QString("  ProxyJump %1\n").arg(hi.property));
+            QString line(QString("  Property %1\n").arg(hi.property));
             file.write(line.toUtf8());
         }
     }
