@@ -4,6 +4,7 @@
 #include "qwohostinfoedit.h"
 #include "qwohostinfolist.h"
 #include "qwohostlistmodel.h"
+#include "qwosessionproperty.h"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -199,14 +200,16 @@ void QWoSessionManager::onListViewItemModify()
         return;
     }
     int idx = target.toInt();
-    QWoHostInfoEdit dlg(idx, this);
+    //QWoHostInfoEdit dlg(idx, this);
+    QWoSessionProperty dlg(idx, this);
     dlg.exec();
     refreshList();
 }
 
 void QWoSessionManager::onListViewItemAdd()
 {
-    QWoHostInfoEdit dlg(this);
+    //QWoHostInfoEdit dlg(this);
+    QWoSessionProperty dlg(-1, this);
     dlg.exec();
     refreshList();
 }
