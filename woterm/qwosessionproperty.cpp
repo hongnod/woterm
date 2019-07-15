@@ -274,6 +274,19 @@ void QWoSessionProperty::initCustom()
     QVariant v = QWoUtils::qBase64ToVariant(hi.property);
     QVariantMap mdata = v.toMap();
     resetProerty(mdata);
+    ui->hostName->setText(hi.name);
+    ui->host->setText(hi.host);
+    ui->port->setText(QString("%1").arg(hi.port));
+    ui->memo->setPlainText(hi.memo);
+    ui->userName->setEditText(hi.user);
+    ui->password->setText(hi.password);
+    ui->identify->setEditText(hi.identityFile);
+    if(!hi.password.isEmpty()) {
+        ui->authType->setCurrentText("Password");
+    }else{
+        ui->authType->setCurrentText("IdentifyFile");
+    }
+    ui->jump->setEditText(hi.proxyJump);
 }
 
 void QWoSessionProperty::resetProerty(QVariantMap mdata)
