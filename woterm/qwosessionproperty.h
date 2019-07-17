@@ -23,6 +23,9 @@ public:
     explicit QWoSessionProperty(int idx, QWidget *parent = nullptr);
     ~QWoSessionProperty();
 
+signals:
+    void connect(const QString& host);
+
 private slots:
     void onAuthCurrentIndexChanged(const QString & txt);
     void onColorCurrentIndexChanged(const QString & txt);

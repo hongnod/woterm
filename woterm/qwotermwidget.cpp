@@ -126,8 +126,8 @@ void QWoTermWidget::closeEvent(QCloseEvent *event)
 
 void QWoTermWidget::initDefault()
 {
-    QVariant val = QWoSetting::value("property/default");
-    QVariantMap mdata = val.toMap();
+    QString val = QWoSetting::value("property/default").toString();
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(val).toMap();
     resetProperty(mdata);
 }
 
@@ -145,6 +145,9 @@ void QWoTermWidget::initCustom()
 
 void QWoTermWidget::resetProperty(QVariantMap mdata)
 {
+    if(mdata.isEmpty()) {
+        return;
+    }
     QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
     QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();

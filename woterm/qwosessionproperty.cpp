@@ -201,7 +201,9 @@ void QWoSessionProperty::onJumpBrowserClicked()
 
 void QWoSessionProperty::onReadyToConnect()
 {
-
+    saveConfig();
+    close();
+    emit connect(ui->hostName->text());
 }
 
 void QWoSessionProperty::onReadyToSave()
@@ -323,7 +325,7 @@ void QWoSessionProperty::resetProerty(QVariantMap mdata)
 }
 
 void QWoSessionProperty::saveConfig()
-{
+{    
     QVariantMap mdata;
     mdata["szPath"] = ui->szUpload->text();
     mdata["rzPath"] = ui->rzDown->text();
@@ -366,9 +368,22 @@ void QWoSessionProperty::saveConfig()
             QMessageBox::warning(this, tr("Info"), tr("The port should be at [10,65535]"));
             return;
         }
+        QList<int> idxs = QWoSshConf::instance()->exists(hi.name);
         if(m_idx > -1) {
+            if(idxs.length() > 2) {
+                QMessageBox::warning(this, tr("Info"), tr("The same name has been used."));
+                return;
+            }
+            if(idxs.length() > 0 && idxs.indexOf(m_idx) < 0) {
+                QMessageBox::warning(this, tr("Info"), tr("The same name has been used."));
+                return;
+            }
             QWoSshConf::instance()->modify(m_idx, hi);
         }else{
+            if(idxs.length() > 0) {
+                QMessageBox::warning(this, tr("Info"), tr("The same name has been used."));
+                return;
+            }
             QWoSshConf::instance()->append(hi);
         }
     }

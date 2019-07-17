@@ -268,6 +268,17 @@ void QWoSshConf::modify(int idx, const HostInfo &hi)
     save();
 }
 
+QList<int> QWoSshConf::exists(const QString &name)
+{
+    QList<int> idxs;
+    for(int i = 0; i < m_hosts.length(); i++) {
+        if(m_hosts[i].name == name) {
+            idxs.append(i);
+        }
+    }
+    return idxs;
+}
+
 void QWoSshConf::updatePassword(const QString &name, const QString &password)
 {
     int idx = findHost(name);
