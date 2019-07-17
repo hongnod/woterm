@@ -20,6 +20,8 @@ public:
     explicit QWoSshProcess(const QString& target, QObject *parent);
     virtual ~QWoSshProcess();
 
+    QString target() const;
+
 private slots:
     void onNewConnection();
     void onClientError(QLocalSocket::LocalSocketError socketError);

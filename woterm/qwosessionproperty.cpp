@@ -49,9 +49,14 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     ui->tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
-    QStandardItem *connect = new QStandardItem(tr("Connect"));
-    m_model.appendRow(connect);
-    connect->appendRow(new QStandardItem(tr("Authentication")));
+    if(m_idx < -1) {
+        ui->connect->hide();
+    }else{
+        QStandardItem *connect = new QStandardItem(tr("Connect"));
+        m_model.appendRow(connect);
+        connect->appendRow(new QStandardItem(tr("Authentication")));
+    }
+
     QStandardItem *terminal = new QStandardItem(tr("Terminal"));
     m_model.appendRow(terminal);
     QStandardItem *appearance = new QStandardItem(tr("Appearance"));
@@ -77,14 +82,11 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
 
     QObject::connect(ui->fontSize, SIGNAL(valueChanged(int)), this, SLOT(onFontValueChanged(int)));
 
+    onAuthCurrentIndexChanged(tr("Password"));
+
     initHistory();
     initDefault();
     initCustom();
-
-
-    if(m_idx < -1) {
-        ui->connect->hide();
-    }
 }
 
 QWoSessionProperty::~QWoSessionProperty()
@@ -232,8 +234,8 @@ void QWoSessionProperty::onRzDirBrowser()
 
 void QWoSessionProperty::initDefault()
 {
-    QVariant val = QWoSetting::value("property/default");
-    QVariantMap mdata = val.toMap();
+    QString val = QWoSetting::value("property/default").toString();
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(val).toMap();
     resetProerty(mdata);
     ui->userName->setEditText("");
     ui->identify->setEditText("");

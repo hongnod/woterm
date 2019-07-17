@@ -1,6 +1,9 @@
 #include "qwotermwidget.h"
 #include "qwoprocess.h"
 #include "qwosetting.h"
+#include "qwosshconf.h"
+#include "qwosshprocess.h"
+#include "qwoutils.h"
 #include "qwoglobal.h"
 
 #include <QApplication>
@@ -130,8 +133,13 @@ void QWoTermWidget::initDefault()
 
 void QWoTermWidget::initCustom()
 {
-    QVariant val = QWoSetting::value("property/default");
-    QVariantMap mdata = val.toMap();
+    QWoSshProcess *sshprocess = qobject_cast<QWoSshProcess*>(m_process);
+    if(sshprocess == nullptr) {
+        return;
+    }
+    QString target = sshprocess->target();
+    HostInfo hi = QWoSshConf::instance()->findHostInfo(target);
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
     resetProperty(mdata);
 }
 

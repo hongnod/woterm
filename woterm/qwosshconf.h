@@ -26,6 +26,9 @@ public:
 
     int findHost(const QString& name);
     HostInfo hostInfo(int i);
+    HostInfo findHostInfo(const QString&name) {
+        return hostInfo(findHost(name));
+    }
 private:
     QList<HostInfo> parse(const QByteArray& buf);
 private:

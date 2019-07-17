@@ -70,6 +70,11 @@ QWoSshProcess::~QWoSshProcess()
 {
 }
 
+QString QWoSshProcess::target() const
+{
+    return m_target;
+}
+
 void QWoSshProcess::zmodemSend(const QStringList &files)
 {
 
