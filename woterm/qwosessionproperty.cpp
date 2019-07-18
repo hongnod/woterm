@@ -208,7 +208,9 @@ void QWoSessionProperty::onReadyToConnect()
 
 void QWoSessionProperty::onReadyToSave()
 {
-    saveConfig();
+    if(!saveConfig()) {
+        return;
+    }
     close();
 }
 
@@ -324,7 +326,7 @@ void QWoSessionProperty::resetProerty(QVariantMap mdata)
     ui->lineSize->setText(line);
 }
 
-void QWoSessionProperty::saveConfig()
+bool QWoSessionProperty::saveConfig()
 {    
     QVariantMap mdata;
     mdata["szPath"] = ui->szUpload->text();
@@ -358,36 +360,37 @@ void QWoSessionProperty::saveConfig()
 
         if(hi.name.isEmpty()) {
             QMessageBox::warning(this, tr("Info"), tr("The name can't be empty"));
-            return;
+            return false;
         }
         if(hi.host.isEmpty()) {
             QMessageBox::warning(this, tr("Info"), tr("The host can't be empty"));
-            return;
+            return false;
         }
         if(hi.port < 10 | hi.port > 65535) {
             QMessageBox::warning(this, tr("Info"), tr("The port should be at [10,65535]"));
-            return;
+            return false;
         }
         QList<int> idxs = QWoSshConf::instance()->exists(hi.name);
         if(m_idx > -1) {
             if(idxs.length() > 2) {
                 QMessageBox::warning(this, tr("Info"), tr("The same name has been used."));
-                return;
+                return false;
             }
             if(idxs.length() > 0 && idxs.indexOf(m_idx) < 0) {
                 QMessageBox::warning(this, tr("Info"), tr("The same name has been used."));
-                return;
+                return false;
             }
             QWoSshConf::instance()->modify(m_idx, hi);
         }else{
             if(idxs.length() > 0) {
                 QMessageBox::warning(this, tr("Info"), tr("The same name has been used."));
-                return;
+                return false;
             }
             QWoSshConf::instance()->append(hi);
         }
     }
     saveHistory();
+    return true;
 }
 
 void QWoSessionProperty::saveHistory()

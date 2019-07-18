@@ -51,7 +51,7 @@ private:
     void initHistory();
     void initCustom();
     void resetProerty(QVariantMap mdata);
-    void saveConfig();
+    bool saveConfig();
     void saveHistory();
     void setFixPreviewString();
 

@@ -63,7 +63,7 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     env << "TERM_MSG_IPC_PROGRAM="+ipc;
     setEnvironment(env);
 
-    QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));    
+    QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
 }
 
 QWoSshProcess::~QWoSshProcess()
