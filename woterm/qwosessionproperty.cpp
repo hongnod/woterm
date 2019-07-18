@@ -201,7 +201,9 @@ void QWoSessionProperty::onJumpBrowserClicked()
 
 void QWoSessionProperty::onReadyToConnect()
 {
-    saveConfig();
+    if(!saveConfig()) {
+        return;
+    }
     close();
     emit connect(ui->hostName->text());
 }

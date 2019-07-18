@@ -22,8 +22,9 @@ public:
     virtual ~QWoSessionManager();
 signals:
     void aboutToClose(QCloseEvent* event);
-    void sessionDoubleClicked(const HostInfo& hi);
-    void sessionBatchClicked(const QVariantList& his);
+    void readyToConnect(const QString& target);
+    void batchReadyToConnect(const QStringList& targets);
+
 private:
     void init();
     void refreshList();

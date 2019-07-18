@@ -13,6 +13,8 @@ QWoHostSimpleList::QWoHostSimpleList(QWidget *parent)
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
     ui->setupUi(this);
 
+    setWindowTitle(tr("jump list"));
+
     m_model = new QWoHostListModel(this);
     m_proxyModel = new QSortFilterProxyModel(this);
     m_proxyModel->setSourceModel(m_model);

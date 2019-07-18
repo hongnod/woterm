@@ -61,7 +61,6 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     QObject::connect(m_input, SIGNAL(returnPressed()), this, SLOT(onEditReturnPressed()));
     QObject::connect(all, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
     QObject::connect(m_input, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
-    QObject::connect(m_list, SIGNAL(clicked()), this, SLOT(onOpenSelectSessions()));
     QObject::connect(m_list, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onListItemDoubleClicked(const QModelIndex&)));
     QObject::connect(m_list, SIGNAL(pressed(const QModelIndex&)), this, SLOT(onListItemPressed(const QModelIndex&)));
     QTimer *timer = new QTimer(this);
@@ -97,12 +96,12 @@ void QWoSessionManager::onOpenSelectSessions()
 {
     int cnt = m_proxyModel->rowCount();
     qDebug() << "rowCount:" << cnt;
-    QVariantList sessions;
+    QStringList sessions;
     for(int i = 0; i < cnt; i++) {
         QModelIndex mi = m_proxyModel->index(i, 0);
-        sessions << mi.data(ROLE_HOSTINFO);
+        sessions << mi.data().toString();
     }
-    emit sessionBatchClicked(sessions);
+    emit batchReadyToConnect(sessions);
 }
 
 void QWoSessionManager::onEditTextChanged(const QString &txt)
@@ -131,7 +130,7 @@ void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
     qDebug() << "server:" << hi.name;
 
     onListItemPressed(item);
-    emit sessionDoubleClicked(hi);
+    emit readyToConnect(hi.name);
 }
 
 void QWoSessionManager::onListItemPressed(const QModelIndex &item)
@@ -175,7 +174,7 @@ void QWoSessionManager::onEditReturnPressed()
         idx = m_proxyModel->index(0, 0);
     }
     const HostInfo& hi = idx.data(ROLE_HOSTINFO).value<HostInfo>();
-    emit sessionDoubleClicked(hi);
+    emit readyToConnect(hi.name);
 }
 
 void QWoSessionManager::onListViewItemOpen()
@@ -185,7 +184,7 @@ void QWoSessionManager::onListViewItemOpen()
         idx = m_proxyModel->index(0, 0);
     }
     const HostInfo& hi = idx.data(ROLE_HOSTINFO).value<HostInfo>();
-    emit sessionDoubleClicked(hi);
+    emit readyToConnect(hi.name);
 }
 
 void QWoSessionManager::onListViewItemReload()

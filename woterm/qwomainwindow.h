@@ -30,8 +30,8 @@ private slots:
     void onNewTerm();
     void onOpenTerm();
     void onEditConfig();
-    void onSessionDoubleClicked(const HostInfo& hi);
-    void onSessionBatchClicked(const QVariantList& his);
+    void onSessionReadyToConnect(const QString& target);
+    void onSessionBatchToConnect(const QStringList& targets);
     void onProcessStartCheck();
 
 private slots:

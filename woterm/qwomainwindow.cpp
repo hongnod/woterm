@@ -85,8 +85,8 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QAction *edit = tool->addAction("Edit");
     QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
 
-    QObject::connect(m_manager, SIGNAL(sessionDoubleClicked(const HostInfo&)), this, SLOT(onSessionDoubleClicked(const HostInfo&)));
-    QObject::connect(m_manager, SIGNAL(sessionBatchClicked(const QVariantList&)), this, SLOT(onSessionBatchClicked(const QVariantList&)));
+    QObject::connect(m_manager, SIGNAL(readyToConnect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
+    QObject::connect(m_manager, SIGNAL(batchReadyToConnect(const QStringList&)), this, SLOT(onSessionBatchToConnect(const QStringList&)));
 
     QTimer::singleShot(1000, this, SLOT(onProcessStartCheck()));
 
@@ -134,16 +134,15 @@ void QWoMainWindow::onEditConfig()
     QDesktopServices::openUrl(QUrl(cfg, QUrl::TolerantMode));
 }
 
-void QWoMainWindow::onSessionDoubleClicked(const HostInfo &hi)
+void QWoMainWindow::onSessionReadyToConnect(const QString &target)
 {
-    m_shower->openConnection(hi.name);
+    m_shower->openConnection(target);
 }
 
-void QWoMainWindow::onSessionBatchClicked(const QVariantList &his)
+void QWoMainWindow::onSessionBatchToConnect(const QStringList &targets)
 {
-    for(int i = 0; i < his.length(); i++) {
-        const HostInfo& hi = his.at(i).value<HostInfo>();
-        m_shower->openConnection(hi.name);
+    for(int i = 0; i < targets.length(); i++) {
+        m_shower->openConnection(targets.at(i));
     }
 }
 
