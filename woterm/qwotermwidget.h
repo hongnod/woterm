@@ -26,6 +26,8 @@ slots:
     void onSendData(const QByteArray& buf);
     void onCopyToClipboard();
     void onPasteFromClipboard();
+    void onVerticalSplitView();
+    void onHorizontalSplitView();
 
 private:
     void contextMenuEvent(QContextMenuEvent *event);

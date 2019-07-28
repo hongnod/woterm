@@ -97,6 +97,16 @@ void QWoTermWidget::onPasteFromClipboard()
     m_process->write(buf);
 }
 
+void QWoTermWidget::onVerticalSplitView()
+{
+
+}
+
+void QWoTermWidget::onHorizontalSplitView()
+{
+
+}
+
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
 {
     if(m_menu == nullptr) {
@@ -104,7 +114,11 @@ void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
         m_copy = m_menu->addAction(tr("Copy"));
         QObject::connect(m_copy, SIGNAL(triggered()), this, SLOT(onCopyToClipboard()));
         m_paste = m_menu->addAction(tr("Paste"));
-        QObject::connect(m_paste, SIGNAL(triggered()), this, SLOT(onPasteFromClipboard()));
+        QObject::connect(m_paste, SIGNAL(triggered()), this, SLOT(onPasteFromClipboard()));        
+        QAction *vsplit = m_menu->addAction(tr("Split Vertical"));
+        QObject::connect(vsplit, SIGNAL(triggered()), this, SLOT(onVerticalSplitView()));
+        QAction *hsplit = m_menu->addAction(tr("Split Horizontal"));
+        QObject::connect(hsplit, SIGNAL(triggered()), this, SLOT(onHorizontalSplitView()));
     }
 
     QString selTxt = selectedText();
