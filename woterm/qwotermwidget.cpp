@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QClipboard>
+#include <QSplitter>
 
 
 QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
@@ -99,12 +100,38 @@ void QWoTermWidget::onPasteFromClipboard()
 
 void QWoTermWidget::onVerticalSplitView()
 {
-
+    QSplitter *splitter = qobject_cast<QSplitter*>(parent());
+    if(splitter == nullptr) {
+        return;
+    }
+    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
+    if(sshproc == nullptr) {
+        return;
+    }
+    splitter->setOrientation(Qt::Vertical);
+    QString target = sshproc->target();
+    QWoSshProcess *process = new QWoSshProcess(target, this);
+    QWoTermWidget *term = new QWoTermWidget(process, splitter);
+    splitter->addWidget(term);
+    process->start();
 }
 
 void QWoTermWidget::onHorizontalSplitView()
 {
-
+    QSplitter *splitter = qobject_cast<QSplitter*>(parent());
+    if(splitter == nullptr) {
+        return;
+    }
+    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
+    if(sshproc == nullptr) {
+        return;
+    }
+    splitter->setOrientation(Qt::Horizontal);
+    QString target = sshproc->target();
+    QWoSshProcess *process = new QWoSshProcess(target, this);
+    QWoTermWidget *term = new QWoTermWidget(process, splitter);
+    splitter->addWidget(term);
+    process->start();
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)

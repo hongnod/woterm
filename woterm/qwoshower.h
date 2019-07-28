@@ -5,6 +5,7 @@
 
 class QTabBar;
 class QWoTermWidget;
+class QSplitter;
 
 class QWoShower : public QWidget
 {
@@ -29,5 +30,5 @@ private slots:
     void onTabCurrentChanged(int index);
 private:
     QPointer<QTabBar> m_tabs;
-    QList<QPointer<QWoTermWidget>> m_terms;
+    QList<QPointer<QSplitter>> m_terms;
 };

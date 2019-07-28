@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QWidget>
+#include "qwowidget.h"
 
 #include <QPointer>
 
-class QWoTermContainer : public QWidget
+class QWoTermContainer : public QWoWidget
 {
     Q_OBJECT
 public:

@@ -4,7 +4,7 @@
 
 
 QWoTermContainer::QWoTermContainer(QWidget *parent)
-    : QWidget (parent)
+    : QWoWidget (parent)
 {
 
 }
