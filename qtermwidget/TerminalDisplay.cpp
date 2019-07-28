@@ -2728,12 +2728,12 @@ int TerminalDisplay::motionAfterPasting()
     return mMotionAfterPasting;
 }
 
-void TerminalDisplay::keyPressEvent( QKeyEvent* e )
+void TerminalDisplay::keyPressEvent2( QKeyEvent* e )
 {
     emit keyPressedSignal(e);
 }
 
-void TerminalDisplay::keyPressEvent2( QKeyEvent* event )
+void TerminalDisplay::keyPressEvent( QKeyEvent* event )
 {
     bool emitKeyPressSignal = true;
 
@@ -2825,7 +2825,7 @@ void TerminalDisplay::keyPressEvent2( QKeyEvent* event )
 void TerminalDisplay::inputMethodEvent( QInputMethodEvent* e )
 {
     QKeyEvent keyEvent(QEvent::KeyPress, 0, Qt::NoModifier,e->commitString());
-    //emit keyPressedSignal(&keyEvent);
+    emit keyPressedSignal(&keyEvent);
     _inputMethodData.preeditString = e->preeditString().toStdWString();
     update(preeditRect() | _inputMethodData.previousPreeditRect);
 

@@ -465,20 +465,20 @@ bool Vt102Emulation::translateKey(QKeyEvent *e)
 bool Vt102Emulation::eventFilter(QObject *obj, QEvent *ev)
 {
     QEvent::Type t = ev->type();
-    if (t == QEvent::KeyPress) {
-        QKeyEvent* e = (QKeyEvent*)ev;
-        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
+//    if (t == QEvent::KeyPress) {
+//        QKeyEvent* e = (QKeyEvent*)ev;
+//        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
 
-        if(translateKey(e)) {
-            return true;
-        }
-        QString keyTxt = e->text();
-        if(!keyTxt.isEmpty()) {
-            QByteArray data = keyTxt.toUtf8();
-            emit sendData(data);
-        }
-        return true;
-    }
+//        if(translateKey(e)) {
+//            return true;
+//        }
+//        QString keyTxt = e->text();
+//        if(!keyTxt.isEmpty()) {
+//            QByteArray data = keyTxt.toUtf8();
+//            emit sendData(data);
+//        }
+//        return true;
+//    }
     return false;
 }
 

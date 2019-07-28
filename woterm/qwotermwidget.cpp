@@ -27,6 +27,9 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     setColorScheme(DEFAULT_COLOR_SCHEMA);
     setKeyBindings(DEFAULT_KEYBOARD_BINDING);
 
+    setBlinkingCursor(true);
+    setBidiEnabled(true);
+
     initDefault();
     initCustom();
 
