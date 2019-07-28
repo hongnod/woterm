@@ -108,12 +108,20 @@ void QWoTermWidget::onVerticalSplitView()
     if(sshproc == nullptr) {
         return;
     }
+    QList<int> ls = splitter->sizes();
+    if(ls.size() >= 2) {
+        return;
+    }
     splitter->setOrientation(Qt::Vertical);
     QString target = sshproc->target();
     QWoSshProcess *process = new QWoSshProcess(target, this);
     QWoTermWidget *term = new QWoTermWidget(process, splitter);
     splitter->addWidget(term);
     process->start();
+    int sz = this->height() / 2;
+    ls.clear();
+    ls << sz << sz;
+    splitter->setSizes(ls);
 }
 
 void QWoTermWidget::onHorizontalSplitView()
@@ -126,12 +134,20 @@ void QWoTermWidget::onHorizontalSplitView()
     if(sshproc == nullptr) {
         return;
     }
+    QList<int> ls = splitter->sizes();
+    if(ls.size() >= 2) {
+        return;
+    }
     splitter->setOrientation(Qt::Horizontal);
     QString target = sshproc->target();
     QWoSshProcess *process = new QWoSshProcess(target, this);
     QWoTermWidget *term = new QWoTermWidget(process, splitter);
     splitter->addWidget(term);
     process->start();
+    int sz = this->width() / 2;
+    ls.clear();
+    ls << sz << sz;
+    splitter->setSizes(ls);
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
