@@ -14,6 +14,7 @@ public:
     virtual ~QWoShower();
     bool openConnection(const QString& target);
     void setBackgroundColor(const QColor& clr);
+    void openFindDialog();
 protected:
     virtual void resizeEvent(QResizeEvent *event);
     void syncGeometry(QWidget *widget);

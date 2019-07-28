@@ -152,7 +152,9 @@ void QWoTermWidget::resetProperty(QVariantMap mdata)
         return;
     }
     QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
+    setColorScheme(schema);
     QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
+    setKeyBindings(binding);
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
     int fontSize = mdata.value("fontSize", DEFAULT_FONT_SIZE).toInt();
     QFont ft(fontName, fontSize);

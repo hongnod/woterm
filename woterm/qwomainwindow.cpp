@@ -42,6 +42,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(onActionSaveTriggered()));
     QObject::connect(ui->actionTransfer, SIGNAL(triggered()), this, SLOT(onActionTransferTriggered()));
     QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionDefaultTriggered()));
+    QObject::connect(ui->actionFind, SIGNAL(triggered()), this, SLOT(onActionFindTriggered()));
 
     //QMenu *actionsMenu = new QMenu("Actions", ui->menuBar);
     //ui->menuBar->addMenu(actionsMenu);
@@ -218,4 +219,9 @@ void QWoMainWindow::onActionDefaultTriggered()
 {
     QWoSessionProperty dlg(-2, this);
     dlg.exec();
+}
+
+void QWoMainWindow::onActionFindTriggered()
+{
+    m_shower->openFindDialog();
 }

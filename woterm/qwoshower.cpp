@@ -47,7 +47,20 @@ void QWoShower::setBackgroundColor(const QColor &clr)
     setPalette(pal);
 //    for(int i = 0; i < m_terms.count(); i++) {
 //        QWoTermWidget *term = m_terms.at(i);
-//    }
+    //    }
+}
+
+void QWoShower::openFindDialog()
+{
+    int idx = m_tabs->currentIndex();
+    if (idx < 0 || idx > m_tabs->count()) {
+        return;
+    }
+    QVariant v = m_tabs->tabData(idx);
+    QWoTermWidget *target = v.value<QWoTermWidget*>();
+    QWoTermWidget *take = m_terms.at(idx);
+    Q_ASSERT(target == take);
+    take->toggleShowSearchBar();
 }
 
 void QWoShower::resizeEvent(QResizeEvent *event)
