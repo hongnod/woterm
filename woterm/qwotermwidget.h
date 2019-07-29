@@ -36,6 +36,7 @@ private:
     void initDefault();
     void initCustom();
     void resetProperty(QVariantMap data);
+    void splitWidget(int sz, bool vertical);
 private:
     QPointer<QWoProcess> m_process;
     QPointer<QMenu> m_menu;

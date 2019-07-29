@@ -100,54 +100,14 @@ void QWoTermWidget::onPasteFromClipboard()
 
 void QWoTermWidget::onVerticalSplitView()
 {
-    QSplitter *splitter = qobject_cast<QSplitter*>(parent());
-    if(splitter == nullptr) {
-        return;
-    }
-    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
-    if(sshproc == nullptr) {
-        return;
-    }
-    QList<int> ls = splitter->sizes();
-    if(ls.size() >= 2) {
-        return;
-    }
-    splitter->setOrientation(Qt::Vertical);
-    QString target = sshproc->target();
-    QWoSshProcess *process = new QWoSshProcess(target, this);
-    QWoTermWidget *term = new QWoTermWidget(process, splitter);
-    splitter->addWidget(term);
-    process->start();
-    int sz = this->height() / 2;
-    ls.clear();
-    ls << sz << sz;
-    splitter->setSizes(ls);
+    int sz = height() / 2;
+    splitWidget(sz, true);
 }
 
 void QWoTermWidget::onHorizontalSplitView()
 {
-    QSplitter *splitter = qobject_cast<QSplitter*>(parent());
-    if(splitter == nullptr) {
-        return;
-    }
-    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
-    if(sshproc == nullptr) {
-        return;
-    }
-    QList<int> ls = splitter->sizes();
-    if(ls.size() >= 2) {
-        return;
-    }
-    splitter->setOrientation(Qt::Horizontal);
-    QString target = sshproc->target();
-    QWoSshProcess *process = new QWoSshProcess(target, this);
-    QWoTermWidget *term = new QWoTermWidget(process, splitter);
-    splitter->addWidget(term);
-    process->start();
-    int sz = this->width() / 2;
-    ls.clear();
-    ls << sz << sz;
-    splitter->setSizes(ls);
+    int sz = width() / 2;
+    splitWidget(sz, false);
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
@@ -226,4 +186,31 @@ void QWoTermWidget::resetProperty(QVariantMap mdata)
     }
     int lines = mdata.value("historyLength", DEFAULT_HISTORY_LINE_LENGTH).toInt();
     setHistorySize(lines);
+}
+
+void QWoTermWidget::splitWidget(int sz, bool vertical)
+{
+    QSplitter *splitParent = qobject_cast<QSplitter*>(parent());
+    if(splitParent == nullptr) {
+        return;
+    }
+    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
+    if(sshproc == nullptr) {
+        return;
+    }
+    int idx = splitParent->indexOf(this);
+    QSplitter *splitNew = new QSplitter(this);
+    splitParent->replaceWidget(idx, splitNew);
+    splitNew->addWidget(this);
+
+    splitNew->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
+    QString target = sshproc->target();
+    QWoSshProcess *process = new QWoSshProcess(target, this);
+    QWoTermWidget *term = new QWoTermWidget(process, splitNew);
+    splitNew->addWidget(term);
+    process->start();
+
+    QList<int> ls;
+    ls << sz << sz;
+    splitNew->setSizes(ls);
 }
