@@ -1,6 +1,7 @@
 #include "qwoshower.h"
 #include "qwosshprocess.h"
 #include "qwotermwidget.h"
+#include "qwotermwidgetimpl.h"
 
 #include <QTabBar>
 #include <QResizeEvent>
@@ -9,16 +10,14 @@
 #include <QSplitter>
 
 QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
-    : QWidget (parent)
+    : QStackedWidget (parent)
     , m_tabs(tab)
 {
     QObject::connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
-    QObject::connect(tab, SIGNAL(tabMoved(int,int)), this, SLOT(onTabMoved(int,int)));
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
 
     setAutoFillBackground(true);
     setBackgroundColor("black");
-
 }
 
 QWoShower::~QWoShower()
@@ -28,17 +27,11 @@ QWoShower::~QWoShower()
 
 bool QWoShower::openConnection(const QString &target)
 {
-    QWoSshProcess *process = new QWoSshProcess(target, this);
-    QSplitter *split = new QSplitter(this);
-    QWoTermWidget *term = new QWoTermWidget(process, split);
-    split->addWidget(term);
-    syncGeometry(split);
-    process->start();
-    m_terms.append(split);
+    QWoTermWidgetImpl *impl = new QWoTermWidgetImpl(target, this);
+    addWidget(impl);
     int idx = m_tabs->addTab(target);
     m_tabs->setCurrentIndex(idx);
-    m_tabs->setTabData(idx, QVariant::fromValue(split));
-    QObject::connect(process, SIGNAL(finished(int)), this, SLOT(onSshProcessFinished(int)));
+    m_tabs->setTabData(idx, QVariant::fromValue(impl));
     return true;
 }
 
@@ -67,10 +60,6 @@ void QWoShower::resizeEvent(QResizeEvent *event)
 {
     QSize newSize = event->size();
     QRect rt(0, 0, newSize.width(), newSize.height());
-    for(int i = 0; i < m_terms.length(); i++) {
-        QWidget *term = m_terms.at(i);
-        term->setGeometry(rt);
-    }
 }
 
 void QWoShower::syncGeometry(QWidget *widget)
@@ -108,36 +97,12 @@ void QWoShower::onTabCloseRequested(int idx)
     closeSession(idx);
 }
 
-void QWoShower::onTabMoved(int from, int to)
-{
-    m_terms.move(from, to);
-}
-
-void QWoShower::onSshProcessFinished(int code)
-{
-    QWoProcess *hit = qobject_cast<QWoProcess*>(sender());
-//    for(int i = 0; i < m_terms.count(); i++) {
-//        QWoTermWidget *term = m_terms.at(i);
-//        QWoProcess *ssh = term->process();
-//        if(ssh == hit) {
-//            closeSession(i);
-//            return;
-//        }
-//    }
-}
-
 void QWoShower::onTabCurrentChanged(int idx)
 {
     if(idx < 0) {
         return;
     }
-    for(int i = 0; i < m_terms.count(); i++) {
-        QWidget *term = m_terms.at(i);
-        if(idx == i) {
-            term->show();
-            term->setFocus();
-        }else{
-            term->hide();
-        }
-    }
+    QVariant v = m_tabs->tabData(idx);
+    QWoTermWidgetImpl *impl = v.value<QWoTermWidgetImpl *>();
+    setCurrentWidget(impl);
 }

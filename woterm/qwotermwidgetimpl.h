@@ -3,6 +3,7 @@
 #include "qwowidget.h"
 
 #include <QPointer>
+
 class QSplitter;
 
 class QWoTermWidgetImpl : public QWoWidget
@@ -14,7 +15,8 @@ signals:
     void aboutToClose(QCloseEvent* event);
 private:
     void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 private:
     QString m_target;
-    QPointer<QSplitter> m_splitter;
+    QPointer<QSplitter> m_root;
 };
