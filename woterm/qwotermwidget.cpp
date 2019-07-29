@@ -72,7 +72,16 @@ void QWoTermWidget::onReadyReadStandardError()
 
 void QWoTermWidget::onFinished(int code)
 {
-    qDebug() << "exitcode" << code;
+    qDebug() << "exitcode" << code;    
+    deleteLater();
+    QSplitter *splitParent = qobject_cast<QSplitter*>(parent());
+    if(splitParent == nullptr) {
+        return;
+    }
+    int cnt = splitParent->count();
+    if(cnt == 1) {
+        splitParent->deleteLater();
+    }
 }
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
@@ -110,6 +119,15 @@ void QWoTermWidget::onHorizontalSplitView()
     splitWidget(sz, false);
 }
 
+void QWoTermWidget::onCloseThisSession()
+{
+    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
+    if(sshproc == nullptr) {
+        return;
+    }
+    sshproc->close();
+}
+
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
 {
     if(m_menu == nullptr) {
@@ -122,6 +140,8 @@ void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
         QObject::connect(vsplit, SIGNAL(triggered()), this, SLOT(onVerticalSplitView()));
         QAction *hsplit = m_menu->addAction(tr("Split Horizontal"));
         QObject::connect(hsplit, SIGNAL(triggered()), this, SLOT(onHorizontalSplitView()));
+        QAction *close = m_menu->addAction(tr("Close Session"));
+        QObject::connect(close, SIGNAL(triggered()), this, SLOT(onCloseThisSession()));
     }
 
     QString selTxt = selectedText();

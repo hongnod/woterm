@@ -28,6 +28,7 @@ slots:
     void onPasteFromClipboard();
     void onVerticalSplitView();
     void onHorizontalSplitView();
+    void onCloseThisSession();
 
 private:
     void contextMenuEvent(QContextMenuEvent *event);
