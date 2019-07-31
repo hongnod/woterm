@@ -218,19 +218,24 @@ void QWoTermWidget::splitWidget(int sz, bool vertical)
     if(sshproc == nullptr) {
         return;
     }
-    int idx = splitParent->indexOf(this);
-    QSplitter *splitNew = new QSplitter(this);
-    splitParent->replaceWidget(idx, splitNew);
-    splitNew->addWidget(this);
+    int cnt = splitParent->count();
+    QSplitter *splitter = splitParent;
+    if(cnt > 1) {
+        int idx = splitParent->indexOf(this);
+        QSplitter *splitNew = new QSplitter(this);
+        splitParent->replaceWidget(idx, splitNew);
+        splitNew->addWidget(this);
+        splitter = splitNew;
+    }
 
-    splitNew->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
+    splitter->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
     QString target = sshproc->target();
-    QWoSshProcess *process = new QWoSshProcess(target, this);
-    QWoTermWidget *term = new QWoTermWidget(process, splitNew);
-    splitNew->addWidget(term);
+    QWoSshProcess *process = new QWoSshProcess(target, splitter);
+    QWoTermWidget *term = new QWoTermWidget(process, splitter);
+    splitter->addWidget(term);
     process->start();
 
     QList<int> ls;
-    ls << sz << sz;
-    splitNew->setSizes(ls);
+    ls << 1 << 1;
+    splitter->setSizes(ls);
 }
