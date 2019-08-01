@@ -70,6 +70,7 @@ QWoSshProcess::~QWoSshProcess()
 {
     if(m_process->isOpen()) {
         m_process->kill();
+        m_process->waitForFinished();
     }
 }
 
