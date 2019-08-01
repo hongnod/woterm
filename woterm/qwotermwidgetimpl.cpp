@@ -19,6 +19,11 @@ QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
     QObject::connect(m_root, SIGNAL(destroyed(QObject*)), this, SLOT(onRootSplitterDestroy()));
 }
 
+QWoTermWidgetImpl::~QWoTermWidgetImpl()
+{
+
+}
+
 void QWoTermWidgetImpl::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose(event);
@@ -38,5 +43,6 @@ void QWoTermWidgetImpl::resizeEvent(QResizeEvent *event)
 
 void QWoTermWidgetImpl::onRootSplitterDestroy()
 {
-    qDebug() << "rootClose()";
+    close();
+    deleteLater();
 }

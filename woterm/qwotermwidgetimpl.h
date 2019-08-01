@@ -11,6 +11,7 @@ class QWoTermWidgetImpl : public QWoWidget
     Q_OBJECT
 public:
     explicit QWoTermWidgetImpl(QString target, QWidget *parent=nullptr);
+    ~QWoTermWidgetImpl();
 signals:
     void aboutToClose(QCloseEvent* event);
 private:

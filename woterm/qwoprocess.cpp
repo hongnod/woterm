@@ -20,6 +20,8 @@ QWoProcess::QWoProcess(QObject *parent)
 
 QWoProcess::~QWoProcess()
 {
+    m_process->terminate();
+    m_process->kill();
     delete m_process;
 }
 
