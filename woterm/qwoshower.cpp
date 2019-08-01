@@ -33,6 +33,7 @@ bool QWoShower::openConnection(const QString &target)
     m_tabs->setCurrentIndex(idx);
     m_tabs->setTabData(idx, QVariant::fromValue(impl));
     QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
+    setCurrentWidget(impl);
     return true;
 }
 

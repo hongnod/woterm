@@ -68,6 +68,9 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
 
 QWoSshProcess::~QWoSshProcess()
 {
+    if(m_process->isOpen()) {
+        m_process->kill();
+    }
 }
 
 QString QWoSshProcess::target() const
