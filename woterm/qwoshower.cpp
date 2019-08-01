@@ -32,6 +32,7 @@ bool QWoShower::openConnection(const QString &target)
     int idx = m_tabs->addTab(target);
     m_tabs->setCurrentIndex(idx);
     m_tabs->setTabData(idx, QVariant::fromValue(impl));
+    QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
     return true;
 }
 
@@ -71,21 +72,12 @@ void QWoShower::syncGeometry(QWidget *widget)
 
 void QWoShower::closeSession(int idx)
 {
-//    if(m_tabs == nullptr) {
-//        return;
-//    }
-//    if(idx >= m_tabs->count()) {
-//        return;
-//    }
-//    QVariant v = m_tabs->tabData(idx);
-//    QWoTermWidget *target = v.value<QWoTermWidget*>();
-//    QWoTermWidget *take = m_terms.takeAt(idx);
-//    Q_ASSERT(target == take);
-//    m_tabs->removeTab(idx);
-//    QWoProcess *process = take->process();
-//    take->close();
-//    process->kill();
-//    process->deleteLater();
+    if(idx >= m_tabs->count()) {
+        return;
+    }
+    QVariant v = m_tabs->tabData(idx);
+    QWoTermWidgetImpl *target = v.value<QWoTermWidgetImpl*>();
+    target->deleteLater();
 }
 
 void QWoShower::onTabCloseRequested(int idx)
@@ -105,4 +97,17 @@ void QWoShower::onTabCurrentChanged(int idx)
     QVariant v = m_tabs->tabData(idx);
     QWoTermWidgetImpl *impl = v.value<QWoTermWidgetImpl *>();
     setCurrentWidget(impl);
+}
+
+void QWoShower::onTermImplDestroy(QObject *it)
+{
+    QWoTermWidgetImpl *target = qobject_cast<QWoTermWidgetImpl*>(it);
+    for(int i = 0; i < m_tabs->count(); i++) {
+        QVariant v = m_tabs->tabData(i);
+        QWoTermWidgetImpl *impl = v.value<QWoTermWidgetImpl *>();
+        if(target == impl) {
+            m_tabs->removeTab(i);
+            break;
+        }
+    }
 }

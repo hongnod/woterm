@@ -26,7 +26,7 @@ private:
 private slots:
     void onTabCloseRequested(int index);
     void onTabCurrentChanged(int index);
+    void onTermImplDestroy(QObject *it);
 private:
     QPointer<QTabBar> m_tabs;
-    QList<QPointer<QWoTermWidgetImpl>> m_impls;
 };

@@ -16,6 +16,10 @@ signals:
 private:
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
+
+private slots:
+    void onRootSplitterDestroy();
+
 private:
     QString m_target;
     QPointer<QSplitter> m_root;
