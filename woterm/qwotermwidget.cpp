@@ -226,6 +226,11 @@ void QWoTermWidget::splitWidget(int sz, bool vertical)
         splitParent->replaceWidget(idx, splitNew);
         splitNew->addWidget(this);
         splitter = splitNew;
+        splitter->setHandleWidth(1);
+        splitter->setOpaqueResize(false);
+        splitter->setAutoFillBackground(true);
+        QPalette pal(Qt::gray);
+        splitter->setPalette(pal);
     }
 
     splitter->setOrientation(vertical ? Qt::Vertical : Qt::Horizontal);
