@@ -13,6 +13,7 @@ SOURCES += main.cpp \
     qwotermwidgetimpl.cpp \
     qwoprocess.cpp \
     qwosshprocess.cpp \
+    qwoshellprocess.cpp \
     qwoevent.cpp \
     qwosetting.cpp \
     qwomainwindow.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     qwotermwidgetimpl.h \
     qwoprocess.h \
     qwosshprocess.h \
+    qwoshellprocess.h \
     qwoevent.h \
     qwosetting.h \
     qwomainwindow.h \
