@@ -40,7 +40,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
 
-    QTimer::singleShot(1000, this, SLOT(onTimeout()));
+    //QTimer::singleShot(1000, this, SLOT(onTimeout()));
 }
 
 QWoTermWidget::~QWoTermWidget()
