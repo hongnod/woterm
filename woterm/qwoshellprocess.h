@@ -14,4 +14,7 @@ public:
     virtual ~QWoShellProcess();
 
 protected:
+private:
+    void reset();
+
 };

@@ -13,4 +13,5 @@ public:
     static QString sshProgramPath();
     static QString sshServerListPath();
     static QString ipcProgramPath();
+    static QString shellProgramPath();
 };

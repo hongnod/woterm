@@ -1,5 +1,6 @@
 #include "qwoshellprocess.h"
 #include "qwoevent.h"
+#include "qwosetting.h"
 
 #include <qtermwidget.h>
 #include <QApplication>
@@ -17,4 +18,9 @@ QWoShellProcess::QWoShellProcess(QObject *parent)
 QWoShellProcess::~QWoShellProcess()
 {
 
+}
+
+void QWoShellProcess::reset()
+{
+    QString path = QWoSetting::shellProgramPath();
 }

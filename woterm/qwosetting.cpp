@@ -103,3 +103,27 @@ QString QWoSetting::ipcProgramPath()
     }
     return path;
 }
+
+QString QWoSetting::shellProgramPath()
+{
+    QString path;
+    path = QWoSetting::value("shell/program").toString();
+    if(!QFile::exists(path)) {
+#ifdef Q_OS_WIN
+        QString cmd = qEnvironmentVariable("ComSpec");
+        if(QFile::exists(cmd)) {
+            return cmd;
+        }
+        QString path = qEnvironmentVariable("path");
+        QStringList paths = path.split(";");
+        for(int i = 0; i < paths.count(); i++) {
+            QString cmd = paths.at(i) + "/cmd.exe";
+            if(QFile::exists(cmd)) {
+                return cmd;
+            }
+        }
+        return "";
+#endif
+    }
+    return path;
+}

@@ -39,6 +39,8 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
     QObject::connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
+
+    QTimer::singleShot(1000, this, SLOT(onTimeout()));
 }
 
 QWoTermWidget::~QWoTermWidget()
@@ -56,6 +58,11 @@ QWoProcess *QWoTermWidget::process()
 void QWoTermWidget::onTimeout()
 {
     qDebug() << "onTimeout()";
+    QByteArray seqTxt = "\033[31mRed \033[32mGreen \033[33mYellow \033[34mBlue";
+    //seqTxt.append("\r\n\033[35mMagenta \033[36mCyan \033[37mWhite \033[39mDefault");
+    //seqTxt.append("\r\n\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue");
+    seqTxt.append("\r\n\033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
+    parseSequenceText(seqTxt);
 }
 
 void QWoTermWidget::onReadyReadStandardOutput()
