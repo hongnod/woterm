@@ -624,6 +624,7 @@ private slots:
 private:
 
     // -- Drawing helpers --
+    QColor prettyForBackgroundColor(const Character* style, const CharacterColor& color);
 
     // determine the width of this text
     int textWidth(int startColumn, int length, int line) const;
@@ -809,6 +810,8 @@ private:
     // custom cursor color.  if this is invalid then the foreground
     // color of the character under the cursor is used
     QColor _cursorColor;
+
+    QMap<QRgb, QColor> _bgclr2fgclr;
 
 
     MotionAfterPasting mMotionAfterPasting;

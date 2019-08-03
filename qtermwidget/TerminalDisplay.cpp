@@ -831,8 +831,8 @@ void TerminalDisplay::drawCharacters(QPainter& painter,
     }
 
     // setup pen
-    const CharacterColor& textColor = ( invertCharacterColor ? style->backgroundColor : style->foregroundColor );
-    const QColor color = textColor.color(_colorTable);
+    const CharacterColor& textColor = (invertCharacterColor ? style->backgroundColor : style->foregroundColor);
+    const QColor color = prettyForBackgroundColor(style, textColor);
     QPen pen = painter.pen();
     if ( pen.color() != color )
     {
@@ -875,15 +875,16 @@ void TerminalDisplay::drawTextFragment(QPainter& painter ,
     const QColor backgroundColor = style->backgroundColor.color(_colorTable);
 
     // draw background if different from the display's background color
-    if ( backgroundColor != palette().background().color() )
-        drawBackground(painter,rect,backgroundColor,
-                       false /* do not use transparency */);
+    if ( backgroundColor != palette().background().color() ){
+        drawBackground(painter,rect,backgroundColor, false /* do not use transparency */);
+    }
 
     // draw cursor shape if the current character is the cursor
     // this may alter the foreground and background colors
     bool invertCharacterColor = false;
-    if ( style->rendition & RE_CURSOR )
+    if ( style->rendition & RE_CURSOR ){
         drawCursor(painter,rect,foregroundColor,backgroundColor,invertCharacterColor);
+    }
 
     // draw text
     drawCharacters(painter,rect,text,style,invertCharacterColor);
@@ -2530,7 +2531,35 @@ void TerminalDisplay::wheelEvent( QWheelEvent* ev )
 
 void TerminalDisplay::tripleClickTimeout()
 {
-  _possibleTripleClick=false;
+    _possibleTripleClick=false;
+}
+
+QColor TerminalDisplay::prettyForBackgroundColor(const Character *style, const CharacterColor &fgclr)
+{
+    const CharacterColor& bgclr = style->backgroundColor;
+    if(!bgclr.isColorful()) {
+        return fgclr.color(_colorTable);
+    }
+    if (fgclr.isMono()) {
+        QColor bg = bgclr.color(_colorTable);
+        QColor fg = _bgclr2fgclr.value(bg.rgba());
+        if(fg.isValid()) {
+            return fg;
+        }
+        int r, g, b;
+        bg.getRgb(&r, &g, &b);
+        int gray = (r*299 + g*587 + b*114 + 500) / 1000;
+        if(255 - gray < gray) {
+            fg = QColor(0, 0, 0);
+            //fg = _colorTable[1].color;
+        }else{
+            //fg = _colorTable[0].color;
+            fg = QColor(255, 255, 255);
+        }
+        _bgclr2fgclr[bg.rgba()] = fg;
+        return fg;
+    }
+    return fgclr.color(_colorTable);
 }
 
 void TerminalDisplay::mouseTripleClickEvent(QMouseEvent* ev)

@@ -32,6 +32,7 @@
 // Qt
 #include <QTextStream>
 #include <QDate>
+#include <QDebug>
 
 // KDE
 //#include <kdebug.h>
@@ -406,7 +407,26 @@ void Screen::reverseRendition(Character& p) const
     p.backgroundColor = f; //p->r &= ~RE_TRANSPARENT;
 }
 
+
 void Screen::updateEffectiveRendition()
+{
+    effectiveRendition = currentRendition;
+    if (currentRendition & RE_REVERSE)
+    {
+        effectiveForeground = currentBackground;
+        effectiveBackground = currentForeground;
+    }
+    else
+    {
+        effectiveForeground = currentForeground;
+        effectiveBackground = currentBackground;
+    }
+
+    if (currentRendition & RE_BOLD)
+        effectiveForeground.setIntensive();
+}
+
+void Screen::updateEffectiveRendition2()
 {
     effectiveRendition = currentRendition;
     if (currentRendition & RE_REVERSE)
@@ -1026,6 +1046,10 @@ void Screen::setForeColor(int space, int color)
 void Screen::setBackColor(int space, int color)
 {
     currentBackground = CharacterColor(space, color);
+
+    if (currentForeground == currentBackground) {
+        qDebug() << "setBackColor";
+    }
 
     if ( currentBackground.isValid() )
         updateEffectiveRendition();
