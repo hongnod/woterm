@@ -1,65 +1,65 @@
 [General]
-Description=Ubuntu
+Description=Square
 Opacity=1
 Wallpaper=
 
 [Background]
-Color=48,10,36
+Color=26,26,26
 
 [BackgroundIntense]
-Color=48,10,36
+Color=26,26,26
 
 [Foreground]
-Color=238,238,236
+Color=172,172,171
 
 [ForegroundIntense]
-Color=238,238,236
+Color=229,229,229
 
 [Color0]
-Color=46,52,54
+Color=5,5,5
 
 [Color1]
-Color=204,0,0
+Color=233,137,124
 
 [Color2Intense]
-Color=138,226,52
+Color=195,247,134
 
 [Color3Intense]
-Color=252,233,79
+Color=252,251,204
 
 [Color4Intense]
-Color=114,159,207
+Color=182,222,251
 
 [Color5Intense]
 Color=173,127,168
 
 [Color6Intense]
-Color=52,226,226
+Color=215,217,252
 
 [Color7Intense]
-Color=238,238,236
+Color=226,226,226
 
 [Color2]
-Color=78,154,6
+Color=182,55,125
 
 [Color3]
-Color=196,160,0
+Color=236,235,190
 
 [Color4]
-Color=52,101,164
+Color=169,205,235
 
 [Color5]
 Color=117,80,123
 
 [Color6]
-Color=6,152,154
+Color=201,202,236
 
 [Color7]
-Color=211,215,207
+Color=242,242,242
 
 [Color0Intense]
-Color=85,87,83
+Color=20,20,20
 
 [Color1Intense]
-Color=239,41,41
+Color=249,146,134
 

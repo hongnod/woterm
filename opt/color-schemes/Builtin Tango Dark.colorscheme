@@ -1,22 +1,22 @@
 [General]
-Description=Ubuntu
+Description=Builtin Tango Dark
 Opacity=1
 Wallpaper=
 
 [Background]
-Color=48,10,36
+Color=0,0,0
 
 [BackgroundIntense]
-Color=48,10,36
+Color=0,0,0
 
 [Foreground]
-Color=238,238,236
+Color=255,255,255
 
 [ForegroundIntense]
-Color=238,238,236
+Color=255,255,255
 
 [Color0]
-Color=46,52,54
+Color=0,0,0
 
 [Color1]
 Color=204,0,0
