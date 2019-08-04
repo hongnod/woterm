@@ -22,6 +22,8 @@ QWoSessionManage::QWoSessionManage(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("Session Property"));
 
+    ui->tableView->setModel(&m_model);
+
 }
 
 QWoSessionManage::~QWoSessionManage()

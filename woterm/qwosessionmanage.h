@@ -2,6 +2,7 @@
 #define QWOSESSIONMANAGE_H
 
 #include "qwoglobal.h"
+#include "qwohostlistmodel.h"
 
 #include <QDialog>
 #include <QPointer>
@@ -13,6 +14,7 @@ class QWoSessionManage;
 
 class QTermWidget;
 class QStringListModel;
+class QSortFilterProxyModel;
 
 
 class QWoSessionManage : public QDialog
@@ -30,7 +32,8 @@ private slots:
 
 private:
     Ui::QWoSessionManage *ui;
-    QStandardItemModel m_model;
+    QPointer<QWoHostListModel> m_model;
+    QPointer<QSortFilterProxyModel> m_proxyModel;
 };
 
 #endif // QWOSESSIONPROPERTY_H
