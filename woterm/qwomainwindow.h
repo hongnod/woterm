@@ -10,7 +10,7 @@ class QVBoxLayout;
 class QTabBar;
 class QToolBar;
 class QWoShower;
-class QWoSessionManager;
+class QWoSessionList;
 
 namespace Ui {
 class QWoMainWindow;
@@ -33,6 +33,7 @@ private slots:
     void onSessionReadyToConnect(const QString& target);
     void onSessionBatchToConnect(const QStringList& targets);
     void onProcessStartCheck();
+    void onOpenSessionList();
 
 private slots:
     void onActionNewTriggered();
@@ -52,6 +53,6 @@ private slots:
 private:
     Ui::QWoMainWindow *ui;
     QPointer<QTabBar> m_tab;
-    QPointer<QWoSessionManager> m_manager;
+    QPointer<QWoSessionList> m_sessions;
     QPointer<QWoShower> m_shower;
 };

@@ -14,12 +14,12 @@ class QMenu;
 class QPlainTextEdit;
 
 
-class QWoSessionManager : public QWidget
+class QWoSessionList : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QWoSessionManager(QWidget *parent=nullptr);
-    virtual ~QWoSessionManager();
+    explicit QWoSessionList(QWidget *parent=nullptr);
+    virtual ~QWoSessionList();
 signals:
     void aboutToClose(QCloseEvent* event);
     void readyToConnect(const QString& target);

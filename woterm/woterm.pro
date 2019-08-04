@@ -19,7 +19,6 @@ SOURCES += main.cpp \
     qwomainwindow.cpp \
     qwoshower.cpp \
     qwowidget.cpp \
-    qwosessionmanager.cpp \
     qwosshconf.cpp \
     qwohostinfolist.cpp \
     qwoutils.cpp \
@@ -27,7 +26,9 @@ SOURCES += main.cpp \
     qwohostsimplelist.cpp \
     qwohostlistmodel.cpp \
     qwosessionproperty.cpp \
-    qwoaes.cpp
+    qwoaes.cpp \
+    qwosessionlist.cpp \
+    qwosessionmanage.cpp
 
 HEADERS += \
     ipchelper.h \
@@ -41,7 +42,6 @@ HEADERS += \
     qwomainwindow.h \
     qwoshower.h \
     qwowidget.h \
-    qwosessionmanager.h \
     qwosshconf.h \
     qwoglobal.h \
     qwohostinfolist.h \
@@ -50,11 +50,14 @@ HEADERS += \
     qwohostsimplelist.h \
     qwohostlistmodel.h \
     qwosessionproperty.h \
-    qwoaes.h
+    qwoaes.h \
+    qwosessionlist.h \
+    qwosessionmanage.h
 
 FORMS += \
     qwohostlist.ui \
     qwohostinfolist.ui \
     qwohostinfo.ui \
     qwomainwindow.ui \
-    qwosessionproperty.ui
+    qwosessionproperty.ui \
+    qwosessionmanage.ui

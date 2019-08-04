@@ -1,4 +1,4 @@
-#include "qwosessionmanager.h"
+#include "qwosessionlist.h"
 #include "qwosetting.h"
 #include "qwosshconf.h"
 #include "qwohostinfoedit.h"
@@ -24,7 +24,7 @@
 #include <QAction>
 #include <QPlainTextEdit>
 
-QWoSessionManager::QWoSessionManager(QWidget *parent)
+QWoSessionList::QWoSessionList(QWidget *parent)
     : QWidget(parent)
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -69,30 +69,30 @@ QWoSessionManager::QWoSessionManager(QWidget *parent)
     m_countLeft = 0;
 }
 
-QWoSessionManager::~QWoSessionManager()
+QWoSessionList::~QWoSessionList()
 {
     if(m_menu) {
         delete m_menu;
     }
 }
 
-void QWoSessionManager::init()
+void QWoSessionList::init()
 {
 
 }
 
 
-void QWoSessionManager::refreshList()
+void QWoSessionList::refreshList()
 {
     m_model->refreshList();
 }
 
-void QWoSessionManager::onReloadSessionList()
+void QWoSessionList::onReloadSessionList()
 {
     refreshList();
 }
 
-void QWoSessionManager::onOpenSelectSessions()
+void QWoSessionList::onOpenSelectSessions()
 {
     int cnt = m_proxyModel->rowCount();
     qDebug() << "rowCount:" << cnt;
@@ -104,7 +104,7 @@ void QWoSessionManager::onOpenSelectSessions()
     emit batchReadyToConnect(sessions);
 }
 
-void QWoSessionManager::onEditTextChanged(const QString &txt)
+void QWoSessionList::onEditTextChanged(const QString &txt)
 {
     m_countLeft = 30;
     QStringList sets = txt.split(' ');
@@ -121,7 +121,7 @@ void QWoSessionManager::onEditTextChanged(const QString &txt)
     m_proxyModel->setFilterRegExp(regex);
 }
 
-void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
+void QWoSessionList::onListItemDoubleClicked(const QModelIndex &item)
 {
     HostInfo hi = item.data(ROLE_HOSTINFO).value<HostInfo>();
     if(hi.name == "") {
@@ -133,7 +133,7 @@ void QWoSessionManager::onListItemDoubleClicked(const QModelIndex &item)
     emit readyToConnect(hi.name);
 }
 
-void QWoSessionManager::onListItemPressed(const QModelIndex &item)
+void QWoSessionList::onListItemPressed(const QModelIndex &item)
 {
     HostInfo hi = item.data(ROLE_HOSTINFO).value<HostInfo>();
     if(hi.name == "") {
@@ -147,7 +147,7 @@ void QWoSessionManager::onListItemPressed(const QModelIndex &item)
     m_info->setPlainText(info);
 }
 
-void QWoSessionManager::onTimeout()
+void QWoSessionList::onTimeout()
 {
     if(m_countLeft < 0) {
         return;
@@ -159,7 +159,7 @@ void QWoSessionManager::onTimeout()
     m_input->setText("");
 }
 
-void QWoSessionManager::onEditReturnPressed()
+void QWoSessionList::onEditReturnPressed()
 {
     QString txt = m_input->text().trimmed();
     if(txt.isEmpty()) {
@@ -177,7 +177,7 @@ void QWoSessionManager::onEditReturnPressed()
     emit readyToConnect(hi.name);
 }
 
-void QWoSessionManager::onListViewItemOpen()
+void QWoSessionList::onListViewItemOpen()
 {
     QModelIndex idx = m_list->currentIndex();
     if(idx.isValid()) {
@@ -187,12 +187,12 @@ void QWoSessionManager::onListViewItemOpen()
     emit readyToConnect(hi.name);
 }
 
-void QWoSessionManager::onListViewItemReload()
+void QWoSessionList::onListViewItemReload()
 {
     refreshList();
 }
 
-void QWoSessionManager::onListViewItemModify()
+void QWoSessionList::onListViewItemModify()
 {
     QVariant target = m_menu->property("itemIndex");
     if(!target.isValid()) {
@@ -206,7 +206,7 @@ void QWoSessionManager::onListViewItemModify()
     refreshList();
 }
 
-void QWoSessionManager::onListViewItemAdd()
+void QWoSessionList::onListViewItemAdd()
 {
     //QWoHostInfoEdit dlg(this);
     QWoSessionProperty dlg(-1, this);
@@ -215,7 +215,7 @@ void QWoSessionManager::onListViewItemAdd()
     refreshList();
 }
 
-void QWoSessionManager::onListViewItemDelete()
+void QWoSessionList::onListViewItemDelete()
 {
     QVariant target = m_menu->property("itemIndex");
     if(target.isValid()) {
@@ -224,7 +224,7 @@ void QWoSessionManager::onListViewItemDelete()
     }
 }
 
-bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
+bool QWoSessionList::handleListViewContextMenu(QContextMenuEvent *ev)
 {
     QModelIndex mi = m_list->indexAt(ev->pos());
     if(m_menu == nullptr) {
@@ -247,7 +247,7 @@ bool QWoSessionManager::handleListViewContextMenu(QContextMenuEvent *ev)
 }
 
 
-void QWoSessionManager::closeEvent(QCloseEvent *event)
+void QWoSessionList::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose(event);
     if(event->isAccepted()) {
@@ -256,7 +256,7 @@ void QWoSessionManager::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event);
 }
 
-bool QWoSessionManager::eventFilter(QObject *obj, QEvent *ev)
+bool QWoSessionList::eventFilter(QObject *obj, QEvent *ev)
 {
     QEvent::Type t = ev->type();
     if(obj == m_list) {

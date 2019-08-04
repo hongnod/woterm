@@ -4,9 +4,10 @@
 #include "qwowidget.h"
 #include "qwosshprocess.h"
 #include "qwotermwidget.h"
-#include "qwosessionmanager.h"
+#include "qwosessionlist.h"
 #include "ui_qwomainwindow.h"
 #include "qwosessionproperty.h"
+#include "qwosessionmanage.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -55,8 +56,8 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetClosable);
     dock->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 
-    m_manager = new QWoSessionManager(dock);
-    dock->setWidget(m_manager);
+    m_sessions = new QWoSessionList(dock);
+    dock->setWidget(m_sessions);
 
     QWoWidget *central = new QWoWidget(this);
     setCentralWidget(central);
@@ -86,8 +87,8 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QAction *edit = tool->addAction("Edit");
     QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
 
-    QObject::connect(m_manager, SIGNAL(readyToConnect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
-    QObject::connect(m_manager, SIGNAL(batchReadyToConnect(const QStringList&)), this, SLOT(onSessionBatchToConnect(const QStringList&)));
+    QObject::connect(m_sessions, SIGNAL(readyToConnect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
+    QObject::connect(m_sessions, SIGNAL(batchReadyToConnect(const QStringList&)), this, SLOT(onSessionBatchToConnect(const QStringList&)));
 
     QTimer::singleShot(1000, this, SLOT(onProcessStartCheck()));
 
@@ -157,6 +158,12 @@ void QWoMainWindow::onProcessStartCheck()
     for(int i = 0; i < args.length(); i++) {
         m_shower->openConnection(args.at(i));
     }
+}
+
+void QWoMainWindow::onOpenSessionList()
+{
+    QWoSessionManage dlg;
+    dlg.exec();
 }
 
 void QWoMainWindow::onActionNewTriggered()
