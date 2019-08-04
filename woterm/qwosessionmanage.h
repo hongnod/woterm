@@ -29,6 +29,7 @@ signals:
     void connect(const QString& host);
 
 private slots:
+    void onEditTextChanged(const QString &txt);
 
 private:
     Ui::QWoSessionManage *ui;

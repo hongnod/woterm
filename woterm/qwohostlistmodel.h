@@ -14,12 +14,16 @@ public:
     explicit QWoHostListModel(QObject *parent = nullptr);
     virtual ~QWoHostListModel() override;
 
+    void setMaxColumnCount(int cnt);
+
     void refreshList();
     bool find(const QUuid& uid, HostInfo *phi) const;
 
 private:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex sibling(int row, int column, const QModelIndex &idx) const override;
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
@@ -31,9 +35,12 @@ private:
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
     Qt::DropActions supportedDropActions() const override;
 
 private:
     Q_DISABLE_COPY(QWoHostListModel)
     QList<HostInfo> m_hosts;
+    int m_maxColumn;
 };

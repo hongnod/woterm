@@ -6,6 +6,7 @@
 
 QWoHostListModel::QWoHostListModel(QObject *parent)
     : QAbstractListModel (parent)
+    , m_maxColumn(1)
 {
     refreshList();
 }
@@ -13,6 +14,11 @@ QWoHostListModel::QWoHostListModel(QObject *parent)
 QWoHostListModel::~QWoHostListModel()
 {
 
+}
+
+void QWoHostListModel::setMaxColumnCount(int cnt)
+{
+    m_maxColumn = cnt;
 }
 
 void QWoHostListModel::refreshList()
@@ -40,6 +46,21 @@ QModelIndex QWoHostListModel::sibling(int row, int column, const QModelIndex &id
     return createIndex(row, 0);
 }
 
+QVariant QWoHostListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if(role == Qt::DisplayRole) {
+        switch (section) {
+        case 0:
+            return tr("Name");
+        case 1:
+            return tr("Host");
+        case 2:
+            return tr("Memo");
+        }
+    }
+    return QAbstractListModel::headerData(section, orientation, role);
+}
+
 QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
 {
     if (index.row() < 0 || index.row() >= m_hosts.size()) {
@@ -60,19 +81,32 @@ QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
         }
         return tip;
     }
-    if (role == Qt::DisplayRole || role == Qt::EditRole) {
-        return QVariant(hi.name);
-    }
+
     if(role == ROLE_INDEX) {
         return index.row();
     }
+
     if(role == ROLE_HOSTINFO) {
         QVariant v;
         v.setValue(hi);
         return v;
     }
+
+    if (role == Qt::DisplayRole || role == Qt::EditRole) {
+        int col = index.column();
+        switch (col) {
+        case 0:
+            return QVariant(hi.name);
+        case 1:
+            return QVariant(QString("%1:%2").arg(hi.host).arg(hi.port));
+        case 2:
+            return QVariant(hi.memo);
+        }
+    }
     return QVariant();
 }
+
+
 
 bool QWoHostListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
@@ -166,6 +200,11 @@ void QWoHostListModel::sort(int column, Qt::SortOrder order)
 
      emit layoutChanged(QList<QPersistentModelIndex>(), VerticalSortHint);
 #endif
+}
+
+int QWoHostListModel::columnCount(const QModelIndex &parent) const
+{
+    return m_maxColumn;
 }
 
 Qt::DropActions QWoHostListModel::supportedDropActions() const

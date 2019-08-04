@@ -175,7 +175,8 @@ void QWoMainWindow::onActionNewTriggered()
 
 void QWoMainWindow::onActionOpenTriggered()
 {
-
+    QWoSessionManage dlg;
+    dlg.exec();
 }
 
 void QWoMainWindow::onActionDisconnectTriggered()

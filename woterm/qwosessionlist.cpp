@@ -2,7 +2,6 @@
 #include "qwosetting.h"
 #include "qwosshconf.h"
 #include "qwohostinfoedit.h"
-#include "qwohostinfolist.h"
 #include "qwohostlistmodel.h"
 #include "qwosessionproperty.h"
 

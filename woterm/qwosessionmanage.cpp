@@ -12,6 +12,7 @@
 #include <QIntValidator>
 #include <QStringListModel>
 #include <QMessageBox>
+#include <QSortFilterProxyModel>
 
 QWoSessionManage::QWoSessionManage(QWidget *parent)
     : QDialog(parent)
@@ -22,11 +23,34 @@ QWoSessionManage::QWoSessionManage(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("Session Property"));
 
-    ui->tableView->setModel(&m_model);
+    m_model = new QWoHostListModel(this);
+    m_model->setMaxColumnCount(3);
+    m_proxyModel = new QSortFilterProxyModel(this);
+    m_proxyModel->setSourceModel(m_model);
+    ui->treeView->setModel(m_proxyModel);
+    ui->treeView->setColumnWidth(0, 100);
+    ui->treeView->setColumnWidth(1, 200);
 
+    QObject::connect(ui->lineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
 }
 
 QWoSessionManage::~QWoSessionManage()
 {
     delete ui;
+}
+
+void QWoSessionManage::onEditTextChanged(const QString &txt)
+{
+    QStringList sets = txt.split(' ');
+    for(QStringList::iterator iter = sets.begin(); iter != sets.end(); ) {
+        if(*iter == "") {
+            iter = sets.erase(iter);
+        }else{
+            iter++;
+        }
+    }
+
+    QRegExp regex(sets.join(".*"), Qt::CaseInsensitive);
+    regex.setPatternSyntax(QRegExp::RegExp2);
+    m_proxyModel->setFilterRegExp(regex);
 }
