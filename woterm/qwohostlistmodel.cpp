@@ -91,6 +91,11 @@ QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
         v.setValue(hi);
         return v;
     }
+    if(role == ROLE_REFILTER) {
+        QVariant v;
+        v.setValue(QString("%1-%2:%3-%4").arg(hi.name).arg(hi.host).arg(hi.port).arg(hi.memo));
+        return v;
+    }
 
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
         int col = index.column();

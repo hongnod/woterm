@@ -53,4 +53,5 @@ void QWoSessionManage::onEditTextChanged(const QString &txt)
     QRegExp regex(sets.join(".*"), Qt::CaseInsensitive);
     regex.setPatternSyntax(QRegExp::RegExp2);
     m_proxyModel->setFilterRegExp(regex);
+    m_proxyModel->setFilterRole(ROLE_REFILTER);
 }
