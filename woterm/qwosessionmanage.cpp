@@ -32,6 +32,10 @@ QWoSessionManage::QWoSessionManage(QWidget *parent)
     ui->treeView->setColumnWidth(1, 200);
 
     QObject::connect(ui->lineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
+    QObject::connect(ui->btnConnect, SIGNAL(click()), this, SLOT(onConnectReady()));
+    QObject::connect(ui->btnDelete, SIGNAL(click()), this, SLOT(onDeleteReady()));
+    QObject::connect(ui->btnModify, SIGNAL(click()), this, SLOT(onModifyReady()));
+    QObject::connect(ui->btnNew, SIGNAL(click()), this, SLOT(onNewReady()));
 }
 
 QWoSessionManage::~QWoSessionManage()
