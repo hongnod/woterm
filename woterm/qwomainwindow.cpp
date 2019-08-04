@@ -162,7 +162,7 @@ void QWoMainWindow::onProcessStartCheck()
 
 void QWoMainWindow::onOpenSessionList()
 {
-    QWoSessionManage dlg;
+    QWoSessionManage dlg(this);
     dlg.exec();
 }
 
@@ -175,7 +175,7 @@ void QWoMainWindow::onActionNewTriggered()
 
 void QWoMainWindow::onActionOpenTriggered()
 {
-    QWoSessionManage dlg;
+    QWoSessionManage dlg(this);
     dlg.exec();
 }
 

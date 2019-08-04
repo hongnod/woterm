@@ -21,7 +21,7 @@ QWoSessionManage::QWoSessionManage(QWidget *parent)
     Qt::WindowFlags flags = windowFlags();
     setWindowFlags(flags &~Qt::WindowContextHelpButtonHint);
     ui->setupUi(this);
-    setWindowTitle(tr("Session Property"));
+    setWindowTitle(tr("Session List"));
 
     m_model = new QWoHostListModel(this);
     m_model->setMaxColumnCount(3);
