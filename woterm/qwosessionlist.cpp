@@ -198,7 +198,6 @@ void QWoSessionList::onListViewItemModify()
         return;
     }
     int idx = target.toInt();
-    //QWoHostInfoEdit dlg(idx, this);
     QWoSessionProperty dlg(idx, this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
     dlg.exec();

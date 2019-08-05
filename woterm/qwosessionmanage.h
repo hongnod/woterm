@@ -30,7 +30,13 @@ signals:
 
 private slots:
     void onEditTextChanged(const QString &txt);
-
+    void onConnectReady();
+    void onDeleteReady();
+    void onModifyReady();
+    void onNewReady();
+    void onTreeItemDoubleClicked(const QModelIndex& idx);
+private:
+    void refreshList();
 private:
     Ui::QWoSessionManage *ui;
     QPointer<QWoHostListModel> m_model;

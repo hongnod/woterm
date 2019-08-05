@@ -1,8 +1,9 @@
 #include "qwohostlistmodel.h"
 #include "qwosshconf.h"
 
-#include<QPair>
-#include<QVector>
+#include <QPair>
+#include <QFontMetrics>
+#include <QVector>
 
 QWoHostListModel::QWoHostListModel(QObject *parent)
     : QAbstractListModel (parent)
@@ -19,6 +20,20 @@ QWoHostListModel::~QWoHostListModel()
 void QWoHostListModel::setMaxColumnCount(int cnt)
 {
     m_maxColumn = cnt;
+}
+
+int QWoHostListModel::widthColumn(const QFont &ft, int i)
+{
+    QFontMetrics fm(ft);
+    QList<HostInfo> his = QWoSshConf::instance()->hostList();
+    int maxWidth = 0;
+    for(int i = 0; i < his.count(); i++) {
+        int w = fm.horizontalAdvance(his.at(i).name);
+        if(maxWidth < w) {
+            maxWidth = w;
+        }
+    }
+    return maxWidth;
 }
 
 void QWoHostListModel::refreshList()
@@ -94,6 +109,11 @@ QVariant QWoHostListModel::data(const QModelIndex &index, int role) const
     if(role == ROLE_REFILTER) {
         QVariant v;
         v.setValue(QString("%1-%2:%3-%4").arg(hi.name).arg(hi.host).arg(hi.port).arg(hi.memo));
+        return v;
+    }
+    if(role == ROLE_FRIENDLY_NAME) {
+        QVariant v;
+        v.setValue(hi.name);
         return v;
     }
 

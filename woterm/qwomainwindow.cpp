@@ -163,6 +163,7 @@ void QWoMainWindow::onProcessStartCheck()
 void QWoMainWindow::onOpenSessionList()
 {
     QWoSessionManage dlg(this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     dlg.exec();
 }
 
@@ -176,6 +177,7 @@ void QWoMainWindow::onActionNewTriggered()
 void QWoMainWindow::onActionOpenTriggered()
 {
     QWoSessionManage dlg(this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     dlg.exec();
 }
 

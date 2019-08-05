@@ -3,10 +3,12 @@
 #include "qwoglobal.h"
 
 #include <QAbstractListModel>
+#include <QFont>
 
 #define ROLE_INDEX   (Qt::UserRole+1)
 #define ROLE_HOSTINFO (Qt::UserRole+2)
 #define ROLE_REFILTER (Qt::UserRole+3)
+#define ROLE_FRIENDLY_NAME (Qt::UserRole+4)
 
 class QWoHostListModel : public QAbstractListModel
 {
@@ -16,6 +18,7 @@ public:
     virtual ~QWoHostListModel() override;
 
     void setMaxColumnCount(int cnt);
+    int widthColumn(const QFont& ft, int i);
 
     void refreshList();
     bool find(const QUuid& uid, HostInfo *phi) const;

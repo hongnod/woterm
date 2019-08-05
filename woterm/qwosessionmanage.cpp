@@ -6,6 +6,7 @@
 #include "qwosetting.h"
 #include "qwoutils.h"
 #include "qwosshconf.h"
+#include "qwosessionproperty.h"
 
 #include <QFileDialog>
 #include <QDebug>
@@ -28,14 +29,19 @@ QWoSessionManage::QWoSessionManage(QWidget *parent)
     m_proxyModel = new QSortFilterProxyModel(this);
     m_proxyModel->setSourceModel(m_model);
     ui->treeView->setModel(m_proxyModel);
-    ui->treeView->setColumnWidth(0, 100);
+    int w = m_model->widthColumn(ui->treeView->font(), 0);
+    if(w < 100) {
+        w = 100;
+    }
+    ui->treeView->setColumnWidth(0, w+30);
     ui->treeView->setColumnWidth(1, 200);
 
     QObject::connect(ui->lineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
-    QObject::connect(ui->btnConnect, SIGNAL(click()), this, SLOT(onConnectReady()));
-    QObject::connect(ui->btnDelete, SIGNAL(click()), this, SLOT(onDeleteReady()));
-    QObject::connect(ui->btnModify, SIGNAL(click()), this, SLOT(onModifyReady()));
-    QObject::connect(ui->btnNew, SIGNAL(click()), this, SLOT(onNewReady()));
+    QObject::connect(ui->btnConnect, SIGNAL(clicked()), this, SLOT(onConnectReady()));
+    QObject::connect(ui->btnDelete, SIGNAL(clicked()), this, SLOT(onDeleteReady()));
+    QObject::connect(ui->btnModify, SIGNAL(clicked()), this, SLOT(onModifyReady()));
+    QObject::connect(ui->btnNew, SIGNAL(clicked()), this, SLOT(onNewReady()));
+    QObject::connect(ui->treeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(onTreeItemDoubleClicked(const QModelIndex&)));
 }
 
 QWoSessionManage::~QWoSessionManage()
@@ -58,4 +64,80 @@ void QWoSessionManage::onEditTextChanged(const QString &txt)
     regex.setPatternSyntax(QRegExp::RegExp2);
     m_proxyModel->setFilterRegExp(regex);
     m_proxyModel->setFilterRole(ROLE_REFILTER);
+}
+
+void QWoSessionManage::onConnectReady()
+{
+    QModelIndex idx = ui->treeView->currentIndex();
+    if(!idx.isValid()) {
+        return;
+    }
+    QString target = idx.data(ROLE_FRIENDLY_NAME).toString();
+    if(target.isEmpty()) {
+        return;
+    }
+    emit connect(target);
+    close();
+}
+
+void QWoSessionManage::onDeleteReady()
+{
+    QModelIndex idx = ui->treeView->currentIndex();
+    if(!idx.isValid()) {
+        return;
+    }
+    QVariant target = idx.data(ROLE_INDEX);
+    if(!target.isValid()) {
+        return;
+    }
+    QMessageBox::StandardButton btn = QMessageBox::warning(this, "delete", "Delete Or Not?", QMessageBox::Ok|QMessageBox::No);
+    if(btn == QMessageBox::No) {
+        return ;
+    }
+    QWoSshConf::instance()->removeAt(target.toInt());
+    refreshList();
+}
+
+void QWoSessionManage::onModifyReady()
+{
+    QModelIndex idx = ui->treeView->currentIndex();
+    if(!idx.isValid()) {
+        return;
+    }
+    QVariant target = idx.data(ROLE_INDEX);
+    if(!target.isValid()) {
+        return;
+    }
+    QWoSessionProperty dlg(target.toInt(), this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
+    dlg.exec();
+    refreshList();
+}
+
+void QWoSessionManage::onNewReady()
+{
+    QWoSessionProperty dlg(-1, this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
+    dlg.exec();
+    refreshList();
+}
+
+void QWoSessionManage::onTreeItemDoubleClicked(const QModelIndex &idx)
+{
+    if(!idx.isValid()) {
+        return;
+    }
+    QString target = idx.data(ROLE_FRIENDLY_NAME).toString();
+    if(target.isEmpty()) {
+        return;
+    }
+    emit connect(target);
+    close();
+}
+
+void QWoSessionManage::refreshList()
+{
+    QWoSshConf::instance()->save();
+    QWoSshConf::instance()->refresh();
+    m_model->refreshList();
 }
