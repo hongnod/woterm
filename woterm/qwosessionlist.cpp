@@ -83,6 +83,8 @@ void QWoSessionList::init()
 
 void QWoSessionList::refreshList()
 {
+    QWoSshConf::instance()->save();
+    QWoSshConf::instance()->refresh();
     m_model->refreshList();
 }
 

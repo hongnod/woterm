@@ -70,6 +70,7 @@ void QWoSessionManage::onConnectReady()
 {
     QModelIndex idx = ui->treeView->currentIndex();
     if(!idx.isValid()) {
+        QMessageBox::information(this, tr("Modify"), tr("No Selection"));
         return;
     }
     QString target = idx.data(ROLE_FRIENDLY_NAME).toString();
@@ -84,13 +85,14 @@ void QWoSessionManage::onDeleteReady()
 {
     QModelIndex idx = ui->treeView->currentIndex();
     if(!idx.isValid()) {
+        QMessageBox::information(this, tr("Modify"), tr("No Selection"));
         return;
     }
     QVariant target = idx.data(ROLE_INDEX);
-    if(!target.isValid()) {
+    if(!target.isValid()) {        
         return;
     }
-    QMessageBox::StandardButton btn = QMessageBox::warning(this, "delete", "Delete Or Not?", QMessageBox::Ok|QMessageBox::No);
+    QMessageBox::StandardButton btn = QMessageBox::warning(this, tr("delete"), tr("Delete Or Not?"), QMessageBox::Ok|QMessageBox::No);
     if(btn == QMessageBox::No) {
         return ;
     }
@@ -102,6 +104,7 @@ void QWoSessionManage::onModifyReady()
 {
     QModelIndex idx = ui->treeView->currentIndex();
     if(!idx.isValid()) {
+        QMessageBox::information(this, tr("Modify"), tr("No Selection"));
         return;
     }
     QVariant target = idx.data(ROLE_INDEX);

@@ -84,9 +84,6 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QAction *openTerm = tool->addAction("Open");
     QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
 
-    QAction *edit = tool->addAction("Edit");
-    QObject::connect(edit, SIGNAL(triggered()), this, SLOT(onEditConfig()));
-
     QObject::connect(m_sessions, SIGNAL(readyToConnect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     QObject::connect(m_sessions, SIGNAL(batchReadyToConnect(const QStringList&)), this, SLOT(onSessionBatchToConnect(const QStringList&)));
 
@@ -118,16 +115,16 @@ void QWoMainWindow::closeEvent(QCloseEvent *event)
 
 void QWoMainWindow::onNewTerm()
 {
-//    QWoSshProcess *process = new QWoSshProcess();
-//    QWoTermWidget *console = new QWoTermWidget(process, m_shower);
-//    process.start();
-//    QVariantMap mapVar;
-//    mapVar["process"] = process;
+    QWoSessionProperty dlg(-1, this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
+    dlg.exec();
 }
 
 void QWoMainWindow::onOpenTerm()
 {
-    m_shower->openConnection("target");
+    QWoSessionManage dlg(this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
+    dlg.exec();
 }
 
 void QWoMainWindow::onEditConfig()
