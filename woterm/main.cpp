@@ -30,7 +30,9 @@ int main(int argc, char *argv[])
     QWoMainWindow *mainWindow = QWoMainWindow::instance();
     mainWindow->show();
 
-    QTimer::singleShot(1000, mainWindow, SLOT(onOpenSessionList()));
+    if(app.arguments().length() <= 1) {
+        QTimer::singleShot(1000, mainWindow, SLOT(onOpenSessionList()));
+    }
 
     return app.exec();
 }
