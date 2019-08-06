@@ -69,6 +69,8 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tab->setUsesScrollButtons(true);
     m_shower = new QWoShower(m_tab, this);
 
+    QObject::connect(m_shower, SIGNAL(tabEmpty()), this, SLOT(onShouldAppExit()));
+
     QVBoxLayout *layout = new QVBoxLayout(central);
     central->setLayout(layout);
     layout->setSpacing(0);
@@ -161,7 +163,16 @@ void QWoMainWindow::onOpenSessionList()
 {
     QWoSessionManage dlg(this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
+    QObject::connect(&dlg, SIGNAL(finished(int)), this, SLOT(onShouldAppExit()));
     dlg.exec();
+}
+
+void QWoMainWindow::onShouldAppExit()
+{
+    if(m_shower->tabCount()) {
+        return;
+    }
+    QApplication::exit();
 }
 
 void QWoMainWindow::onActionNewTriggered()

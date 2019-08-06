@@ -16,6 +16,11 @@ public:
     bool openConnection(const QString& target);
     void setBackgroundColor(const QColor& clr);
     void openFindDialog();
+
+    int tabCount();
+signals:
+    void tabEmpty();
+
 protected:
     virtual void resizeEvent(QResizeEvent *event);
     void syncGeometry(QWidget *widget);

@@ -34,6 +34,7 @@ bool QWoShower::openConnection(const QString &target)
     m_tabs->setTabData(idx, QVariant::fromValue(impl));
     QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
     setCurrentWidget(impl);
+    qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
     return true;
 }
 
@@ -55,7 +56,12 @@ void QWoShower::openFindDialog()
     QSplitter *target = v.value<QSplitter*>();
 //    QSplitter *take = m_terms.at(idx);
 //    Q_ASSERT(target == take);
-//    take->toggleShowSearchBar();
+    //    take->toggleShowSearchBar();
+}
+
+int QWoShower::tabCount()
+{
+    return m_tabs->count();
 }
 
 void QWoShower::resizeEvent(QResizeEvent *event)
@@ -107,8 +113,13 @@ void QWoShower::onTermImplDestroy(QObject *it)
         QVariant v = m_tabs->tabData(i);
         QWoTermWidgetImpl *impl = v.value<QWoTermWidgetImpl *>();
         if(target == impl) {
+            removeWidget(target);
             m_tabs->removeTab(i);
             break;
         }
+    }
+    qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
+    if(tabCount() <= 0) {
+        emit tabEmpty();
     }
 }

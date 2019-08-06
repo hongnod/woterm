@@ -34,6 +34,7 @@ private slots:
     void onSessionBatchToConnect(const QStringList& targets);
     void onProcessStartCheck();
     void onOpenSessionList();
+    void onShouldAppExit();
 
 private slots:
     void onActionNewTriggered();
