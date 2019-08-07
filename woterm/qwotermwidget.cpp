@@ -5,6 +5,7 @@
 #include "qwosshprocess.h"
 #include "qwoutils.h"
 #include "qwoglobal.h"
+#include "qwotermmask.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -18,6 +19,9 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     , m_process(process)
     , m_bexit(false)
 {
+    m_mask = new QWoTermMask(this);
+    m_mask->hide();
+
     m_process->setTermWidget(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -48,6 +52,9 @@ QWoTermWidget::~QWoTermWidget()
 {
     if(m_menu) {
         delete m_menu;
+    }
+    if(m_mask) {
+        delete m_mask;
     }
 }
 
@@ -83,7 +90,7 @@ void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
     if(!m_bexit) {
-
+        m_mask->show();
         return;
     }
     deleteLater();
@@ -175,6 +182,13 @@ void QWoTermWidget::closeEvent(QCloseEvent *event)
         return;
     }
     QTermWidget::closeEvent(event);
+}
+
+void QWoTermWidget::resizeEvent(QResizeEvent *event)
+{
+    QSize sz = event->size();
+    m_mask->setGeometry(0, 0, sz.width(), sz.height());
+    QTermWidget::resizeEvent(event);
 }
 
 void QWoTermWidget::initDefault()

@@ -6,6 +6,7 @@
 
 class QWoProcess;
 class QMenu;
+class QWoTermMask;
 
 class QWoTermWidget : public QTermWidget
 {
@@ -33,6 +34,7 @@ slots:
 private:
     void contextMenuEvent(QContextMenuEvent *event);
     void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 private:
     void initDefault();
     void initCustom();
@@ -43,5 +45,6 @@ private:
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;
     QPointer<QAction> m_paste;
+    QPointer<QWoTermMask> m_mask;
     bool m_bexit;
 };
