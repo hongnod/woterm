@@ -16,6 +16,7 @@
 QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     : QTermWidget (parent)
     , m_process(process)
+    , m_bexit(false)
 {
     m_process->setTermWidget(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -80,7 +81,11 @@ void QWoTermWidget::onReadyReadStandardError()
 
 void QWoTermWidget::onFinished(int code)
 {
-    qDebug() << "exitcode" << code;    
+    qDebug() << "exitcode" << code;
+    if(!m_bexit) {
+
+        return;
+    }
     deleteLater();
     QSplitter *splitParent = qobject_cast<QSplitter*>(parent());
     if(splitParent == nullptr) {

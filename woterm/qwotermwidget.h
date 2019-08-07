@@ -43,4 +43,5 @@ private:
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;
     QPointer<QAction> m_paste;
+    bool m_bexit;
 };
