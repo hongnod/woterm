@@ -1,13 +1,13 @@
 #ifndef QWOTERMMASK_H
 #define QWOTERMMASK_H
 
-#include <QWidget>
+#include "qwowidget.h"
 
 namespace Ui {
 class QWoTermMask;
 }
 
-class QWoTermMask : public QWidget
+class QWoTermMask : public QWoWidget
 {
     Q_OBJECT
 
@@ -17,6 +17,9 @@ public:
 
 signals:
     void reconnect();
+
+private slots:
+    void onReconnect();
 
 private:
     void paintEvent(QPaintEvent* paint);

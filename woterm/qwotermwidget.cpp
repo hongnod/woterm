@@ -22,6 +22,8 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     m_mask = new QWoTermMask(this);
     m_mask->hide();
 
+    QObject::connect(m_mask, SIGNAL(aboutToClose(QCloseEvent*)), this, SLOT(onCloseThisSession()));
+
     m_process->setTermWidget(this);
     setAttribute(Qt::WA_DeleteOnClose);
 

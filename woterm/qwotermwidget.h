@@ -18,6 +18,7 @@ public:
     QWoProcess *process();
 signals:
     void aboutToClose(QCloseEvent* event);
+
 private
 slots:
     void onTimeout();

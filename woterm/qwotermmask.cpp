@@ -2,20 +2,28 @@
 #include "ui_qwotermmask.h"
 
 #include <QPainter>
+#include <QDebug>
 
 QWoTermMask::QWoTermMask(QWidget *parent) :
-    QWidget(parent),
+    QWoWidget(parent),
     ui(new Ui::QWoTermMask)
 {
     ui->setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground, true);
-    QObject::connect(ui->btnClose, SIGNAL(click()), this, SLOT(close()));
-    QObject::connect(ui->btnReconnect, SIGNAL(click()), this, SIGNAL(reconnect()));
+    QObject::connect(ui->btnClose, SIGNAL(clicked()), this, SLOT(close()));
+    QObject::connect(ui->btnReconnect, SIGNAL(clicked()), this, SIGNAL(onReconnect()));
 }
 
 QWoTermMask::~QWoTermMask()
 {
     delete ui;
+}
+
+void QWoTermMask::onReconnect()
+{
+    hide();
+    emit reconnect();
 }
 
 void QWoTermMask::paintEvent(QPaintEvent *paint)
