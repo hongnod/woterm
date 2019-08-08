@@ -22,6 +22,8 @@ private slots:
     void onRootSplitterDestroy();
 
 private:
+    void broadcastEvent(QEvent *e);
+private:
     QString m_target;
     QPointer<QSplitter> m_root;
 };

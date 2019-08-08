@@ -52,3 +52,8 @@ void QWoTermWidgetImpl::onRootSplitterDestroy()
     close();
     deleteLater();
 }
+
+void QWoTermWidgetImpl::broadcastEvent(QEvent *e)
+{
+
+}
