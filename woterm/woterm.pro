@@ -29,6 +29,7 @@ SOURCES += main.cpp \
     qwoaes.cpp \
     qwosessionlist.cpp \
     qwosessionmanage.cpp \
+    qwotermmask.cpp \
     qwotermmask.cpp
 
 HEADERS += \
@@ -54,6 +55,7 @@ HEADERS += \
     qwoaes.h \
     qwosessionlist.h \
     qwosessionmanage.h \
+    qwotermmask.h \
     qwotermmask.h
 
 FORMS += \
@@ -63,4 +65,5 @@ FORMS += \
     qwomainwindow.ui \
     qwosessionproperty.ui \
     qwosessionmanage.ui \
+    qwotermmask.ui \
     qwotermmask.ui
