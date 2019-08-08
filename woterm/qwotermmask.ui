@@ -45,7 +45,7 @@
      <item>
       <widget class="QPushButton" name="btnReconnect">
        <property name="text">
-        <string>PushButton</string>
+        <string>Reconect</string>
        </property>
       </widget>
      </item>
@@ -68,7 +68,7 @@
      <item>
       <widget class="QPushButton" name="btnClose">
        <property name="text">
-        <string>PushButton</string>
+        <string>Close</string>
        </property>
       </widget>
      </item>

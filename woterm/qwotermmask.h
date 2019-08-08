@@ -15,6 +15,11 @@ public:
     explicit QWoTermMask(QWidget *parent = nullptr);
     ~QWoTermMask();
 
+signals:
+    void reconnect();
+
+private:
+    void paintEvent(QPaintEvent* paint);
 private:
     Ui::QWoTermMask *ui;
 };
