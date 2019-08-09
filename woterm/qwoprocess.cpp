@@ -62,6 +62,7 @@ void QWoProcess::setWorkingDirectory(const QString &dir)
 
 void QWoProcess::start()
 {
+    m_process->reset();
     m_process->start();
 }
 

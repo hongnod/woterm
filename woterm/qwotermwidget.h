@@ -33,6 +33,7 @@ slots:
     void onHorizontalSplitView();
     void onCloseThisSession();
     void onForceToCloseThisSession();
+    void onSessionReconnect();
 
 private:
     void contextMenuEvent(QContextMenuEvent *event);

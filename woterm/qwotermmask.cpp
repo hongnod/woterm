@@ -12,7 +12,7 @@ QWoTermMask::QWoTermMask(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
     setAttribute(Qt::WA_TranslucentBackground, true);
     QObject::connect(ui->btnClose, SIGNAL(clicked()), this, SLOT(close()));
-    QObject::connect(ui->btnReconnect, SIGNAL(clicked()), this, SIGNAL(onReconnect()));
+    QObject::connect(ui->btnReconnect, SIGNAL(clicked()), this, SLOT(onReconnect()));
 }
 
 QWoTermMask::~QWoTermMask()

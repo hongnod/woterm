@@ -26,6 +26,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     m_mask->hide();
 
     QObject::connect(m_mask, SIGNAL(aboutToClose(QCloseEvent*)), this, SLOT(onForceToCloseThisSession()));
+    QObject::connect(m_mask, SIGNAL(reconnect()), this, SLOT(onSessionReconnect()));
 
     m_process->setTermWidget(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -159,6 +160,12 @@ void QWoTermWidget::onCloseThisSession()
 void QWoTermWidget::onForceToCloseThisSession()
 {
     closeAndDelete();
+}
+
+void QWoTermWidget::onSessionReconnect()
+{
+    m_mask->hide();
+    m_process->start();
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
