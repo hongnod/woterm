@@ -15,7 +15,9 @@
 
 void test()
 {
-
+    freopen("c:\\slyar.txt", "w", stdout);
+    int len = system("dir");
+    qDebug() << "len" << len;
 }
 
 int main(int argc, char *argv[])
