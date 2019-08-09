@@ -25,7 +25,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     m_mask = new QWoTermMask(this);
     m_mask->hide();
 
-    QObject::connect(m_mask, SIGNAL(aboutToClose(QCloseEvent*)), this, SLOT(onCloseThisSession()));
+    QObject::connect(m_mask, SIGNAL(aboutToClose(QCloseEvent*)), this, SLOT(onForceToCloseThisSession()));
 
     m_process->setTermWidget(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -68,6 +68,20 @@ QWoProcess *QWoTermWidget::process()
     return m_process;
 }
 
+void QWoTermWidget::closeAndDelete()
+{
+    m_bexit = true;
+    deleteLater();
+    QSplitter *splitParent = qobject_cast<QSplitter*>(parent());
+    if(splitParent == nullptr) {
+        return;
+    }
+    int cnt = splitParent->count();
+    if(cnt == 1) {
+        splitParent->deleteLater();
+    }
+}
+
 void QWoTermWidget::onTimeout()
 {
     qDebug() << "onTimeout()";
@@ -94,19 +108,7 @@ void QWoTermWidget::onReadyReadStandardError()
 void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
-    if(!m_bexit) {
-        m_mask->show();
-        return;
-    }
-    deleteLater();
-    QSplitter *splitParent = qobject_cast<QSplitter*>(parent());
-    if(splitParent == nullptr) {
-        return;
-    }
-    int cnt = splitParent->count();
-    if(cnt == 1) {
-        splitParent->deleteLater();
-    }
+    m_mask->show();
 }
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
@@ -151,6 +153,12 @@ void QWoTermWidget::onCloseThisSession()
         return;
     }
     sshproc->close();
+    closeAndDelete();
+}
+
+void QWoTermWidget::onForceToCloseThisSession()
+{
+    closeAndDelete();
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)

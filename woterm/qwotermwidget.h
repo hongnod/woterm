@@ -16,6 +16,7 @@ public:
     virtual ~QWoTermWidget();
 
     QWoProcess *process();
+    void closeAndDelete();
 signals:
     void aboutToClose(QCloseEvent* event);
 
@@ -31,6 +32,7 @@ slots:
     void onVerticalSplitView();
     void onHorizontalSplitView();
     void onCloseThisSession();
+    void onForceToCloseThisSession();
 
 private:
     void contextMenuEvent(QContextMenuEvent *event);
