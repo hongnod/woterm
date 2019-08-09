@@ -5,6 +5,7 @@
 
 #include <QCloseEvent>
 #include <QSplitter>
+#include <QApplication>
 
 
 QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
@@ -53,7 +54,22 @@ void QWoTermWidgetImpl::onRootSplitterDestroy()
     deleteLater();
 }
 
-void QWoTermWidgetImpl::broadcastEvent(QEvent *e)
+void QWoTermWidgetImpl::broadcastMessage(int type, QVariant msg)
 {
+    for(int i = 0; i < m_terms.count(); i++) {
+        QWoTermWidget *term = m_terms.at(i);
+        if(term) {
+            term->onBroadcastMessage(type, msg);
+        }
+    }
+}
 
+void QWoTermWidgetImpl::addToList(QWoTermWidget *w)
+{
+    m_terms.append(w);
+}
+
+void QWoTermWidgetImpl::removeFromList(QWoTermWidget *w)
+{
+    m_terms.removeOne(w);
 }

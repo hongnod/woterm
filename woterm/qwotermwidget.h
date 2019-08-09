@@ -41,7 +41,11 @@ private:
     void initCustom();
     void resetProperty(QVariantMap data);
     void splitWidget(int sz, bool vertical);
+
+    void addToTermImpl();
+    void onBroadcastMessage(int type, QVariant msg);
 private:
+    friend class QWoTermWidgetImpl;
     QPointer<QWoProcess> m_process;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;

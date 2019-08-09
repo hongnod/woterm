@@ -5,6 +5,7 @@
 #include <QPointer>
 
 class QSplitter;
+class QWoTermWidget;
 
 class QWoTermWidgetImpl : public QWoWidget
 {
@@ -12,6 +13,8 @@ class QWoTermWidgetImpl : public QWoWidget
 public:
     explicit QWoTermWidgetImpl(QString target, QWidget *parent=nullptr);
     ~QWoTermWidgetImpl();
+
+
 signals:
     void aboutToClose(QCloseEvent* event);
 private:
@@ -22,8 +25,12 @@ private slots:
     void onRootSplitterDestroy();
 
 private:
-    void broadcastEvent(QEvent *e);
+    void broadcastMessage(int type, QVariant msg);
+    void addToList(QWoTermWidget *w);
+    void removeFromList(QWoTermWidget *w);
 private:
+    friend class QWoTermWidget;
     QString m_target;
     QPointer<QSplitter> m_root;
+    QList<QPointer<QWoTermWidget>> m_terms;
 };

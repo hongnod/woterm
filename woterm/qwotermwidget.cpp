@@ -6,6 +6,7 @@
 #include "qwoutils.h"
 #include "qwoglobal.h"
 #include "qwotermmask.h"
+#include "qwotermwidgetimpl.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -19,6 +20,8 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     , m_process(process)
     , m_bexit(false)
 {
+    addToTermImpl();
+
     m_mask = new QWoTermMask(this);
     m_mask->hide();
 
@@ -272,4 +275,23 @@ void QWoTermWidget::splitWidget(int sz, bool vertical)
     QList<int> ls;
     ls << 1 << 1;
     splitter->setSizes(ls);
+}
+
+void QWoTermWidget::addToTermImpl()
+{
+    QWidget *widgetParent = parentWidget();
+    QWoTermWidgetImpl *impl = qobject_cast<QWoTermWidgetImpl*>(widgetParent);
+    while(impl == nullptr) {
+        widgetParent = widgetParent->parentWidget();
+        if(widgetParent == nullptr) {
+            return;
+        }
+        impl = qobject_cast<QWoTermWidgetImpl*>(widgetParent);
+    }
+    impl->addToList(this);
+}
+
+void QWoTermWidget::onBroadcastMessage(int type, QVariant msg)
+{
+    qDebug() << "type" << type << "msg" << msg;
 }
