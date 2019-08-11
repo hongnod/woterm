@@ -94,6 +94,9 @@ QByteArray QWoProcess::readAllStandardError()
 
 void QWoProcess::write(const QByteArray &data)
 {
+    if(data.isEmpty()) {
+        return;
+    }
     QWoEvent ev(QWoEvent::BeforeWriteStdOut, data);
     QApplication::sendEvent(this, &ev);
     m_process->setCurrentWriteChannel(QProcess::StandardOutput);

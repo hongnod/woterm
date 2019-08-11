@@ -8,31 +8,57 @@
 
 using namespace std;
 
+
+QString getline()
+{
+    QString line;
+    while(1) {
+        int c;
+        int n = fread(0, &c, 1);
+        if(c == '\r' || c == '\n') {
+            return line;
+        }
+        printf("%c", c);
+        line.append(QChar(c));
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    QFile in;
+    QFile err;
+    QFile out;
+    if(!in.open(stdin, QIODevice::ReadOnly)) {
+        return -1;
+    }
+    if(!out.open(stdout, QIODevice::WriteOnly)) {
+        return -1;
+    }
+    if(!err.open(stderr, QIODevice::WriteOnly)) {
+        return -1;
+    }
     while(1) {
-        string ln;
         QDir work(QDir::currentPath());
         QString tip = QString("[%1]$").arg(QDir::toNativeSeparators(work.path()));
-        cout << tip.toStdString();
-        getline(cin, ln);
-        QString line(ln.c_str());
+        printf(tip.toStdString().c_str());
+        QString line = getline();
         line = line.trimmed();
         if(line.isEmpty()) {
             continue;
         }
         if(line.compare("exit") == 0) {
-            cout << "exit program now." << endl;
+            printf("exit program now.\r\n");
             break;
         }
         if(line.startsWith("cd ")) {
             if(!work.cd(line.mid(3))) {
-               cout << "bad path." << endl;
+               printf("bad path.\r\b");
             }else{
                 QDir::setCurrent(work.path());
             }
             continue;
         }
+        printf(line.toStdString().c_str());
         system(line.toStdString().c_str());
     }
     return 0;

@@ -24,9 +24,16 @@ QWoShellProcess::QWoShellProcess(QObject *parent)
     QStringList args;
     args.append(program);
     setArguments(args);
+
+    QTimer::singleShot(3000, this, SLOT(onTimeout()));
 }
 
 QWoShellProcess::~QWoShellProcess()
 {
 
+}
+
+void QWoShellProcess::onTimeout()
+{
+    write("dir\r\n");
 }

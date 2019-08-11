@@ -13,6 +13,8 @@ public:
     explicit QWoShellProcess(QObject *parent=nullptr);
     virtual ~QWoShellProcess();
 
+private slots:
+    void onTimeout();
 private:
     QString m_target;
 };
