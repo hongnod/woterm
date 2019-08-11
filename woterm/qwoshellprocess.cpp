@@ -19,8 +19,3 @@ QWoShellProcess::~QWoShellProcess()
 {
 
 }
-
-void QWoShellProcess::reset()
-{
-    QString path = QWoSetting::shellProgramPath();
-}
