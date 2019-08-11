@@ -13,6 +13,7 @@ class QWoShower : public QStackedWidget
 public:
     explicit QWoShower(QTabBar *tab, QWidget *parent=nullptr);
     virtual ~QWoShower();
+    bool openLocalShell();
     bool openConnection(const QString& target);
     void setBackgroundColor(const QColor& clr);
     void openFindDialog();

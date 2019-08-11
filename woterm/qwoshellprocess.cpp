@@ -8,11 +8,22 @@
 #include <QMenu>
 #include <QClipboard>
 #include <QProcess>
+#include <QMessageBox>
 
 QWoShellProcess::QWoShellProcess(QObject *parent)
     :QWoProcess (parent)
 {
-
+    QString program = QWoSetting::shellProgramPath();
+    if(program.isEmpty()) {
+        QMessageBox::critical(m_term, "shell", "can't find any shell program.");
+        QApplication::exit(0);
+        return;
+    }
+    m_target = program;
+    setProgram(program);
+    QStringList args;
+    args.append(program);
+    setArguments(args);
 }
 
 QWoShellProcess::~QWoShellProcess()

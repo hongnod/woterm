@@ -161,6 +161,7 @@ void QWoMainWindow::onProcessStartCheck()
 
 void QWoMainWindow::onOpenSessionList()
 {
+    m_shower->openLocalShell();
     QWoSessionManage dlg(this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     QObject::connect(&dlg, SIGNAL(finished(int)), this, SLOT(onShouldAppExit()));

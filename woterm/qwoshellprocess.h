@@ -13,4 +13,6 @@ public:
     explicit QWoShellProcess(QObject *parent=nullptr);
     virtual ~QWoShellProcess();
 
+private:
+    QString m_target;
 };

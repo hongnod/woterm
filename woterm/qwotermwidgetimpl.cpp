@@ -1,5 +1,6 @@
 #include "qwotermwidgetimpl.h"
 #include "qwosshprocess.h"
+#include "qwoshellprocess.h"
 #include "qwotermwidget.h"
 #include "qwoglobal.h"
 
@@ -8,27 +9,31 @@
 #include <QApplication>
 
 
+QWoTermWidgetImpl::QWoTermWidgetImpl(QWidget *parent)
+    : QWoWidget (parent)
+    , m_termType(EShell)
+{
+    QWoShellProcess *process = new QWoShellProcess(m_root);
+    init(process);
+}
+
 QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
     : QWoWidget (parent)
     , m_target(target)
+    , m_termType(ESsh)
 {
-    m_root = new QSplitter(this);
-    m_root->setHandleWidth(1);
-    m_root->setOpaqueResize(false);
-    m_root->setAutoFillBackground(true);
-    QPalette pal(Qt::gray);
-    m_root->setPalette(pal);
     QWoSshProcess *process = new QWoSshProcess(target, m_root);
-    QWoTermWidget *term = new QWoTermWidget(process, m_root);
-    m_root->addWidget(term);
-    process->start();
-
-    QObject::connect(m_root, SIGNAL(destroyed(QObject*)), this, SLOT(onRootSplitterDestroy()));
+    init(process);
 }
 
 QWoTermWidgetImpl::~QWoTermWidgetImpl()
 {
 
+}
+
+QWoTermWidgetImpl::ETermType QWoTermWidgetImpl::termType()
+{
+    return m_termType;
 }
 
 void QWoTermWidgetImpl::closeEvent(QCloseEvent *event)
@@ -72,4 +77,19 @@ void QWoTermWidgetImpl::addToList(QWoTermWidget *w)
 void QWoTermWidgetImpl::removeFromList(QWoTermWidget *w)
 {
     m_terms.removeOne(w);
+}
+
+void QWoTermWidgetImpl::init(QWoProcess *process)
+{
+    m_root = new QSplitter(this);
+    m_root->setHandleWidth(1);
+    m_root->setOpaqueResize(false);
+    m_root->setAutoFillBackground(true);
+    QPalette pal(Qt::gray);
+    m_root->setPalette(pal);
+    QWoTermWidget *term = new QWoTermWidget(process, m_root);
+    m_root->addWidget(term);
+    process->start();
+
+    QObject::connect(m_root, SIGNAL(destroyed(QObject*)), this, SLOT(onRootSplitterDestroy()));
 }

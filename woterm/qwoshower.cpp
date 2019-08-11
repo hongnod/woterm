@@ -25,6 +25,19 @@ QWoShower::~QWoShower()
 
 }
 
+bool QWoShower::openLocalShell()
+{
+    QWoTermWidgetImpl *impl = new QWoTermWidgetImpl(this);
+    addWidget(impl);
+    int idx = m_tabs->addTab("Local");
+    m_tabs->setCurrentIndex(idx);
+    m_tabs->setTabData(idx, QVariant::fromValue(impl));
+    QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
+    setCurrentWidget(impl);
+    qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
+    return true;
+}
+
 bool QWoShower::openConnection(const QString &target)
 {
     QWoTermWidgetImpl *impl = new QWoTermWidgetImpl(target, this);
