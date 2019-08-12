@@ -25,7 +25,7 @@ QWoShellProcess::QWoShellProcess(QObject *parent)
     args.append(program);
     setArguments(args);
 
-    QTimer::singleShot(3000, this, SLOT(onTimeout()));
+    //QTimer::singleShot(3000, this, SLOT(onTimeout()));
 }
 
 QWoShellProcess::~QWoShellProcess()
@@ -36,4 +36,5 @@ QWoShellProcess::~QWoShellProcess()
 void QWoShellProcess::onTimeout()
 {
     write("dir\r\n");
+    QTimer::singleShot(3000, this, SLOT(onTimeout()));
 }
