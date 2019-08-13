@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-class qworeadline : public QObject
+class QWoReadLine : public QObject
 {
     Q_OBJECT
 public:
-    explicit qworeadline(const QByteArray& prompt, QObject *parent = nullptr);
+    explicit QWoReadLine(const QByteArray& prompt, QObject *parent = nullptr);
     void append(const QByteArray& buf);
 
 signals:
