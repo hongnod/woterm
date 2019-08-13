@@ -16,7 +16,7 @@ void qworeadline::append(const QByteArray &buf)
     if(idx >= 0) {
         m_line.append(buf.left(idx));
         handleCommand(m_line);
-        m_line = m_prompt;
+        m_line = "\n"+m_prompt;
         return;
     }
     m_line.append(buf);
@@ -25,4 +25,7 @@ void qworeadline::append(const QByteArray &buf)
 void qworeadline::handleCommand(const QByteArray &cmd)
 {
     QByteArray line = cmd.trimmed();
+    QByteArray echo="\n";
+    echo.append(cmd);
+    emit result(echo);
 }
