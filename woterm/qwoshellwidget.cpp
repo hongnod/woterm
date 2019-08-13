@@ -35,6 +35,9 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
 
+    QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
+
+
     QTimer::singleShot(1000, this, SLOT(onTimeout()));
 }
 
@@ -72,6 +75,11 @@ void QWoShellWidget::onTimeout()
 
 void QWoShellWidget::onSendData(const QByteArray &buf)
 {
+    QByteArray data(buf);
+    if(data == "\r") {
+        data += "\n";
+    }
+    parseSequenceText(data);
     scrollToEnd();
 }
 
