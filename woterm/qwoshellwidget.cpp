@@ -79,7 +79,7 @@ void QWoShellWidget::onTimeout()
 void QWoShellWidget::onSendData(const QByteArray &buf)
 {
     m_readline->append(buf);
-    parseSequenceText(data);
+    parseSequenceText(buf);
     scrollToEnd();
 }
 
