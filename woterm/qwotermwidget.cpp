@@ -111,7 +111,11 @@ void QWoTermWidget::onReadyReadStandardError()
 void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
-    m_mask->show();
+    if(code != 0) {
+        m_mask->show();
+        return;
+    }
+    closeAndDelete();
 }
 
 void QWoTermWidget::onSendData(const QByteArray &buf)
@@ -168,6 +172,7 @@ void QWoTermWidget::onSessionReconnect()
 {
     m_mask->hide();
     m_process->start();
+    setFocus();
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
