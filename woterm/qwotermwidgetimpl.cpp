@@ -10,7 +10,7 @@
 
 
 QWoTermWidgetImpl::QWoTermWidgetImpl(QWidget *parent)
-    : QWoWidget (parent)
+    : QWoShowerWidget (parent)
     , m_termType(EShell)
 {
     QWoShellProcess *process = new QWoShellProcess(m_root);
@@ -18,7 +18,7 @@ QWoTermWidgetImpl::QWoTermWidgetImpl(QWidget *parent)
 }
 
 QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
-    : QWoWidget (parent)
+    : QWoShowerWidget (parent)
     , m_target(target)
     , m_termType(ESsh)
 {

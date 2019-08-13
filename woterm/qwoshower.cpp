@@ -27,7 +27,7 @@ QWoShower::~QWoShower()
 
 bool QWoShower::openLocalShell()
 {
-    QWoTermWidgetImpl *impl = new QWoTermWidgetImpl(this);
+    QWoShowerWidget *impl = new QWoTermWidgetImpl(this);
     addWidget(impl);
     int idx = m_tabs->addTab("Local");
     m_tabs->setCurrentIndex(idx);
@@ -40,7 +40,7 @@ bool QWoShower::openLocalShell()
 
 bool QWoShower::openConnection(const QString &target)
 {
-    QWoTermWidgetImpl *impl = new QWoTermWidgetImpl(target, this);
+    QWoShowerWidget *impl = new QWoTermWidgetImpl(target, this);
     addWidget(impl);
     int idx = m_tabs->addTab(target);
     m_tabs->setCurrentIndex(idx);
@@ -96,7 +96,7 @@ void QWoShower::closeSession(int idx)
         return;
     }
     QVariant v = m_tabs->tabData(idx);
-    QWoTermWidgetImpl *target = v.value<QWoTermWidgetImpl*>();
+    QWoShowerWidget *target = v.value<QWoShowerWidget*>();
     target->deleteLater();
 }
 
@@ -121,10 +121,10 @@ void QWoShower::onTabCurrentChanged(int idx)
 
 void QWoShower::onTermImplDestroy(QObject *it)
 {
-    QWoTermWidgetImpl *target = qobject_cast<QWoTermWidgetImpl*>(it);
+    QWoShowerWidget *target = qobject_cast<QWoShowerWidget*>(it);
     for(int i = 0; i < m_tabs->count(); i++) {
         QVariant v = m_tabs->tabData(i);
-        QWoTermWidgetImpl *impl = v.value<QWoTermWidgetImpl *>();
+        QWoShowerWidget *impl = v.value<QWoShowerWidget *>();
         if(target == impl) {
             removeWidget(target);
             m_tabs->removeTab(i);

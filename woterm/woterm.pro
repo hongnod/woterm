@@ -18,6 +18,7 @@ SOURCES += main.cpp \
     qwosetting.cpp \
     qwomainwindow.cpp \
     qwoshower.cpp \
+    qwoshowerwidget.cpp \
     qwowidget.cpp \
     qwosshconf.cpp \
     qwohostinfolist.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
     qwosetting.h \
     qwomainwindow.h \
     qwoshower.h \
+    qwoshowerwidget.h \
     qwowidget.h \
     qwosshconf.h \
     qwoglobal.h \

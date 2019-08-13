@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qwowidget.h"
+#include "qwoshowerwidget.h"
 
 #include <QPointer>
 
@@ -8,7 +8,7 @@ class QSplitter;
 class QWoTermWidget;
 class QWoProcess;
 
-class QWoTermWidgetImpl : public QWoWidget
+class QWoTermWidgetImpl : public QWoShowerWidget
 {
     Q_OBJECT
 public:
