@@ -6,6 +6,7 @@
 #include "qwoutils.h"
 #include "qwoglobal.h"
 #include "qwoshellwidgetimpl.h"
+#include "qworeadline.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -39,6 +40,8 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
 
 
     QTimer::singleShot(1000, this, SLOT(onTimeout()));
+
+    m_readline = new QWoReadLine("$", this);
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -75,10 +78,7 @@ void QWoShellWidget::onTimeout()
 
 void QWoShellWidget::onSendData(const QByteArray &buf)
 {
-    QByteArray data(buf);
-    if(data == "\r") {
-        data += "\n";
-    }
+    m_readline->append(buf);
     parseSequenceText(data);
     scrollToEnd();
 }

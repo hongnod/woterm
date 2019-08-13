@@ -7,6 +7,7 @@
 class QWoProcess;
 class QMenu;
 class QWoShellWidgetImpl;
+class QWoReadLine;
 
 class QWoShellWidget : public QTermWidget
 {
@@ -42,5 +43,6 @@ private:
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;
     QPointer<QAction> m_paste;
+    QPointer<QWoReadLine> m_readline;
     bool m_bexit;
 };
