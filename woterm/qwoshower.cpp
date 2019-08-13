@@ -1,13 +1,13 @@
 #include "qwoshower.h"
-#include "qwosshprocess.h"
-#include "qwotermwidget.h"
 #include "qwotermwidgetimpl.h"
+#include "qwoshellwidgetimpl.h"
 
 #include <QTabBar>
 #include <QResizeEvent>
 #include <QMessageBox>
 #include <QtGlobal>
 #include <QSplitter>
+#include <QDebug>
 
 QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     : QStackedWidget (parent)
@@ -27,7 +27,7 @@ QWoShower::~QWoShower()
 
 bool QWoShower::openLocalShell()
 {
-    QWoShowerWidget *impl = new QWoTermWidgetImpl(this);
+    QWoShowerWidget *impl = new QWoShellWidgetImpl(this);
     addWidget(impl);
     int idx = m_tabs->addTab("Local");
     m_tabs->setCurrentIndex(idx);

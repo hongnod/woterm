@@ -10,6 +10,8 @@ unix:QMAKE_RPATHDIR+=$$PROJECT_LIBDIR
 SOURCES += main.cpp \
     ipchelper.cpp \
     qwotermwidget.cpp \
+    qwoshellwidget.cpp \
+    qwoshellwidgetimpl.cpp \
     qwotermwidgetimpl.cpp \
     qwoprocess.cpp \
     qwosshprocess.cpp \
@@ -36,6 +38,8 @@ SOURCES += main.cpp \
 HEADERS += \
     ipchelper.h \
     qwotermwidget.h \
+    qwoshellwidget.h \
+    qwoshellwidgetimpl.h \
     qwotermwidgetimpl.h \
     qwoprocess.h \
     qwosshprocess.h \
