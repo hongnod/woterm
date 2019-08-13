@@ -75,18 +75,22 @@ void QWoApp::start()
     mtx.unlock();
 }
 
+static QCoreApplication *myApp = nullptr;
 void QWoApp::run()
 {
     char*** argv = __p___argv();
     int* argc = __p___argc();
-    static QCoreApplication app(*argc, *argv);
+    myApp = new QCoreApplication(*argc, *argv);
     qDebug() << "start app thread";
     m_cond.wakeOne();
-    app.exec();
+    myApp->exec();
 }
 
 void IpcExit()
 {
+    QCoreApplication::quit();
+    woApp.wait();
     woApp.exit(0);
     woApp.terminate();
+
 }

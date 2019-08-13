@@ -45,6 +45,8 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
     initDefault();
     initCustom();
 
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
 
     QObject::connect(m_process, SIGNAL(readyReadStandardOutput()), this, SLOT(onReadyReadStandardOutput()));
     QObject::connect(m_process, SIGNAL(readyReadStandardError()), this, SLOT(onReadyReadStandardError()));
