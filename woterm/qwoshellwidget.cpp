@@ -6,7 +6,7 @@
 #include "qwoutils.h"
 #include "qwoglobal.h"
 #include "qwoshellwidgetimpl.h"
-#include "qworeadline.h"
+#include "qwolinenoise.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -41,7 +41,7 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
 
     QTimer::singleShot(1000, this, SLOT(onTimeout()));
 
-    m_readline = new QWoReadLine("$", this);
+    m_linenoise = new QWoLineNoise("$", this);
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -78,7 +78,7 @@ void QWoShellWidget::onTimeout()
 
 void QWoShellWidget::onSendData(const QByteArray &buf)
 {
-    QByteArray line = m_readline->append(buf);
+    QByteArray line = m_linenoise->parse(buf);
     parseSequenceText(line);
     scrollToEnd();
 }
