@@ -1,13 +1,15 @@
 #include "qworeadline.h"
 
+#include <QByteArray>
+
 QWoReadLine::QWoReadLine(const QByteArray &prompt, QObject *parent)
     : QObject(parent)
-    , m_prompt(prompt)
+    , m_prompt("\x1b[0K"+prompt)
 {
 
 }
 
-void QWoReadLine::append(const QByteArray &buf)
+QByteArray QWoReadLine::append(const QByteArray &buf)
 {
     int idx = buf.indexOf('\r');
     if(idx < 0) {
@@ -15,17 +17,30 @@ void QWoReadLine::append(const QByteArray &buf)
     }
     if(idx >= 0) {
         m_line.append(buf.left(idx));
-        handleCommand(m_line);
+        QByteArray result = handleCommand(m_line);
         m_line = "\n"+m_prompt;
-        return;
+        result.append(m_line);
+        return handleResult(result);
     }
     m_line.append(buf);
+    return handleResult(m_line);
 }
 
-void QWoReadLine::handleCommand(const QByteArray &cmd)
+QByteArray QWoReadLine::handleCommand(const QByteArray &cmd)
 {
     QByteArray line = cmd.trimmed();
     QByteArray echo="\n";
     echo.append(cmd);
-    emit result(echo);
+    return echo;
+}
+
+QByteArray QWoReadLine::handleResult(const QByteArray& data)
+{
+    QByteArray result;
+    //result.append('\r');
+    result.append(data);
+    result.append("\x1b[0K");
+    //result.append("\r\x1b[%dC");
+    result.append("\r\x1b[1C");
+    return result;
 }

@@ -103,8 +103,6 @@
  *
  */
 
-#include <termios.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -113,8 +111,6 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
 #include "linenoise.h"
 
 #define LINENOISE_DEFAULT_HISTORY_MAX_LEN 100
@@ -124,7 +120,6 @@ static linenoiseCompletionCallback *completionCallback = NULL;
 static linenoiseHintsCallback *hintsCallback = NULL;
 static linenoiseFreeHintsCallback *freeHintsCallback = NULL;
 
-static struct termios orig_termios; /* In order to restore at exit.*/
 static int rawmode = 0; /* For atexit() function to check if restore is needed*/
 static int mlmode = 0;  /* Multi line mode. Default is single line. */
 static int atexit_registered = 0; /* Register atexit just 1 time. */
@@ -216,44 +211,13 @@ static int isUnsupportedTerm(void) {
 
 /* Raw mode: 1960 magic shit. */
 static int enableRawMode(int fd) {
-    struct termios raw;
-
-    if (!isatty(STDIN_FILENO)) goto fatal;
-    if (!atexit_registered) {
-        atexit(linenoiseAtExit);
-        atexit_registered = 1;
-    }
-    if (tcgetattr(fd,&orig_termios) == -1) goto fatal;
-
-    raw = orig_termios;  /* modify the original mode */
-    /* input modes: no break, no CR to NL, no parity check, no strip char,
-     * no start/stop output control. */
-    raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-    /* output modes - disable post processing */
-    raw.c_oflag &= ~(OPOST);
-    /* control modes - set 8 bit chars */
-    raw.c_cflag |= (CS8);
-    /* local modes - choing off, canonical off, no extended functions,
-     * no signal chars (^Z,^C) */
-    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-    /* control chars - set return condition: min number of bytes and timer.
-     * We want read to return every single byte, without timeout. */
-    raw.c_cc[VMIN] = 1; raw.c_cc[VTIME] = 0; /* 1 byte, no timer */
-
-    /* put terminal in raw mode after flushing */
-    if (tcsetattr(fd,TCSAFLUSH,&raw) < 0) goto fatal;
     rawmode = 1;
     return 0;
-
-fatal:
-    errno = ENOTTY;
-    return -1;
 }
 
 static void disableRawMode(int fd) {
     /* Don't even check the return value as it's too late. */
-    if (rawmode && tcsetattr(fd,TCSAFLUSH,&orig_termios) != -1)
-        rawmode = 0;
+    rawmode = 0;
 }
 
 /* Use the ESC [6n escape sequence to query the horizontal cursor position
@@ -284,41 +248,12 @@ static int getCursorPosition(int ifd, int ofd) {
 /* Try to get the number of columns in the current terminal, or assume 80
  * if it fails. */
 static int getColumns(int ifd, int ofd) {
-    struct winsize ws;
-
-    if (ioctl(1, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
-        /* ioctl() failed. Try to query the terminal itself. */
-        int start, cols;
-
-        /* Get the initial position so we can restore it later. */
-        start = getCursorPosition(ifd,ofd);
-        if (start == -1) goto failed;
-
-        /* Go to right margin and get position. */
-        if (write(ofd,"\x1b[999C",6) != 6) goto failed;
-        cols = getCursorPosition(ifd,ofd);
-        if (cols == -1) goto failed;
-
-        /* Restore position. */
-        if (cols > start) {
-            char seq[32];
-            snprintf(seq,32,"\x1b[%dD",cols-start);
-            if (write(ofd,seq,strlen(seq)) == -1) {
-                /* Can't recover... */
-            }
-        }
-        return cols;
-    } else {
-        return ws.ws_col;
-    }
-
-failed:
     return 80;
 }
 
 /* Clear the screen. Used to handle ctrl+l */
 void linenoiseClearScreen(void) {
-    if (write(STDOUT_FILENO,"\x1b[H\x1b[2J",7) <= 0) {
+    if (write(stdout,"\x1b[H\x1b[2J",7) <= 0) {
         /* nothing to do, just to avoid warning. */
     }
 }
@@ -800,7 +735,8 @@ static int linenoiseEdit(int stdin_fd, int stdout_fd, char *buf, size_t buflen, 
         char seq[3];
 
         nread = read(l.ifd,&c,1);
-        if (nread <= 0) return l.len;
+        if (nread <= 0)
+            return l.len;
 
         /* Only autocomplete when the callback is set. It returns < 0 when
          * there was an error reading from fd. Otherwise it will return the
@@ -951,34 +887,6 @@ static int linenoiseEdit(int stdin_fd, int stdout_fd, char *buf, size_t buflen, 
     return l.len;
 }
 
-/* This special mode is used by linenoise in order to print scan codes
- * on screen for debugging / development purposes. It is implemented
- * by the linenoise_example program using the --keycodes option. */
-void linenoisePrintKeyCodes(void) {
-    char quit[4];
-
-    printf("Linenoise key codes debugging mode.\n"
-            "Press keys to see scan codes. Type 'quit' at any time to exit.\n");
-    if (enableRawMode(STDIN_FILENO) == -1) return;
-    memset(quit,' ',4);
-    while(1) {
-        char c;
-        int nread;
-
-        nread = read(STDIN_FILENO,&c,1);
-        if (nread <= 0) continue;
-        memmove(quit,quit+1,sizeof(quit)-1); /* shift string to left. */
-        quit[sizeof(quit)-1] = c; /* Insert current char on the right. */
-        if (memcmp(quit,"quit",sizeof(quit)) == 0) break;
-
-        printf("'%c' %02x (%d) (type quit to exit)\n",
-            isprint(c) ? c : '?', (int)c, (int)c);
-        printf("\r"); /* Go left edge manually, we are in raw mode. */
-        fflush(stdout);
-    }
-    disableRawMode(STDIN_FILENO);
-}
-
 /* This function calls the line editing function linenoiseEdit() using
  * the STDIN file descriptor set in raw mode. */
 static int linenoiseRaw(char *buf, size_t buflen, const char *prompt) {
@@ -989,47 +897,9 @@ static int linenoiseRaw(char *buf, size_t buflen, const char *prompt) {
         return -1;
     }
 
-    if (enableRawMode(STDIN_FILENO) == -1) return -1;
-    count = linenoiseEdit(STDIN_FILENO, STDOUT_FILENO, buf, buflen, prompt);
-    disableRawMode(STDIN_FILENO);
+    count = linenoiseEdit(stdin, stdout, buf, buflen, prompt);
     printf("\n");
     return count;
-}
-
-/* This function is called when linenoise() is called with the standard
- * input file descriptor not attached to a TTY. So for example when the
- * program using linenoise is called in pipe or with a file redirected
- * to its standard input. In this case, we want to be able to return the
- * line regardless of its length (by default we are limited to 4k). */
-static char *linenoiseNoTTY(void) {
-    char *line = NULL;
-    size_t len = 0, maxlen = 0;
-
-    while(1) {
-        if (len == maxlen) {
-            if (maxlen == 0) maxlen = 16;
-            maxlen *= 2;
-            char *oldval = line;
-            line = realloc(line,maxlen);
-            if (line == NULL) {
-                if (oldval) free(oldval);
-                return NULL;
-            }
-        }
-        int c = fgetc(stdin);
-        if (c == EOF || c == '\n') {
-            if (c == EOF && len == 0) {
-                free(line);
-                return NULL;
-            } else {
-                line[len] = '\0';
-                return line;
-            }
-        } else {
-            line[len] = c;
-            len++;
-        }
-    }
 }
 
 /* The high level function that is the main API of the linenoise library.
@@ -1041,27 +911,9 @@ char *linenoise(const char *prompt) {
     char buf[LINENOISE_MAX_LINE];
     int count;
 
-    if (!isatty(STDIN_FILENO)) {
-        /* Not a tty: read from file / pipe. In this mode we don't want any
-         * limit to the line size, so we call a function to handle that. */
-        return linenoiseNoTTY();
-    } else if (isUnsupportedTerm()) {
-        size_t len;
-
-        printf("%s",prompt);
-        fflush(stdout);
-        if (fgets(buf,LINENOISE_MAX_LINE,stdin) == NULL) return NULL;
-        len = strlen(buf);
-        while(len && (buf[len-1] == '\n' || buf[len-1] == '\r')) {
-            len--;
-            buf[len] = '\0';
-        }
-        return strdup(buf);
-    } else {
-        count = linenoiseRaw(buf,LINENOISE_MAX_LINE,prompt);
-        if (count == -1) return NULL;
-        return strdup(buf);
-    }
+    count = linenoiseRaw(buf,LINENOISE_MAX_LINE,prompt);
+    if (count == -1) return NULL;
+    return strdup(buf);
 }
 
 /* This is just a wrapper the user may want to call in order to make sure
@@ -1088,7 +940,6 @@ static void freeHistory(void) {
 
 /* At exit we'll try to fix the terminal to the initial conditions. */
 static void linenoiseAtExit(void) {
-    disableRawMode(STDIN_FILENO);
     freeHistory();
 }
 
@@ -1158,44 +1009,4 @@ int linenoiseHistorySetMaxLen(int len) {
     if (history_len > history_max_len)
         history_len = history_max_len;
     return 1;
-}
-
-/* Save the history in the specified file. On success 0 is returned
- * otherwise -1 is returned. */
-int linenoiseHistorySave(const char *filename) {
-    mode_t old_umask = umask(S_IXUSR|S_IRWXG|S_IRWXO);
-    FILE *fp;
-    int j;
-
-    fp = fopen(filename,"w");
-    umask(old_umask);
-    if (fp == NULL) return -1;
-    chmod(filename,S_IRUSR|S_IWUSR);
-    for (j = 0; j < history_len; j++)
-        fprintf(fp,"%s\n",history[j]);
-    fclose(fp);
-    return 0;
-}
-
-/* Load the history from the specified file. If the file does not exist
- * zero is returned and no operation is performed.
- *
- * If the file exists and the operation succeeded 0 is returned, otherwise
- * on error -1 is returned. */
-int linenoiseHistoryLoad(const char *filename) {
-    FILE *fp = fopen(filename,"r");
-    char buf[LINENOISE_MAX_LINE];
-
-    if (fp == NULL) return -1;
-
-    while (fgets(buf,LINENOISE_MAX_LINE,fp) != NULL) {
-        char *p;
-
-        p = strchr(buf,'\r');
-        if (!p) p = strchr(buf,'\n');
-        if (p) *p = '\0';
-        linenoiseHistoryAdd(buf);
-    }
-    fclose(fp);
-    return 0;
 }
