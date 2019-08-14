@@ -3,11 +3,11 @@
 #include <QObject>
 #include <QByteArray>
 
-class QWoReadLine : public QObject
+class QWoLineNoise : public QObject
 {
     Q_OBJECT
 public:
-    explicit QWoReadLine(const QByteArray& prompt, QObject *parent = nullptr);
+    explicit QWoLineNoise(const QByteArray& prompt, QObject *parent = nullptr);
     QByteArray append(const QByteArray& buf);
 
 signals:

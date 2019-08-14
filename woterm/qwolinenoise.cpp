@@ -1,15 +1,13 @@
-#include "qworeadline.h"
+#include "qwolinenoise.h"
 
-#include <QByteArray>
-
-QWoReadLine::QWoReadLine(const QByteArray &prompt, QObject *parent)
+QWoLineNoise::QWoLineNoise(const QByteArray &prompt, QObject *parent)
     : QObject(parent)
     , m_prompt("\x1b[0K"+prompt)
 {
 
 }
 
-QByteArray QWoReadLine::append(const QByteArray &buf)
+QByteArray QWoLineNoise::append(const QByteArray &buf)
 {
     int idx = buf.indexOf('\r');
     if(idx < 0) {
@@ -26,7 +24,7 @@ QByteArray QWoReadLine::append(const QByteArray &buf)
     return handleResult(m_line);
 }
 
-QByteArray QWoReadLine::handleCommand(const QByteArray &cmd)
+QByteArray QWoLineNoise::handleCommand(const QByteArray &cmd)
 {
     QByteArray line = cmd.trimmed();
     QByteArray echo="\n";
@@ -34,7 +32,7 @@ QByteArray QWoReadLine::handleCommand(const QByteArray &cmd)
     return echo;
 }
 
-QByteArray QWoReadLine::handleResult(const QByteArray& data)
+QByteArray QWoLineNoise::handleResult(const QByteArray& data)
 {
     QByteArray result;
     //result.append('\r');
