@@ -17,7 +17,6 @@ public:
         ESsh = 0x2
     } ETermType;
 public:
-    explicit QWoTermWidgetImpl(QWidget *parent=nullptr);
     explicit QWoTermWidgetImpl(QString target, QWidget *parent=nullptr);
     ~QWoTermWidgetImpl();
 

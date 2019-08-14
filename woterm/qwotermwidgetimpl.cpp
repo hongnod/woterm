@@ -1,6 +1,5 @@
 #include "qwotermwidgetimpl.h"
 #include "qwosshprocess.h"
-#include "qwoshellprocess.h"
 #include "qwotermwidget.h"
 #include "qwoglobal.h"
 
@@ -8,14 +7,6 @@
 #include <QSplitter>
 #include <QApplication>
 
-
-QWoTermWidgetImpl::QWoTermWidgetImpl(QWidget *parent)
-    : QWoShowerWidget (parent)
-    , m_termType(EShell)
-{
-    QWoShellProcess *process = new QWoShellProcess(m_root);
-    init(process);
-}
 
 QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
     : QWoShowerWidget (parent)
