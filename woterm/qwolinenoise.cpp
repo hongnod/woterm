@@ -69,6 +69,9 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
         case ENTER:    /* enter */
             editMoveEnd();
             break;
+        default:
+            editInsert(c);
+            break;
         }
     }
     return QByteArray();
@@ -108,6 +111,20 @@ void QWoLineNoise::reset()
 char QWoLineNoise::completeLine()
 {
     return 0;
+}
+
+void QWoLineNoise::editInsert(char c)
+{
+    if (m_state.buf.length() == m_state.pos) {
+        m_state.buf.append(c);
+        m_state.pos++;
+        refreshLine();
+    } else {
+        m_state.buf.insert(m_state.pos, c);
+        m_state.pos++;
+        refreshLine();
+    }
+
 }
 
 void QWoLineNoise::refreshLine()
@@ -156,11 +173,33 @@ void QWoLineNoise::refreshMultiLine()
     ab.append(m_state.prompt);
     ab.append(m_state.buf);
 
-    /* Erase to right */
-    n = snprintf(seq, 64, "\x1b[0K");
+
+    /* If we are at the very end of the screen with our prompt, we need to
+         * emit a newline and move the prompt to the first column. */
+    if(m_state.pos > 0 && m_state.pos == m_state.buf.length() && (m_state.pos + m_state.prompt.length()) % m_state.cols == 0) {
+        ab.append('\n');
+        n = snprintf(seq, 64, "\r");
+        ab.append(seq, n);
+        rows++;
+        if (rows > m_state.maxrows) {
+            m_state.maxrows = rows;
+        }
+    }
+    /* Move cursor to right position. */
+    rpos2 = (m_state.prompt.length()+m_state.pos+m_state.cols)/m_state.cols; /* current cursor relative row. */
+    /* Go up till we reach the expected positon. */
+    if (rows-rpos2 > 0) {
+        n = snprintf(seq,64,"\x1b[%dA", rows-rpos2);
+        ab.append(seq, n);
+    }
+    /* Set column. */
+    col = (m_state.prompt.length()+m_state.pos) % m_state.cols;
+    if (col){
+        n = snprintf(seq,64,"\r\x1b[%dC", col);
+    } else {
+        n = snprintf(seq,64,"\r");
+    }
     ab.append(seq, n);
-    /* Move cursor to original position. */
-    n = snprintf(seq, 64, "\r\x1b[%dC", m_state.pos+m_state.buf.length());
-    ab.append(seq, n);
+    m_state.oldpos = m_state.pos;
     m_term->parseSequenceText(ab);
 }

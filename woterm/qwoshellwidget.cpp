@@ -41,7 +41,7 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
 
     QTimer::singleShot(1000, this, SLOT(onTimeout()));
 
-    m_linenoise = new QWoLineNoise("$", this);
+    m_linenoise = new QWoLineNoise(this, "$", this);
 }
 
 QWoShellWidget::~QWoShellWidget()

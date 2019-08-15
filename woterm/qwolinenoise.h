@@ -35,6 +35,7 @@ private:
     QByteArray handleResult(const QByteArray& data);
     void reset();
     char completeLine();
+    void editInsert(char c);
     void editMoveEnd();
     void refreshLine();
     void refreshMultiLine();
