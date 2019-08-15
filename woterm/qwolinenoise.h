@@ -1,7 +1,10 @@
 #pragma once
 
 #include <QObject>
+#include <QPointer>
 #include <QByteArray>
+
+class QTermWidget;
 
 class QWoLineNoise : public QObject
 {
@@ -20,7 +23,7 @@ private:
     } LineNoiseState;
 
 public:
-    explicit QWoLineNoise(const QByteArray& prompt, QObject *parent = nullptr);
+    explicit QWoLineNoise(QTermWidget *term, const QByteArray& prompt, QObject *parent = nullptr);
     QByteArray append(const QByteArray& buf);
     QByteArray parse(const QByteArray& buf);
     void setColumn(int n);
@@ -37,6 +40,7 @@ private:
     void refreshMultiLine();
 private:
     const QByteArray m_prompt;
+    QPointer<QTermWidget> m_term;
     QByteArray m_line;
 
     LineNoiseState m_state;
