@@ -28,24 +28,7 @@ QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject 
     , m_prompt("\x1b[0K"+prompt)
     , m_term(term)
 {
-
-}
-
-QByteArray QWoLineNoise::append(const QByteArray &buf)
-{
-    int idx = buf.indexOf('\r');
-    if(idx < 0) {
-        idx = buf.indexOf('\n');
-    }
-    if(idx >= 0) {
-        m_line.append(buf.left(idx));
-        QByteArray result = handleCommand(m_line);
-        m_line = "\n"+m_prompt;
-        result.append(m_line);
-        return handleResult(result);
-    }
-    m_line.append(buf);
-    return handleResult(m_line);
+    reset();
 }
 
 QByteArray QWoLineNoise::parse(const QByteArray &buf)
@@ -57,8 +40,9 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             c = completeLine();
             /* Return on errors */
             if (c < 0) {
-                //return l.len;
-                return m_state.buf;
+                QByteArray line = m_state.buf;
+                reset();
+                return line;
             }
             /* Read next character when 0 */
             if (c == 0){
@@ -67,8 +51,16 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
         }
         switch(c) {
         case ENTER:    /* enter */
+        {
             editMoveEnd();
-            break;
+            QByteArray line = m_state.buf;
+
+            m_term->parseSequenceText("\n");
+            handleCommand(line);
+            reset();
+            m_term->parseSequenceText(m_prompt);
+            return line;
+        }
         default:
             editInsert(c);
             break;
@@ -77,35 +69,21 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
     return QByteArray();
 }
 
+void QWoLineNoise::handleCommand(const QByteArray &buf)
+{
+
+}
+
 int QWoLineNoise::termColumn()
 {
     return m_term->screenColumnsCount();
-}
-
-QByteArray QWoLineNoise::handleCommand(const QByteArray &cmd)
-{
-    QByteArray line = cmd.trimmed();
-    QByteArray echo="\n";
-    echo.append(cmd);
-    return echo;
-}
-
-QByteArray QWoLineNoise::handleResult(const QByteArray& data)
-{
-    QByteArray result;
-    //result.append('\r');
-    result.append(data);
-    result.append("\x1b[0K");
-    //result.append("\r\x1b[%dC");
-    result.append("\r\x1b[1C");
-    return result;
 }
 
 void QWoLineNoise::reset()
 {
     m_state.buf.resize(0);
     m_state.oldpos = m_state.pos = 0;
-    m_state.maxrows = 1024;
+    m_state.maxrows = m_term->screenLinesCount();
 }
 
 char QWoLineNoise::completeLine()
@@ -142,7 +120,7 @@ void QWoLineNoise::editMoveEnd()
 void QWoLineNoise::refreshMultiLine()
 {
     char seq[64];
-    int plen = m_state.prompt.length();
+    int plen = m_prompt.length();
     int rows = (plen+m_state.buf.length()+termColumn()-1)/termColumn(); /* rows used by current buf. */
     int rpos = (plen+m_state.oldpos+termColumn())/termColumn(); /* cursor relative row. */
     int old_rows = m_state.maxrows;
@@ -166,7 +144,7 @@ void QWoLineNoise::refreshMultiLine()
     int n = snprintf(seq,64,"\r\x1b[0K");
     ab.append(seq, n);
     /* Write the prompt and the current buffer content */
-    ab.append(m_state.prompt);
+    ab.append(m_prompt);
     ab.append(m_state.buf);
 
 
@@ -174,7 +152,7 @@ void QWoLineNoise::refreshMultiLine()
          * emit a newline and move the prompt to the first column. */
     if(m_state.pos > 0
             && m_state.pos == m_state.buf.length()
-            && (m_state.pos + m_state.prompt.length()) % termColumn() == 0) {
+            && (m_state.pos + m_prompt.length()) % termColumn() == 0) {
         ab.append('\n');
         n = snprintf(seq, 64, "\r");
         ab.append(seq, n);
@@ -184,14 +162,14 @@ void QWoLineNoise::refreshMultiLine()
         }
     }
     /* Move cursor to right position. */
-    int rpos2 = (m_state.prompt.length()+m_state.pos+termColumn())/termColumn(); /* current cursor relative row. */
+    int rpos2 = (m_prompt.length()+m_state.pos+termColumn())/termColumn(); /* current cursor relative row. */
     /* Go up till we reach the expected positon. */
     if (rows-rpos2 > 0) {
         n = snprintf(seq,64,"\x1b[%dA", rows-rpos2);
         ab.append(seq, n);
     }
     /* Set column. */
-    int col = (m_state.prompt.length()+m_state.pos) % termColumn();
+    int col = (m_prompt.length()+m_state.pos) % termColumn();
     if (col){
         n = snprintf(seq,64,"\r\x1b[%dC", col);
     } else {

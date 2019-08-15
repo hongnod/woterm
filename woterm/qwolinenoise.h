@@ -15,7 +15,6 @@ private:
      * functionalities. */
     typedef struct {
         QByteArray buf;          /* Edited line buffer. */
-        QByteArray prompt; /* Prompt to display. */
         int pos;         /* Current cursor position. */
         int oldpos;      /* Previous refresh cursor position. */
         int maxrows;     /* Maximum num of rows used so far (multiline mode) */
@@ -23,15 +22,10 @@ private:
 
 public:
     explicit QWoLineNoise(QTermWidget *term, const QByteArray& prompt, QObject *parent = nullptr);
-    QByteArray append(const QByteArray& buf);
     QByteArray parse(const QByteArray& buf);
     void setColumn(int n);
-signals:
-    void result(const QByteArray& buf);
-public slots:
 private:
-    QByteArray handleCommand(const QByteArray& cmd);
-    QByteArray handleResult(const QByteArray& data);
+    void handleCommand(const QByteArray& buf);
     void reset();
     char completeLine();
     void editInsert(char c);
