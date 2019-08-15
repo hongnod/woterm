@@ -18,7 +18,6 @@ private:
         QByteArray prompt; /* Prompt to display. */
         int pos;         /* Current cursor position. */
         int oldpos;      /* Previous refresh cursor position. */
-        int cols;        /* Number of columns in terminal. */
         int maxrows;     /* Maximum num of rows used so far (multiline mode) */
     } LineNoiseState;
 
@@ -39,6 +38,7 @@ private:
     void editMoveEnd();
     void refreshLine();
     void refreshMultiLine();
+    int termColumn();
 private:
     const QByteArray m_prompt;
     QPointer<QTermWidget> m_term;

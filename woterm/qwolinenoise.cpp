@@ -77,9 +77,9 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
     return QByteArray();
 }
 
-void QWoLineNoise::setColumn(int n)
+int QWoLineNoise::termColumn()
 {
-
+    return m_term->screenColumnsCount();
 }
 
 QByteArray QWoLineNoise::handleCommand(const QByteArray &cmd)
@@ -117,13 +117,11 @@ void QWoLineNoise::editInsert(char c)
 {
     if (m_state.buf.length() == m_state.pos) {
         m_state.buf.append(c);
-        m_state.pos++;
-        refreshLine();
     } else {
         m_state.buf.insert(m_state.pos, c);
-        m_state.pos++;
-        refreshLine();
     }
+    m_state.pos++;
+    refreshLine();
 
 }
 
@@ -145,10 +143,8 @@ void QWoLineNoise::refreshMultiLine()
 {
     char seq[64];
     int plen = m_state.prompt.length();
-    int rows = (plen+m_state.buf.length()+m_state.cols-1)/m_state.cols; /* rows used by current buf. */
-    int rpos = (plen+m_state.oldpos+m_state.cols)/m_state.cols; /* cursor relative row. */
-    int rpos2; /* rpos after refresh. */
-    int col; /* colum position, zero-based. */
+    int rows = (plen+m_state.buf.length()+termColumn()-1)/termColumn(); /* rows used by current buf. */
+    int rpos = (plen+m_state.oldpos+termColumn())/termColumn(); /* cursor relative row. */
     int old_rows = m_state.maxrows;
     QByteArray ab;
 
@@ -176,7 +172,9 @@ void QWoLineNoise::refreshMultiLine()
 
     /* If we are at the very end of the screen with our prompt, we need to
          * emit a newline and move the prompt to the first column. */
-    if(m_state.pos > 0 && m_state.pos == m_state.buf.length() && (m_state.pos + m_state.prompt.length()) % m_state.cols == 0) {
+    if(m_state.pos > 0
+            && m_state.pos == m_state.buf.length()
+            && (m_state.pos + m_state.prompt.length()) % termColumn() == 0) {
         ab.append('\n');
         n = snprintf(seq, 64, "\r");
         ab.append(seq, n);
@@ -186,14 +184,14 @@ void QWoLineNoise::refreshMultiLine()
         }
     }
     /* Move cursor to right position. */
-    rpos2 = (m_state.prompt.length()+m_state.pos+m_state.cols)/m_state.cols; /* current cursor relative row. */
+    int rpos2 = (m_state.prompt.length()+m_state.pos+termColumn())/termColumn(); /* current cursor relative row. */
     /* Go up till we reach the expected positon. */
     if (rows-rpos2 > 0) {
         n = snprintf(seq,64,"\x1b[%dA", rows-rpos2);
         ab.append(seq, n);
     }
     /* Set column. */
-    col = (m_state.prompt.length()+m_state.pos) % m_state.cols;
+    int col = (m_state.prompt.length()+m_state.pos) % termColumn();
     if (col){
         n = snprintf(seq,64,"\r\x1b[%dC", col);
     } else {
