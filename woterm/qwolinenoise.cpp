@@ -33,7 +33,7 @@ QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject 
 
 QByteArray QWoLineNoise::parse(const QByteArray &buf)
 {
-    for(int i = 0; i < buf.size(); i++) {
+    for(int i = 0; i < buf.count(); ) {
         char seq[3];
         char c = buf.at(i);
         if(c == 9) {
@@ -46,6 +46,7 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             }
             /* Read next character when 0 */
             if (c == 0){
+                i++;
                 continue;
             }
         }
@@ -64,6 +65,7 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             editInsert(c);
             break;
         }
+        i++;
     }
     return QByteArray();
 }
