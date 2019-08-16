@@ -54,8 +54,7 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
         {
             editMoveEnd();
             QByteArray line = m_state.buf;
-
-            m_term->parseSequenceText("\r\n\x1b[0C");
+            m_term->parseSequenceText("\r\n");
             handleCommand(line);
             reset();
             m_term->parseSequenceText(m_prompt);
@@ -83,7 +82,7 @@ void QWoLineNoise::reset()
 {
     m_state.buf.resize(0);
     m_state.oldpos = m_state.pos = 0;
-    m_state.maxrows = m_term->screenLinesCount();
+    m_state.maxrows = 0;
 }
 
 char QWoLineNoise::completeLine()
