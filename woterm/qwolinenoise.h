@@ -22,8 +22,11 @@ private:
 
 public:
     explicit QWoLineNoise(QTermWidget *term, const QByteArray& prompt, QObject *parent = nullptr);
-    QByteArray parse(const QByteArray& buf);
+    void parse(const QByteArray& buf);
     void setColumn(int n);
+signals:
+    void command(const QByteArray& line);
+
 private:
     void handleCommand(const QByteArray& buf);
     void reset();
@@ -39,6 +42,9 @@ private:
     void editMoveRight();
     void editMoveLeft();
     void editMoveHome();
+    void editBackspace();
+    void clearScreen();
+    void editDeletePrevWord();
 
 private:
     const QByteArray m_prompt;

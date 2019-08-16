@@ -1185,11 +1185,10 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
         else {
             textToSend += _codec->fromUnicode(event->text());
         }
-
-        sendData(textToSend);
-    }
-    else
-    {
+        if(!textToSend.isEmpty()) {
+            sendData(textToSend);
+        }
+    } else {
         // print an error message to the terminal if no key translator has been
         // set
         QString translatorError =  tr("No keyboard translator available.  "

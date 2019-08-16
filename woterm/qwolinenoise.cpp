@@ -20,7 +20,8 @@ enum KEY_ACTION{
     CTRL_U = 21,        /* Ctrl+u */
     CTRL_W = 23,        /* Ctrl+w */
     ESC = 27,           /* Escape */
-    BACKSPACE =  127    /* Backspace */
+    BACKSPACE = 8,    /* Backspace */
+    DELETE = 127           /* delete */
 };
 
 QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject *parent)
@@ -31,7 +32,7 @@ QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject 
     reset();
 }
 
-QByteArray QWoLineNoise::parse(const QByteArray &buf)
+void QWoLineNoise::parse(const QByteArray &buf)
 {
     int iread = 0;
     while(iread < buf.count()) {
@@ -43,7 +44,8 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             if (c < 0) {
                 QByteArray line = m_state.buf;
                 reset();
-                return line;
+                emit command(line);
+                return;
             }
             /* Read next character when 0 */
             if (c == 0){
@@ -56,11 +58,40 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             editMoveEnd();
             QByteArray line = m_state.buf;
             m_term->parseSequenceText("\r\n");
-            handleCommand(line);
+            emit command(line);
             reset();
             m_term->parseSequenceText(m_prompt);
-            return line;
+            return;
         }
+        case CTRL_C:     /* ctrl-c */
+            m_term->parseSequenceText("^C\r\n");
+            reset();
+            m_term->parseSequenceText(m_prompt);
+            return ;
+        case BACKSPACE:   /* backspace */
+            editBackspace();
+            break;
+        case DELETE:     /* ctrl-h */
+            editDelete();
+            break;
+        case CTRL_D:     /* ctrl-d, remove char at right of cursor, or if the
+                            line is empty, act as end-of-file. */
+            if (m_state.buf.length() > 0) {
+                editDelete();
+            }
+            break;
+        case CTRL_B:     /* ctrl-b */
+            editMoveLeft();
+            break;
+        case CTRL_F:     /* ctrl-f */
+            editMoveRight();
+            break;
+        case CTRL_P:    /* ctrl-p */
+            editHistoryPrev();
+            break;
+        case CTRL_N:    /* ctrl-n */
+            editHistoryNext();
+            break;
         case ESC:    /* escape sequence */
             /* Read the next two bytes representing the escape sequence.
              * Use two calls to handle slow terminals returning the two
@@ -114,12 +145,30 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
                 }
             }
             break;
+        case CTRL_U: /* Ctrl+u, delete the whole line. */
+            reset();
+            refreshLine();
+            break;
+        case CTRL_K: /* Ctrl+k, delete from current to end of line. */
+            m_state.buf = m_state.buf.left(m_state.pos);
+            refreshLine();
+            break;
+        case CTRL_A: /* Ctrl+a, go to the start of the line */
+            editMoveHome();
+            break;
+        case CTRL_E: /* ctrl+e, go to the end of the line */
+            editMoveEnd();
+            break;
+        case CTRL_L: /* ctrl+l, clear screen */
+            clearScreen();
+            refreshLine();
+            break;
         default:
             editInsert(c);
             break;
         }
+
     }
-    return QByteArray();
 }
 
 void QWoLineNoise::handleCommand(const QByteArray &buf)
@@ -173,6 +222,25 @@ void QWoLineNoise::editMoveHome()
         m_state.pos = 0;
         refreshLine();
     }
+}
+
+void QWoLineNoise::editBackspace()
+{
+    if (m_state.pos > 0 && !m_state.buf.isEmpty()) {
+        m_state.buf.remove(m_state.pos-1, 1);
+        m_state.pos--;
+        refreshLine();
+    }
+}
+
+void QWoLineNoise::clearScreen()
+{
+    m_term->parseSequenceText("\x1b[H\x1b[2J");
+}
+
+void QWoLineNoise::editDeletePrevWord()
+{
+
 }
 
 /* Move cursor to the end of the line. */
