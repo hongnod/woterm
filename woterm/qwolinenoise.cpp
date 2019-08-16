@@ -25,7 +25,7 @@ enum KEY_ACTION{
 
 QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject *parent)
     : QObject(parent)
-    , m_prompt("\x1b[0K"+prompt)
+    , m_prompt(prompt)
     , m_term(term)
 {
     reset();
@@ -55,7 +55,7 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             editMoveEnd();
             QByteArray line = m_state.buf;
 
-            m_term->parseSequenceText("\n");
+            m_term->parseSequenceText("\r\n\x1b[0C");
             handleCommand(line);
             reset();
             m_term->parseSequenceText(m_prompt);
