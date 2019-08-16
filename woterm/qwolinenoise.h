@@ -33,6 +33,13 @@ private:
     void refreshLine();
     void refreshMultiLine();
     int termColumn();
+    void editDelete();
+    void editHistoryPrev();
+    void editHistoryNext();
+    void editMoveRight();
+    void editMoveLeft();
+    void editMoveHome();
+
 private:
     const QByteArray m_prompt;
     QPointer<QTermWidget> m_term;

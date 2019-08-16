@@ -33,9 +33,10 @@ QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject 
 
 QByteArray QWoLineNoise::parse(const QByteArray &buf)
 {
-    for(int i = 0; i < buf.count(); ) {
+    int iread = 0;
+    while(iread < buf.count()) {
         char seq[3];
-        char c = buf.at(i);
+        char c = buf.at(iread++);
         if(c == 9) {
             c = completeLine();
             /* Return on errors */
@@ -46,7 +47,6 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             }
             /* Read next character when 0 */
             if (c == 0){
-                i++;
                 continue;
             }
         }
@@ -61,11 +61,63 @@ QByteArray QWoLineNoise::parse(const QByteArray &buf)
             m_term->parseSequenceText(m_prompt);
             return line;
         }
+        case ESC:    /* escape sequence */
+            /* Read the next two bytes representing the escape sequence.
+             * Use two calls to handle slow terminals returning the two
+             * chars at different times. */
+            seq[0] = buf[iread++];
+            seq[1] = buf[iread++];
+
+            /* ESC [ sequences. */
+            if (seq[0] == '[') {
+                if (seq[1] >= '0' && seq[1] <= '9') {
+                    /* Extended escape, read additional byte. */
+                    seq[2] = buf[iread++];
+                    if (seq[2] == '~') {
+                        switch(seq[1]) {
+                        case '3': /* Delete key. */
+                            editDelete();
+                            break;
+                        }
+                    }
+                } else {
+                    switch(seq[1]) {
+                    case 'A': /* Up */
+                        editHistoryPrev();
+                        break;
+                    case 'B': /* Down */
+                        editHistoryNext();
+                        break;
+                    case 'C': /* Right */
+                        editMoveRight();
+                        break;
+                    case 'D': /* Left */
+                        editMoveLeft();
+                        break;
+                    case 'H': /* Home */
+                        editMoveHome();
+                        break;
+                    case 'F': /* End*/
+                        editMoveEnd();
+                        break;
+                    }
+                }
+            } else if (seq[0] == 'O') {
+                /* ESC O sequences. */
+                switch(seq[1]) {
+                case 'H': /* Home */
+                    editMoveHome();
+                    break;
+                case 'F': /* End*/
+                    editMoveEnd();
+                    break;
+                }
+            }
+            break;
         default:
             editInsert(c);
             break;
         }
-        i++;
     }
     return QByteArray();
 }
@@ -78,6 +130,58 @@ void QWoLineNoise::handleCommand(const QByteArray &buf)
 int QWoLineNoise::termColumn()
 {
     return m_term->screenColumnsCount();
+}
+
+void QWoLineNoise::editDelete()
+{
+    if (m_state.pos < m_state.buf.length()) {
+         m_state.buf.remove(m_state.pos, 1);
+         refreshLine();
+    }
+}
+
+void QWoLineNoise::editHistoryPrev()
+{
+
+}
+
+void QWoLineNoise::editHistoryNext()
+{
+
+}
+
+
+void QWoLineNoise::editMoveRight()
+{
+    if (m_state.pos != m_state.buf.length()) {
+        m_state.pos++;
+        refreshLine();
+    }
+}
+
+void QWoLineNoise::editMoveLeft()
+{
+    if (m_state.pos > 0) {
+        m_state.pos--;
+        refreshLine();
+    }
+}
+
+void QWoLineNoise::editMoveHome()
+{
+    if (m_state.pos != 0) {
+        m_state.pos = 0;
+        refreshLine();
+    }
+}
+
+/* Move cursor to the end of the line. */
+void QWoLineNoise::editMoveEnd()
+{
+    if (m_state.pos != m_state.buf.length()) {
+        m_state.pos = m_state.buf.length();
+        refreshLine();
+    }
 }
 
 void QWoLineNoise::reset()
@@ -107,15 +211,6 @@ void QWoLineNoise::editInsert(char c)
 void QWoLineNoise::refreshLine()
 {
     refreshMultiLine();
-}
-
-/* Move cursor to the end of the line. */
-void QWoLineNoise::editMoveEnd()
-{
-    if (m_state.pos != m_state.buf.length()) {
-        m_state.pos = m_state.buf.length();
-        refreshLine();
-    }
 }
 
 void QWoLineNoise::refreshMultiLine()
