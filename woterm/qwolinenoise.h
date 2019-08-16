@@ -28,7 +28,6 @@ signals:
     void command(const QByteArray& line);
 
 private:
-    void handleCommand(const QByteArray& buf);
     void reset();
     char completeLine();
     void editInsert(char c);

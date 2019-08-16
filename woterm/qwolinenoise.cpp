@@ -164,16 +164,14 @@ void QWoLineNoise::parse(const QByteArray &buf)
             refreshLine();
             break;
         default:
+            if(!QChar::fromLatin1(c).isPrint()){
+                return;
+            }
             editInsert(c);
             break;
         }
 
     }
-}
-
-void QWoLineNoise::handleCommand(const QByteArray &buf)
-{
-
 }
 
 int QWoLineNoise::termColumn()
