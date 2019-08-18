@@ -17,6 +17,7 @@
 
 QWoShellWidget::QWoShellWidget(QWidget *parent)
     : QTermWidget (parent)
+    , QWoLineNoise (this)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -40,8 +41,6 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
 
 
     QTimer::singleShot(1000, this, SLOT(onTimeout()));
-
-    m_linenoise = new QWoLineNoise(this, "$", this);
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -78,7 +77,7 @@ void QWoShellWidget::onTimeout()
 
 void QWoShellWidget::onSendData(const QByteArray &buf)
 {
-    m_linenoise->parse(buf);
+    parse(buf);
     scrollToEnd();
 }
 
@@ -212,4 +211,9 @@ void QWoShellWidget::splitWidget(bool vertical)
     QList<int> ls;
     ls << 1 << 1;
     splitter->setSizes(ls);
+}
+
+void QWoShellWidget::handleCommand(const QByteArray& line)
+{
+
 }

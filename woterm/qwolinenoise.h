@@ -6,10 +6,9 @@
 
 class QTermWidget;
 
-class QWoLineNoise : public QObject
+class QWoLineNoise
 {
-    Q_OBJECT
-private:
+protected:
     /* The linenoiseState structure represents the state during line editing.
      * We pass this state to functions implementing specific editing
      * functionalities. */
@@ -21,11 +20,12 @@ private:
     } LineNoiseState;
 
 public:
-    explicit QWoLineNoise(QTermWidget *term, const QByteArray& prompt, QObject *parent = nullptr);
+    explicit QWoLineNoise(QTermWidget *term);
     void parse(const QByteArray& buf);
-    void setColumn(int n);
-signals:
-    void command(const QByteArray& line);
+    void setPrompt(const QByteArray& prompt);
+
+protected:
+    virtual void handleCommand(const QByteArray& line) = 0;
 
 private:
     void reset();
@@ -34,7 +34,7 @@ private:
     void editMoveEnd();
     void refreshLine();
     void refreshMultiLine();
-    int termColumn();
+    int column();
     void editDelete();
     void editHistoryPrev();
     void editHistoryNext();
@@ -46,9 +46,7 @@ private:
     void editDeletePrevWord();
 
 private:
-    const QByteArray m_prompt;
+    QByteArray m_prompt;
     QPointer<QTermWidget> m_term;
-    QByteArray m_line;
-
     LineNoiseState m_state;
 };

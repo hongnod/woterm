@@ -24,9 +24,8 @@ enum KEY_ACTION{
     DELETE = 127           /* delete */
 };
 
-QWoLineNoise::QWoLineNoise(QTermWidget *term, const QByteArray &prompt, QObject *parent)
-    : QObject(parent)
-    , m_prompt(prompt)
+QWoLineNoise::QWoLineNoise(QTermWidget *term)
+    : m_prompt("$")
     , m_term(term)
 {
     reset();
@@ -44,7 +43,7 @@ void QWoLineNoise::parse(const QByteArray &buf)
             if (c < 0) {
                 QByteArray line = m_state.buf;
                 reset();
-                emit command(line);
+                handleCommand(line);
                 return;
             }
             /* Read next character when 0 */
@@ -58,7 +57,7 @@ void QWoLineNoise::parse(const QByteArray &buf)
             editMoveEnd();
             QByteArray line = m_state.buf;
             m_term->parseSequenceText("\r\n");
-            emit command(line);
+            handleCommand(line);
             reset();
             m_term->parseSequenceText(m_prompt);
             return;
@@ -174,7 +173,12 @@ void QWoLineNoise::parse(const QByteArray &buf)
     }
 }
 
-int QWoLineNoise::termColumn()
+void QWoLineNoise::setPrompt(const QByteArray &prompt)
+{
+    m_prompt = prompt;
+}
+
+int QWoLineNoise::column()
 {
     return m_term->screenColumnsCount();
 }
@@ -283,8 +287,8 @@ void QWoLineNoise::refreshMultiLine()
 {
     char seq[64];
     int plen = m_prompt.length();
-    int rows = (plen+m_state.buf.length()+termColumn()-1)/termColumn(); /* rows used by current buf. */
-    int rpos = (plen+m_state.oldpos+termColumn())/termColumn(); /* cursor relative row. */
+    int rows = (plen+m_state.buf.length()+column()-1)/column(); /* rows used by current buf. */
+    int rpos = (plen+m_state.oldpos+column())/column(); /* cursor relative row. */
     int old_rows = m_state.maxrows;
     QByteArray ab;
 
@@ -314,7 +318,7 @@ void QWoLineNoise::refreshMultiLine()
          * emit a newline and move the prompt to the first column. */
     if(m_state.pos > 0
             && m_state.pos == m_state.buf.length()
-            && (m_state.pos + m_prompt.length()) % termColumn() == 0) {
+            && (m_state.pos + m_prompt.length()) % column() == 0) {
         ab.append('\n');
         n = snprintf(seq, 64, "\r");
         ab.append(seq, n);
@@ -324,14 +328,14 @@ void QWoLineNoise::refreshMultiLine()
         }
     }
     /* Move cursor to right position. */
-    int rpos2 = (m_prompt.length()+m_state.pos+termColumn())/termColumn(); /* current cursor relative row. */
+    int rpos2 = (m_prompt.length()+m_state.pos+column())/column(); /* current cursor relative row. */
     /* Go up till we reach the expected positon. */
     if (rows-rpos2 > 0) {
         n = snprintf(seq,64,"\x1b[%dA", rows-rpos2);
         ab.append(seq, n);
     }
     /* Set column. */
-    int col = (m_prompt.length()+m_state.pos) % termColumn();
+    int col = (m_prompt.length()+m_state.pos) % column();
     if (col){
         n = snprintf(seq,64,"\r\x1b[%dC", col);
     } else {

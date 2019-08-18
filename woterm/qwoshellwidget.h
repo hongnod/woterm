@@ -1,5 +1,7 @@
 #pragma once
 
+#include "qwolinenoise.h"
+
 #include <qtermwidget.h>
 
 #include <QPointer>
@@ -7,9 +9,9 @@
 class QWoProcess;
 class QMenu;
 class QWoShellWidgetImpl;
-class QWoLineNoise;
 
-class QWoShellWidget : public QTermWidget
+
+class QWoShellWidget : public QTermWidget, QWoLineNoise
 {
     Q_OBJECT
 public:
@@ -38,6 +40,9 @@ private:
     void initDefault();
     void resetProperty(QVariantMap data);
     void splitWidget(bool vertical);
+
+protected:
+    void handleCommand(const QByteArray& line);
 private:
     friend class QWoShellWidgetImpl;
     QPointer<QMenu> m_menu;
