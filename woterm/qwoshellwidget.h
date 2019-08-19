@@ -43,6 +43,8 @@ private:
 
 protected:
     void handleCommand(const QByteArray& line);
+    void handleComplete();
+    QByteArray handleShowHints(QByteArray& line, int &clr, bool &bold);
 private:
     friend class QWoShellWidgetImpl;
     QPointer<QMenu> m_menu;

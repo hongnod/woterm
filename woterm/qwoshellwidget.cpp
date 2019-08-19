@@ -217,3 +217,13 @@ void QWoShellWidget::handleCommand(const QByteArray& line)
 {
 
 }
+
+void QWoShellWidget::handleComplete()
+{
+
+}
+
+QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int &clr, bool &bold)
+{
+    return QByteArray();
+}

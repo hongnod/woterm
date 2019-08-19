@@ -313,6 +313,8 @@ void QWoLineNoise::refreshMultiLine()
     ab.append(m_prompt);
     ab.append(m_state.buf);
 
+    /* Show hits if any. */
+    ab.append(refreshShowHints());
 
     /* If we are at the very end of the screen with our prompt, we need to
          * emit a newline and move the prompt to the first column. */
@@ -344,4 +346,37 @@ void QWoLineNoise::refreshMultiLine()
     ab.append(seq, n);
     m_state.oldpos = m_state.pos;
     m_term->parseSequenceText(ab);
+}
+
+QByteArray QWoLineNoise::refreshShowHints()
+{
+    char seq[64];
+    QByteArray ab;
+    if (m_prompt.length()+m_state.buf.length() < column()) {
+        int color;
+        bool bold = false;
+        QByteArray hint = handleShowHints(m_state.buf, color, bold);
+        if (!hint.isEmpty()) {
+            int hintlen = hint.length();
+            int hintmaxlen = column() - (m_prompt.length()+m_state.buf.length());
+            if (hintlen > hintmaxlen){
+                hintlen = hintmaxlen;
+            }
+            hint.resize(hintlen);
+            if (bold && color == -1) {
+                color = 37;
+            }
+            if (color != -1 || bold){
+                int n = snprintf(seq,64,"\033[%d;%d;49m", bold, color);
+                ab.append(seq, n);
+            }else{
+                seq[0] = '\0';
+            }
+            ab.append(hint);
+            if (color != -1 || bold != 0){
+                ab.append("\033[0m");
+            }
+        }
+    }
+    return ab;
 }
