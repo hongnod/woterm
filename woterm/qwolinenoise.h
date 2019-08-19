@@ -27,7 +27,7 @@ public:
 protected:
     virtual void handleCommand(const QByteArray& line) = 0;
     virtual void handleComplete() = 0;
-    virtual QByteArray handleShowHints(QByteArray& line, int &clr, bool &bold) = 0;
+    virtual QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold) = 0;
 private:
     void reset();
     char completeLine();

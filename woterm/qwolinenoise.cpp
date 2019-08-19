@@ -353,9 +353,9 @@ QByteArray QWoLineNoise::refreshShowHints()
     char seq[64];
     QByteArray ab;
     if (m_prompt.length()+m_state.buf.length() < column()) {
-        int color;
-        bool bold = false;
-        QByteArray hint = handleShowHints(m_state.buf, color, bold);
+        int color = -1;
+        int bold = 0;
+        QByteArray hint = handleShowHints(m_state.buf, &color, &bold);
         if (!hint.isEmpty()) {
             int hintlen = hint.length();
             int hintmaxlen = column() - (m_prompt.length()+m_state.buf.length());
@@ -364,9 +364,9 @@ QByteArray QWoLineNoise::refreshShowHints()
             }
             hint.resize(hintlen);
             if (bold && color == -1) {
-                color = 37;
+                color = 8;
             }
-            if (color != -1 || bold){
+            if (color != -1 || bold != 0){
                 int n = snprintf(seq,64,"\033[%d;%d;49m", bold, color);
                 ab.append(seq, n);
             }else{

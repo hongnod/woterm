@@ -18,6 +18,7 @@
 QWoShellWidget::QWoShellWidget(QWidget *parent)
     : QTermWidget (parent)
     , QWoLineNoise (this)
+    , m_bScrollToEnd(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -40,7 +41,10 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
     QObject::connect(this, SIGNAL(sendData(const QByteArray&)), this, SLOT(onSendData(const QByteArray&)));
 
 
-    QTimer::singleShot(1000, this, SLOT(onTimeout()));
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+
+    loadCommandList();
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -66,19 +70,15 @@ void QWoShellWidget::closeAndDelete()
 
 void QWoShellWidget::onTimeout()
 {
-    qDebug() << "onTimeout()";
-    QByteArray seqTxt = "\033[31mRed \033[32mGreen \033[33mYellow \033[34mBlue";
-    seqTxt.append("\r\n\033[35mMagenta \033[36mCyan \033[37mWhite \033[39mDefault");
-    seqTxt.append("\r\n\033[40mBlack \033[41mRed \033[42mGreen \033[43mYellow \033[44mBlue");
-    seqTxt.append("\r\n\033[45mMagenta \033[46mCyan \033[47mWhite \033[49mDefault");
-    //seqTxt = "\033[47mWhite \033[49mDefault";
-    parseSequenceText(seqTxt);
+    if(m_bScrollToEnd) {
+        scrollToEnd();
+    }
 }
 
 void QWoShellWidget::onSendData(const QByteArray &buf)
 {
     parse(buf);
-    scrollToEnd();
+    m_bScrollToEnd = true;
 }
 
 void QWoShellWidget::onCopyToClipboard()
@@ -213,6 +213,11 @@ void QWoShellWidget::splitWidget(bool vertical)
     splitter->setSizes(ls);
 }
 
+void QWoShellWidget::loadCommandList()
+{
+    m_cmds << "dir" << "ls" << "rm" << "grep" << "pwd";
+}
+
 void QWoShellWidget::handleCommand(const QByteArray& line)
 {
 
@@ -223,7 +228,17 @@ void QWoShellWidget::handleComplete()
 
 }
 
-QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int &clr, bool &bold)
+QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int *pclr, int *pbold)
 {
+    if(line.isEmpty()) {
+        return QByteArray();
+    }
+    for(int i = 0; i < m_cmds.count(); i++) {
+        QByteArray cmd = m_cmds.at(i);
+        if(cmd.startsWith(line)) {
+            *pbold = 1;
+            return cmd.mid(line.length());
+        }
+    }
     return QByteArray();
 }

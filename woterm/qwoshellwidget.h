@@ -40,11 +40,11 @@ private:
     void initDefault();
     void resetProperty(QVariantMap data);
     void splitWidget(bool vertical);
-
+    void loadCommandList();
 protected:
     void handleCommand(const QByteArray& line);
     void handleComplete();
-    QByteArray handleShowHints(QByteArray& line, int &clr, bool &bold);
+    QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold);
 private:
     friend class QWoShellWidgetImpl;
     QPointer<QMenu> m_menu;
@@ -52,4 +52,7 @@ private:
     QPointer<QAction> m_paste;
     QPointer<QWoLineNoise> m_linenoise;
     bool m_bexit;
+    bool m_bScrollToEnd;
+
+    QList<QByteArray> m_cmds;
 };
