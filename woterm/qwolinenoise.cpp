@@ -33,12 +33,26 @@ QWoLineNoise::QWoLineNoise(QTermWidget *term)
 
 void QWoLineNoise::parse(const QByteArray &buf)
 {
+    if(m_state.isCompleteState) {
+        completeParse(buf);
+    }else{
+        normalParse(buf);
+    }
+}
+
+void QWoLineNoise::completeParse(const QByteArray &buf)
+{
+
+}
+
+void QWoLineNoise::normalParse(const QByteArray &buf)
+{
     int iread = 0;
     while(iread < buf.count()) {
         char seq[3];
         char c = buf.at(iread++);
         if(c == 9) {
-            c = completeLine();
+            c = completeLine(iread);
             /* Return on errors */
             if (c < 0) {
                 QByteArray line = m_state.buf;
@@ -259,10 +273,13 @@ void QWoLineNoise::reset()
     m_state.buf.resize(0);
     m_state.oldpos = m_state.pos = 0;
     m_state.maxrows = 0;
+    m_state.isCompleteState = false;
 }
 
-char QWoLineNoise::completeLine()
+char QWoLineNoise::completeLine(int &iread)
 {
+    QList<QByteArray> completes = handleComplete();
+
     return 0;
 }
 

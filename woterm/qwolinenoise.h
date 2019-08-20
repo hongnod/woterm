@@ -17,6 +17,8 @@ protected:
         int pos;         /* Current cursor position. */
         int oldpos;      /* Previous refresh cursor position. */
         int maxrows;     /* Maximum num of rows used so far (multiline mode) */
+        bool isCompleteState; /* In Complete State */
+        QList<QByteArray> completeStates;
     } LineNoiseState;
 
 public:
@@ -26,11 +28,14 @@ public:
 
 protected:
     virtual void handleCommand(const QByteArray& line) = 0;
-    virtual void handleComplete() = 0;
+    virtual QList<QByteArray> handleComplete() = 0;
     virtual QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold) = 0;
 private:
     void reset();
-    char completeLine();
+    char completeLine(int &iread);
+    void normalParse(const QByteArray& buf);
+    void completeParse(const QByteArray& buf);
+
     void editInsert(char c);
     void editMoveEnd();
     void refreshLine();
