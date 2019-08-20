@@ -33,16 +33,21 @@ QWoLineNoise::QWoLineNoise(QTermWidget *term)
 
 void QWoLineNoise::parse(const QByteArray &buf)
 {
-    if(m_state.isCompleteState) {
-        completeParse(buf);
+    if(buf.length() == 1) {
+        if(buf[0] == 9) {
+            // tab.
+            m_state.isCompleteState = true;
+        }else if(buf[0] == 27) {
+            // escape
+            m_state.isCompleteState = false;
+        }else if(m_state.isCompleteState) {
+            m_state.isCompleteState = false;
+        }else{
+            normalParse(buf);
+        }
     }else{
         normalParse(buf);
     }
-}
-
-void QWoLineNoise::completeParse(const QByteArray &buf)
-{
-
 }
 
 void QWoLineNoise::normalParse(const QByteArray &buf)
@@ -51,20 +56,6 @@ void QWoLineNoise::normalParse(const QByteArray &buf)
     while(iread < buf.count()) {
         char seq[3];
         char c = buf.at(iread++);
-        if(c == 9) {
-            c = completeLine(iread);
-            /* Return on errors */
-            if (c < 0) {
-                QByteArray line = m_state.buf;
-                reset();
-                handleCommand(line);
-                return;
-            }
-            /* Read next character when 0 */
-            if (c == 0){
-                continue;
-            }
-        }
         switch(c) {
         case ENTER:    /* enter */
         {
@@ -183,8 +174,12 @@ void QWoLineNoise::normalParse(const QByteArray &buf)
             editInsert(c);
             break;
         }
-
     }
+}
+
+void QWoLineNoise::completeParse(const QByteArray &buf)
+{
+
 }
 
 void QWoLineNoise::setPrompt(const QByteArray &prompt)
