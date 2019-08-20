@@ -43,7 +43,7 @@ private:
     void loadCommandList();
 protected:
     void handleCommand(const QByteArray& line);
-    QList<QByteArray> handleComplete();
+    QList<QByteArray> handleComplete(const QByteArray& line);
     QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold);
 private:
     friend class QWoShellWidgetImpl;

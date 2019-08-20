@@ -19,6 +19,7 @@ protected:
         int maxrows;     /* Maximum num of rows used so far (multiline mode) */
         bool isCompleteState; /* In Complete State */
         QList<QByteArray> completes;
+        int completeIndex;
     } LineNoiseState;
 
 public:
