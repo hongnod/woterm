@@ -223,9 +223,9 @@ void QWoShellWidget::handleCommand(const QByteArray& line)
 
 }
 
-void QWoShellWidget::handleComplete()
+QList<QByteArray> QWoShellWidget::handleComplete(const QByteArray &line)
 {
-
+    return QList<QByteArray>();
 }
 
 QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int *pclr, int *pbold)

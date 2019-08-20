@@ -36,6 +36,13 @@ void QWoLineNoise::parse(const QByteArray &buf)
     if(buf.length() == 1) {
         if(buf[0] == 9) {
             // tab.
+            if(m_state.completes.isEmpty()) {
+                m_state.completes = handleComplete(m_state.buf);
+                if(m_state.completes.isEmpty()) {
+                    return;
+                }
+                m_state.completeIndex = 0;
+            }
             m_state.isCompleteState = true;
         }else if(buf[0] == 27) {
             // escape
