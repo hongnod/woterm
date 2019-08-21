@@ -41,6 +41,7 @@ private:
     void resetProperty(QVariantMap data);
     void splitWidget(bool vertical);
     void loadCommandList();
+    void showWellcome();
 protected:
     void handleCommand(const QByteArray& line);
     QList<QByteArray> handleComplete(const QByteArray& line);

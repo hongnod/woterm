@@ -45,6 +45,7 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 
     loadCommandList();
+    showWellcome();
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -215,7 +216,18 @@ void QWoShellWidget::splitWidget(bool vertical)
 
 void QWoShellWidget::loadCommandList()
 {
-    m_cmds << "dir" << "ls" << "ls -l" << "ls -lh" << "rm" << "grep" << "pwd";
+    m_cmds << "dir" << "ls" << "rm" << "grep" << "pwd";
+}
+
+void QWoShellWidget::showWellcome()
+{
+    QByteArray well;
+    char seq[64];
+    int n = snprintf(seq, 64,"\033[1;1;31m");
+    well.append(seq, n);
+    well.append("WoTerm Open for everyone.");
+    well.append("\r\n");
+    parseSequenceText(well);
 }
 
 void QWoShellWidget::handleCommand(const QByteArray& line)
