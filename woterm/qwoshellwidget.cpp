@@ -228,6 +228,7 @@ void QWoShellWidget::showWellcome()
     well.append("WoTerm Open for everyone.");
     well.append("\r\n");
     parseSequenceText(well);
+    refreshLine();
 }
 
 void QWoShellWidget::handleCommand(const QByteArray& line)

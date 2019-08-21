@@ -30,6 +30,8 @@ protected:
     virtual void handleCommand(const QByteArray& line) = 0;
     virtual QList<QByteArray> handleComplete(const QByteArray& line) = 0;
     virtual QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold) = 0;
+protected:
+    void refreshLine();
 private:
     void reset();
     void normalParse(const QByteArray& buf);
@@ -37,7 +39,6 @@ private:
 
     void editInsert(char c);
     void editMoveEnd();
-    void refreshLine();
     void refreshMultiLine();
     QByteArray refreshShowHints();
     int column();
