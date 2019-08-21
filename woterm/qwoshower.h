@@ -33,6 +33,7 @@ private slots:
     void onTabCloseRequested(int index);
     void onTabCurrentChanged(int index);
     void onTermImplDestroy(QObject *it);
+    void onTabbarDoubleClicked(int index);
 private:
     QPointer<QTabBar> m_tabs;
 };

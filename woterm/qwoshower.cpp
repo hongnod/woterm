@@ -15,6 +15,7 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
 {
     QObject::connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
+    QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
 
     setAutoFillBackground(true);
     setBackgroundColor("black");
@@ -134,5 +135,12 @@ void QWoShower::onTermImplDestroy(QObject *it)
     qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
     if(tabCount() <= 0) {
         emit tabEmpty();
+    }
+}
+
+void QWoShower::onTabbarDoubleClicked(int index)
+{
+    if(index < 0) {
+        openLocalShell();
     }
 }
