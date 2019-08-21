@@ -215,7 +215,7 @@ void QWoShellWidget::splitWidget(bool vertical)
 
 void QWoShellWidget::loadCommandList()
 {
-    m_cmds << "dir" << "ls" << "rm" << "grep" << "pwd";
+    m_cmds << "dir" << "ls" << "ls -l" << "ls -lh" << "rm" << "grep" << "pwd";
 }
 
 void QWoShellWidget::handleCommand(const QByteArray& line)
@@ -225,7 +225,14 @@ void QWoShellWidget::handleCommand(const QByteArray& line)
 
 QList<QByteArray> QWoShellWidget::handleComplete(const QByteArray &line)
 {
-    return QList<QByteArray>();
+    QList<QByteArray> lsTmp;
+    for(int i = 0; i < m_cmds.count(); i++) {
+        QByteArray cmd = m_cmds.at(i);
+        if(cmd.startsWith(line)) {
+            lsTmp.append(cmd);
+        }
+    }
+    return lsTmp;
 }
 
 QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int *pclr, int *pbold)

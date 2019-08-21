@@ -17,7 +17,6 @@ protected:
         int pos;         /* Current cursor position. */
         int oldpos;      /* Previous refresh cursor position. */
         int maxrows;     /* Maximum num of rows used so far (multiline mode) */
-        bool isCompleteState; /* In Complete State */
         QList<QByteArray> completes;
         int completeIndex;
     } LineNoiseState;
@@ -33,7 +32,6 @@ protected:
     virtual QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold) = 0;
 private:
     void reset();
-    char completeLine(int &iread);
     void normalParse(const QByteArray& buf);
     void completeParse(const QByteArray& buf);
 
@@ -52,7 +50,7 @@ private:
     void editBackspace();
     void clearScreen();
     void editDeletePrevWord();
-
+    void beep();
 private:
     QByteArray m_prompt;
     QPointer<QTermWidget> m_term;

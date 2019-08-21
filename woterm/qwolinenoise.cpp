@@ -42,14 +42,18 @@ void QWoLineNoise::parse(const QByteArray &buf)
                     return;
                 }
                 m_state.completeIndex = 0;
+            }else{
+                m_state.completeIndex = (m_state.completeIndex+1) % m_state.completes.length();
             }
-            m_state.isCompleteState = true;
-        }else if(buf[0] == 27) {
-            // escape
-            m_state.isCompleteState = false;
-        }else if(m_state.isCompleteState) {
-            m_state.isCompleteState = false;
-        }else{
+            m_state.buf = m_state.completes[m_state.completeIndex];
+            refreshLine();
+        }else if(!m_state.completes.isEmpty() && buf[0] == 27) {
+            m_state.completes.clear();
+            m_state.buf = m_state.buf.left(m_state.pos);
+            refreshLine();
+        } else {
+            m_state.completes.clear();
+            m_state.buf = m_state.buf.left(m_state.pos);
             normalParse(buf);
         }
     }else{
@@ -261,6 +265,11 @@ void QWoLineNoise::editDeletePrevWord()
 
 }
 
+void QWoLineNoise::beep()
+{
+
+}
+
 /* Move cursor to the end of the line. */
 void QWoLineNoise::editMoveEnd()
 {
@@ -275,14 +284,6 @@ void QWoLineNoise::reset()
     m_state.buf.resize(0);
     m_state.oldpos = m_state.pos = 0;
     m_state.maxrows = 0;
-    m_state.isCompleteState = false;
-}
-
-char QWoLineNoise::completeLine(int &iread)
-{
-    QList<QByteArray> completes = handleComplete();
-
-    return 0;
 }
 
 void QWoLineNoise::editInsert(char c)
