@@ -6,6 +6,7 @@
 class QTabBar;
 class QWoTermWidget;
 class QWoTermWidgetImpl;
+class QWoShowerWidget;
 
 class QWoShower : public QStackedWidget
 {
@@ -28,6 +29,7 @@ protected:
 
 private:
     void closeSession(int idx);
+    void createTab(QWoShowerWidget *widget);
 
 private slots:
     void onTabCloseRequested(int index);

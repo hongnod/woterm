@@ -29,26 +29,14 @@ QWoShower::~QWoShower()
 bool QWoShower::openLocalShell()
 {
     QWoShowerWidget *impl = new QWoShellWidgetImpl(this);
-    addWidget(impl);
-    int idx = m_tabs->addTab("Local");
-    m_tabs->setCurrentIndex(idx);
-    m_tabs->setTabData(idx, QVariant::fromValue(impl));
-    QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
-    setCurrentWidget(impl);
-    qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
+    createTab(impl);
     return true;
 }
 
 bool QWoShower::openConnection(const QString &target)
 {
     QWoShowerWidget *impl = new QWoTermWidgetImpl(target, this);
-    addWidget(impl);
-    int idx = m_tabs->addTab(target);
-    m_tabs->setCurrentIndex(idx);
-    m_tabs->setTabData(idx, QVariant::fromValue(impl));
-    QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
-    setCurrentWidget(impl);
-    qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
+    createTab(impl);
     return true;
 }
 
@@ -101,6 +89,17 @@ void QWoShower::closeSession(int idx)
     target->deleteLater();
 }
 
+void QWoShower::createTab(QWoShowerWidget *impl)
+{
+    addWidget(impl);
+    int idx = m_tabs->addTab("Local");
+    m_tabs->setCurrentIndex(idx);
+    m_tabs->setTabData(idx, QVariant::fromValue(impl));
+    QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
+    setCurrentWidget(impl);
+    qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
+}
+
 void QWoShower::onTabCloseRequested(int idx)
 {
     QMessageBox::StandardButton btn = QMessageBox::warning(this, "CloseSession", "Close Or Not?", QMessageBox::Ok|QMessageBox::No);
@@ -116,7 +115,7 @@ void QWoShower::onTabCurrentChanged(int idx)
         return;
     }
     QVariant v = m_tabs->tabData(idx);
-    QWoTermWidgetImpl *impl = v.value<QWoTermWidgetImpl *>();
+    QWoShowerWidget *impl = v.value<QWoShowerWidget *>();
     setCurrentWidget(impl);
 }
 

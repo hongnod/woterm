@@ -31,15 +31,14 @@ protected:
     virtual QList<QByteArray> handleComplete(const QByteArray& line) = 0;
     virtual QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold) = 0;
 protected:
-    void refreshLine();
+    void resetInput();
 private:
     void reset();
     void normalParse(const QByteArray& buf);
-    void completeParse(const QByteArray& buf);
 
     void editInsert(char c);
     void editMoveEnd();
-    void refreshMultiLine();
+    void refreshLine();
     QByteArray refreshShowHints();
     int column();
     void editDelete();

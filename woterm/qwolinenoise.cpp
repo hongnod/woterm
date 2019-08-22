@@ -188,11 +188,6 @@ void QWoLineNoise::normalParse(const QByteArray &buf)
     }
 }
 
-void QWoLineNoise::completeParse(const QByteArray &buf)
-{
-
-}
-
 void QWoLineNoise::setPrompt(const QByteArray &prompt)
 {
     m_prompt = prompt;
@@ -298,12 +293,15 @@ void QWoLineNoise::editInsert(char c)
 
 }
 
-void QWoLineNoise::refreshLine()
+void QWoLineNoise::resetInput()
 {
-    refreshMultiLine();
+    QByteArray buf;
+    buf.append("\033[0m");
+    m_term->parseSequenceText(buf);
+    refreshLine();
 }
 
-void QWoLineNoise::refreshMultiLine()
+void QWoLineNoise::refreshLine()
 {
     char seq[64];
     int plen = m_prompt.length();
