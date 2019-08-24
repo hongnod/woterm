@@ -11,6 +11,11 @@ class QWoShowerWidget;
 class QWoShower : public QStackedWidget
 {
     Q_OBJECT
+private:
+    typedef enum {
+        ETShell = 0x01,
+        ETSsh = 0x02
+    } ETabType;
 public:
     explicit QWoShower(QTabBar *tab, QWidget *parent=nullptr);
     virtual ~QWoShower();
@@ -29,7 +34,7 @@ protected:
 
 private:
     void closeSession(int idx);
-    void createTab(QWoShowerWidget *widget);
+    void createTab(QWoShowerWidget *widget, const QString& tabName);
 
 private slots:
     void onTabCloseRequested(int index);

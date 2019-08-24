@@ -9,6 +9,7 @@
 #include <QSplitter>
 #include <QDebug>
 
+#define TAB_TYPE_NAME ("tabtype")
 QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     : QStackedWidget (parent)
     , m_tabs(tab)
@@ -29,14 +30,16 @@ QWoShower::~QWoShower()
 bool QWoShower::openLocalShell()
 {
     QWoShowerWidget *impl = new QWoShellWidgetImpl(this);
-    createTab(impl);
+    impl->setProperty(TAB_TYPE_NAME, ETShell);
+    createTab(impl, "local");
     return true;
 }
 
 bool QWoShower::openConnection(const QString &target)
 {
     QWoShowerWidget *impl = new QWoTermWidgetImpl(target, this);
-    createTab(impl);
+    impl->setProperty(TAB_TYPE_NAME, ETSsh);
+    createTab(impl, target);
     return true;
 }
 
@@ -89,10 +92,10 @@ void QWoShower::closeSession(int idx)
     target->deleteLater();
 }
 
-void QWoShower::createTab(QWoShowerWidget *impl)
+void QWoShower::createTab(QWoShowerWidget *impl, const QString& tabName)
 {
     addWidget(impl);
-    int idx = m_tabs->addTab("Local");
+    int idx = m_tabs->addTab(tabName);
     m_tabs->setCurrentIndex(idx);
     m_tabs->setTabData(idx, QVariant::fromValue(impl));
     QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
@@ -133,7 +136,12 @@ void QWoShower::onTermImplDestroy(QObject *it)
     }
     qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
     if(tabCount() <= 0) {
-        emit tabEmpty();
+        int t = it->property(TAB_TYPE_NAME).toInt();
+        if(t == ETShell) {
+            emit tabEmpty();
+        }else{
+            openLocalShell();
+        }
     }
 }
 
