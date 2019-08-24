@@ -121,10 +121,10 @@ void QWoShower::onTabCurrentChanged(int idx)
 
 void QWoShower::onTermImplDestroy(QObject *it)
 {
-    QWoShowerWidget *target = qobject_cast<QWoShowerWidget*>(it);
+    QWidget *target = qobject_cast<QWidget*>(it);
     for(int i = 0; i < m_tabs->count(); i++) {
         QVariant v = m_tabs->tabData(i);
-        QWoShowerWidget *impl = v.value<QWoShowerWidget *>();
+        QWidget *impl = v.value<QWidget *>();
         if(target == impl) {
             removeWidget(target);
             m_tabs->removeTab(i);
