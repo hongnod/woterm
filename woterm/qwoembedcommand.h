@@ -4,17 +4,18 @@
 #include <QDir>
 #include <QPointer>
 
-class QTermWidget;
+class QWoShellWidget;
 
 class QWoEmbedCommand : public QObject
 {
     Q_OBJECT
 public:
-    explicit QWoEmbedCommand(QTermWidget *term, QObject* parent);
-    void cd(const QString& path);
+    explicit QWoEmbedCommand(QWoShellWidget *term, QObject* parent);
+    bool cd(const QString& path);
+    bool pwd();
+
     QString workPath();
-    void pwd();
 private:
     QDir m_current;
-    QPointer<QTermWidget> m_term;
+    QPointer<QWoShellWidget> m_term;
 };

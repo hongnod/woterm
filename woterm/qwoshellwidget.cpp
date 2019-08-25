@@ -247,7 +247,7 @@ void QWoShellWidget::showWellcome()
 
 void QWoShellWidget::resetPrompt()
 {
-    QString path = QDir::toNativeSeparators(m_embedCommand->pwd());
+    QString path = QDir::toNativeSeparators(m_embedCommand->workPath());
     setPrompt("["+path.toUtf8()+"]$ ");
 }
 
@@ -270,9 +270,25 @@ void QWoShellWidget::handleCommand(const QByteArray& line)
     QString path = m_cmds.value(cmd);
     if(path.isEmpty()) {
         executeInternalCommand(cmd, param);
-    }else{
-        parseSequenceText("\r\n");
+        return;
     }
+
+    QStringList args;
+    args << param;
+    if(cmd == "ls") {
+        param = m_embedCommand->workPath().toUtf8();
+        args.clear();
+        args << " -l " << param;
+    }
+
+    QProcess process;
+    process.setProgram(path);
+    process.setArguments(args);
+    process.start();
+    process.waitForFinished();
+    process.setWorkingDirectory(m_embedCommand->workPath());
+    QByteArray buf = process.readAllStandardOutput();
+    parseSequenceText(buf);
 }
 
 QList<QByteArray> QWoShellWidget::handleComplete(const QByteArray &line)
@@ -296,13 +312,9 @@ QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int *pclr, int *pbo
 void QWoShellWidget::executeInternalCommand(const QByteArray &cmd, const QByteArray &param)
 {
     if(cmd == "cd") {
-        QString pathNow = m_embedCommand->cd(param);
+        m_embedCommand->cd(param);
         resetPrompt();
     }else if(cmd == "pwd") {
-        QString path = QDir::toNativeSeparators(m_embedCommand->pwd());
-        path += "\r\n";
-        parseSequenceText(path.toUtf8());
-    }else if(cmd == "ls") {
-
+        m_embedCommand->pwd();
     }
 }
