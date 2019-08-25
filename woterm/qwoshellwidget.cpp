@@ -46,7 +46,8 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
 
     loadCommandList();
     showWellcome();
-    resetInput();
+
+    refreshPrompt();
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -217,7 +218,16 @@ void QWoShellWidget::splitWidget(bool vertical)
 
 void QWoShellWidget::loadCommandList()
 {
-    m_cmds << "dir" << "ls" << "rm" << "grep" << "pwd";
+    m_cmds.insert("pwd", QString());
+    m_cmds.insert("cd", QString());
+    m_cmds.insert("dir", QString());
+    m_cmds.insert("ls", QString());
+    m_cmds.insert("rm", QString());
+    QStringList cmds = QWoSetting::utilsCommandList();
+    for(int i = 0; i < cmds.count(); i++) {
+        QFileInfo fi(cmds.at(i));
+        m_cmds.insert(fi.baseName().toUtf8(), QDir::toNativeSeparators(fi.filePath()));
+    }
 }
 
 void QWoShellWidget::showWellcome()
@@ -231,16 +241,33 @@ void QWoShellWidget::showWellcome()
     parseSequenceText(well);
 }
 
+void QWoShellWidget::refreshPrompt()
+{
+    QString path = QDir::toNativeSeparators(m_dirCurrent.currentPath());
+    setPrompt("["+path.toUtf8()+"]$");
+    resetInput();
+}
+
 void QWoShellWidget::handleCommand(const QByteArray& line)
 {
-
+    QByteArray cmd = line.trimmed();
+    int idx = cmd.indexOf(' ');
+    if(idx > 0) {
+        cmd = cmd.mid(idx);
+    }
+    if(!m_cmds.contains(cmd)) {
+       parseSequenceText("\r\n no such command:"+cmd+"\r\n");
+       return;
+    }
+    resetInput();
 }
 
 QList<QByteArray> QWoShellWidget::handleComplete(const QByteArray &line)
 {
     QList<QByteArray> lsTmp;
-    for(int i = 0; i < m_cmds.count(); i++) {
-        QByteArray cmd = m_cmds.at(i);
+    QList<QByteArray> cmds = m_cmds.keys();
+    for(int i = 0; i < cmds.count(); i++) {
+        QByteArray cmd = cmds.at(i);
         if(cmd.startsWith(line)) {
             lsTmp.append(cmd);
         }
@@ -253,8 +280,9 @@ QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int *pclr, int *pbo
     if(line.isEmpty()) {
         return QByteArray();
     }
-    for(int i = 0; i < m_cmds.count(); i++) {
-        QByteArray cmd = m_cmds.at(i);
+    QList<QByteArray> cmds = m_cmds.keys();
+    for(int i = 0; i < cmds.count(); i++) {
+        QByteArray cmd = cmds.at(i);
         if(cmd.startsWith(line)) {
             *pbold = 1;
             return cmd.mid(line.length());

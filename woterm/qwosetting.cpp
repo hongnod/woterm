@@ -120,3 +120,33 @@ QString QWoSetting::shellProgramPath()
     }
     return path;
 }
+
+QString QWoSetting::utilsCommandPath()
+{
+    QString path;
+    path = QWoSetting::value("shell/utils").toString();
+    if(!QFile::exists(path)) {
+        path = QDir::cleanPath(QApplication::applicationDirPath() + "/../unxutils");
+        path = QDir::toNativeSeparators(path);
+        if(!QFile::exists(path)){
+            return "";
+        }
+    }
+    return path;
+}
+
+QStringList QWoSetting::utilsCommandList()
+{
+    QString path = utilsCommandPath();
+    if(path.isEmpty()) {
+        return QStringList();
+    }
+    QStringList cmds;
+    QDir dir(path);
+    QStringList exes = dir.entryList(QDir::Executable|QDir::Files);
+    for(int i = 0; i < exes.count(); i++) {
+        QString fullName = QDir::toNativeSeparators(dir.path() + "/" + exes.at(i));
+        cmds << fullName;
+    }
+    return cmds;
+}

@@ -5,6 +5,7 @@
 #include <qtermwidget.h>
 
 #include <QPointer>
+#include <QDir>
 
 class QWoProcess;
 class QMenu;
@@ -42,6 +43,7 @@ private:
     void splitWidget(bool vertical);
     void loadCommandList();
     void showWellcome();
+    void refreshPrompt();
 protected:
     void handleCommand(const QByteArray& line);
     QList<QByteArray> handleComplete(const QByteArray& line);
@@ -55,5 +57,7 @@ private:
     bool m_bexit;
     bool m_bScrollToEnd;
 
-    QList<QByteArray> m_cmds;
+    QMap<QByteArray, QString> m_cmds;
+
+    QDir m_dirCurrent;
 };
