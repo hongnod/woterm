@@ -8,15 +8,19 @@ QWoEmbedCommand::QWoEmbedCommand(QTermWidget *term, QObject *parent)
 
 }
 
-QString QWoEmbedCommand::cd(const QString &path)
+void QWoEmbedCommand::cd(const QString &path)
 {
     if(!m_current.cd(path)) {
-        return m_current.path();
+
     }
-    return QDir::cleanPath(m_current.absolutePath());
 }
 
-QString QWoEmbedCommand::pwd()
+QString QWoEmbedCommand::workPath()
 {
-    return QDir::cleanPath(m_current.absolutePath());
+    QDir::cleanPath(m_current.absolutePath());
+}
+
+void QWoEmbedCommand::pwd()
+{
+    QDir::cleanPath(m_current.absolutePath());
 }

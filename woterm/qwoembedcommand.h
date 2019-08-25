@@ -11,8 +11,9 @@ class QWoEmbedCommand : public QObject
     Q_OBJECT
 public:
     explicit QWoEmbedCommand(QTermWidget *term, QObject* parent);
-    QString cd(const QString& path);
-    QString pwd();
+    void cd(const QString& path);
+    QString workPath();
+    void pwd();
 private:
     QDir m_current;
     QPointer<QTermWidget> m_term;
