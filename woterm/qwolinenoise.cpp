@@ -42,17 +42,23 @@ void QWoLineNoise::parse(const QByteArray &buf)
                     return;
                 }
                 m_state.completeIndex = 0;
+                m_state.oldpos = m_state.pos;
             }else{
                 m_state.completeIndex = (m_state.completeIndex+1) % m_state.completes.length();
             }
             m_state.buf = m_state.completes[m_state.completeIndex];
+            m_state.pos = m_state.buf.count();
             refreshLine();
         }else if(!m_state.completes.isEmpty() && buf[0] == 27) {
             m_state.completes.clear();
+            if(m_state.oldpos >= 0) {
+                m_state.pos = m_state.oldpos;
+            }
             m_state.buf = m_state.buf.left(m_state.pos);
             refreshLine();
         } else {
             m_state.completes.clear();
+            m_state.oldpos = -1;
             m_state.buf = m_state.buf.left(m_state.pos);
             normalParse(buf);
         }
@@ -111,13 +117,21 @@ void QWoLineNoise::normalParse(const QByteArray &buf)
             /* Read the next two bytes representing the escape sequence.
              * Use two calls to handle slow terminals returning the two
              * chars at different times. */
+            if(iread >= buf.count()) {
+                return;
+            }
             seq[0] = buf[iread++];
+            if(iread >= buf.count()) {
+                return;
+            }
             seq[1] = buf[iread++];
-
             /* ESC [ sequences. */
             if (seq[0] == '[') {
                 if (seq[1] >= '0' && seq[1] <= '9') {
                     /* Extended escape, read additional byte. */
+                    if(iread >= buf.count()) {
+                        return;
+                    }
                     seq[2] = buf[iread++];
                     if (seq[2] == '~') {
                         switch(seq[1]) {
@@ -277,7 +291,8 @@ void QWoLineNoise::editMoveEnd()
 void QWoLineNoise::reset()
 {
     m_state.buf.resize(0);
-    m_state.oldpos = m_state.pos = 0;
+    m_state.oldpos = -1;
+    m_state.pos = 0;
     m_state.maxrows = 0;
 }
 
@@ -361,8 +376,7 @@ void QWoLineNoise::refreshLine()
     } else {
         n = snprintf(seq,64,"\r");
     }
-    ab.append(seq, n);
-    m_state.oldpos = m_state.pos;
+    ab.append(seq, n);    
     m_term->parseSequenceText(ab);
 }
 

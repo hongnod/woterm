@@ -10,6 +10,7 @@
 class QWoProcess;
 class QMenu;
 class QWoShellWidgetImpl;
+class QWoEmbedCommand;
 
 
 class QWoShellWidget : public QTermWidget, QWoLineNoise
@@ -49,15 +50,19 @@ protected:
     QList<QByteArray> handleComplete(const QByteArray& line);
     QByteArray handleShowHints(QByteArray& line, int *pclr, int *pbold);
 private:
+    void executeInternalCommand(const QByteArray& cmd, const QByteArray& param);
+private:
     friend class QWoShellWidgetImpl;
     QPointer<QMenu> m_menu;
     QPointer<QAction> m_copy;
     QPointer<QAction> m_paste;
     QPointer<QWoLineNoise> m_linenoise;
+    QPointer<QWoEmbedCommand> m_embedCommand;
     bool m_bexit;
     bool m_bScrollToEnd;
 
     QMap<QByteArray, QString> m_cmds;
 
     QDir m_dirCurrent;
+
 };

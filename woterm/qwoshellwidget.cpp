@@ -7,6 +7,7 @@
 #include "qwoglobal.h"
 #include "qwoshellwidgetimpl.h"
 #include "qwolinenoise.h"
+#include "qwoembedcommand.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -21,6 +22,8 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
     , m_bScrollToEnd(false)
 {
     setAttribute(Qt::WA_DeleteOnClose);
+
+    m_embedCommand = new QWoEmbedCommand(this, this);
 
     QFont font = QApplication::font();
     font.setFamily(DEFAULT_FONT_FAMILY);
@@ -244,22 +247,32 @@ void QWoShellWidget::showWellcome()
 void QWoShellWidget::refreshPrompt()
 {
     QString path = QDir::toNativeSeparators(m_dirCurrent.currentPath());
-    setPrompt("["+path.toUtf8()+"]$");
+    setPrompt("["+path.toUtf8()+"]$ ");
     resetInput();
 }
 
 void QWoShellWidget::handleCommand(const QByteArray& line)
 {
     QByteArray cmd = line.trimmed();
+    if(cmd.isEmpty()) {
+        return;
+    }
+    QByteArray param;
     int idx = cmd.indexOf(' ');
     if(idx > 0) {
-        cmd = cmd.mid(idx);
+        param = cmd.mid(idx);
+        cmd = cmd.left(idx);
     }
     if(!m_cmds.contains(cmd)) {
-       parseSequenceText("\r\n no such command:"+cmd+"\r\n");
+       parseSequenceText("no such command:"+cmd+"\r\n");
        return;
     }
-    resetInput();
+    QString path = m_cmds.value(cmd);
+    if(path.isEmpty()) {
+        executeInternalCommand(cmd, param);
+    }else{
+        parseSequenceText("\r\n");
+    }
 }
 
 QList<QByteArray> QWoShellWidget::handleComplete(const QByteArray &line)
@@ -277,16 +290,12 @@ QList<QByteArray> QWoShellWidget::handleComplete(const QByteArray &line)
 
 QByteArray QWoShellWidget::handleShowHints(QByteArray &line, int *pclr, int *pbold)
 {
-    if(line.isEmpty()) {
-        return QByteArray();
-    }
-    QList<QByteArray> cmds = m_cmds.keys();
-    for(int i = 0; i < cmds.count(); i++) {
-        QByteArray cmd = cmds.at(i);
-        if(cmd.startsWith(line)) {
-            *pbold = 1;
-            return cmd.mid(line.length());
-        }
-    }
     return QByteArray();
+}
+
+void QWoShellWidget::executeInternalCommand(const QByteArray &cmd, const QByteArray &param)
+{
+    if(cmd == "cd") {
+        QString pathNow = m_embedCommand->cd(param);
+    }
 }
