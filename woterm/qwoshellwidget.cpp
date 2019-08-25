@@ -50,7 +50,8 @@ QWoShellWidget::QWoShellWidget(QWidget *parent)
     loadCommandList();
     showWellcome();
 
-    refreshPrompt();
+    resetPrompt();
+    resetInput();
 }
 
 QWoShellWidget::~QWoShellWidget()
@@ -244,11 +245,10 @@ void QWoShellWidget::showWellcome()
     parseSequenceText(well);
 }
 
-void QWoShellWidget::refreshPrompt()
+void QWoShellWidget::resetPrompt()
 {
-    QString path = QDir::toNativeSeparators(m_dirCurrent.currentPath());
+    QString path = QDir::toNativeSeparators(m_embedCommand->pwd());
     setPrompt("["+path.toUtf8()+"]$ ");
-    resetInput();
 }
 
 void QWoShellWidget::handleCommand(const QByteArray& line)
@@ -260,7 +260,7 @@ void QWoShellWidget::handleCommand(const QByteArray& line)
     QByteArray param;
     int idx = cmd.indexOf(' ');
     if(idx > 0) {
-        param = cmd.mid(idx);
+        param = cmd.mid(idx).trimmed();
         cmd = cmd.left(idx);
     }
     if(!m_cmds.contains(cmd)) {
@@ -297,5 +297,12 @@ void QWoShellWidget::executeInternalCommand(const QByteArray &cmd, const QByteAr
 {
     if(cmd == "cd") {
         QString pathNow = m_embedCommand->cd(param);
+        resetPrompt();
+    }else if(cmd == "pwd") {
+        QString path = QDir::toNativeSeparators(m_embedCommand->pwd());
+        path += "\r\n";
+        parseSequenceText(path.toUtf8());
+    }else if(cmd == "ls") {
+
     }
 }

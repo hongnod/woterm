@@ -44,7 +44,7 @@ private:
     void splitWidget(bool vertical);
     void loadCommandList();
     void showWellcome();
-    void refreshPrompt();
+    void resetPrompt();
 protected:
     void handleCommand(const QByteArray& line);
     QList<QByteArray> handleComplete(const QByteArray& line);
@@ -62,7 +62,4 @@ private:
     bool m_bScrollToEnd;
 
     QMap<QByteArray, QString> m_cmds;
-
-    QDir m_dirCurrent;
-
 };

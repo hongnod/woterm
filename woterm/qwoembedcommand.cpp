@@ -1,5 +1,5 @@
 #include "qwoembedcommand.h"
-
+#include "qtermwidget.h"
 
 QWoEmbedCommand::QWoEmbedCommand(QTermWidget *term, QObject *parent)
     :QObject (parent)
@@ -13,10 +13,10 @@ QString QWoEmbedCommand::cd(const QString &path)
     if(!m_current.cd(path)) {
         return m_current.path();
     }
-    return m_current.path();
+    return QDir::cleanPath(m_current.absolutePath());
 }
 
-QString QWoEmbedCommand::pwd(const QString &path)
+QString QWoEmbedCommand::pwd()
 {
-    return m_current.path();
+    return QDir::cleanPath(m_current.absolutePath());
 }
