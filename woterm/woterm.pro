@@ -1,6 +1,8 @@
 QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+LIBS += User32.lib
+
 TEMPLATE=app
 include(../qtermwidget/qtermwidget.pri)
 include($$PWD/../third/aes/aes.pri)

@@ -4,8 +4,10 @@
 
 #include <QCloseEvent>
 #include <QIODevice>
-#include <Windows.h>
 
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
 
 QWoWin32ShellWidget::QWoWin32ShellWidget(QWidget *parent)
     : QWidget (parent)
@@ -34,14 +36,15 @@ void QWoWin32ShellWidget::init()
     STARTUPINFO si;
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
+    si.wShowWindow = SW_SHOW;
+    si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
     ZeroMemory(&pi, sizeof(pi));
     std::wstring wstr = path.toStdWString();
     if(!CreateProcessW(nullptr, (LPWSTR)wstr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi)) {
         return;
-    }
-    WaitForSingleObject( pi.hProcess, INFINITE);
+    }    
     DWORD id = GetThreadId(pi.hThread);
-    EnumThreadWindows(id, EnumThreadWndProc, (LPARAM)0);
+    EnumThreadWindows(id, EnumThreadWndProc, (LPARAM)this);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
 }
