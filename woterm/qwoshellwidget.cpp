@@ -6,8 +6,6 @@
 #include "qwoutils.h"
 #include "qwoglobal.h"
 #include "qwoshellwidgetimpl.h"
-#include "qwolinenoise.h"
-#include "qwoembedcommand.h"
 
 #include <QApplication>
 #include <QDebug>

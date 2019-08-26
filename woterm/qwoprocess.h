@@ -25,6 +25,7 @@ public:
     void setWorkingDirectory(const QString &dir);
 
     void start();
+    bool startDetached(qint64 *pid = nullptr);
     QByteArray readAllStandardOutput();
     QByteArray readAllStandardError();
     void write(const QByteArray& data);

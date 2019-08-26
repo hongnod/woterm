@@ -109,14 +109,21 @@ QString QWoSetting::shellProgramPath()
     QString path;
     path = QWoSetting::value("shell/program").toString();
     if(!QFile::exists(path)) {
-        path = QDir::cleanPath(QApplication::applicationDirPath() + "/shellcommand");
 #ifdef Q_OS_WIN
-        path.append(".exe");
-#endif
-        path = QDir::toNativeSeparators(path);
-        if(!QFile::exists(path)){
-            return "";
+        QString cmd = qEnvironmentVariable("ComSpec");
+        if(QFile::exists(cmd)) {
+            return cmd;
         }
+        QString path = qEnvironmentVariable("path");
+        QStringList paths = path.split(";");
+        for(int i = 0; i < paths.count(); i++) {
+            QString cmd = paths.at(i) + "/cmd.exe";
+            if(QFile::exists(cmd)) {
+                return cmd;
+            }
+        }
+        return "";
+#endif
     }
     return path;
 }
