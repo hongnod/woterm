@@ -16,5 +16,6 @@ private:
     void closeEvent(QCloseEvent *event);
 private:
     void init();
+    void init2();
 private:
 };
