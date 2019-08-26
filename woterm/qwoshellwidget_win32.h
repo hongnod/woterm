@@ -17,5 +17,4 @@ private:
 private:
     void init();
 private:
-    QPointer<QWoProcess> m_shell;
 };

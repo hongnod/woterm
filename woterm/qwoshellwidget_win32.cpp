@@ -3,6 +3,7 @@
 #include "qwoprocess.h"
 
 #include <QCloseEvent>
+#include <QIODevice>
 #include <Windows.h>
 
 
@@ -24,8 +25,17 @@ void QWoWin32ShellWidget::closeEvent(QCloseEvent *event)
 void QWoWin32ShellWidget::init()
 {
     QString path = QWoSetting::shellProgramPath();
-    m_shell = new QWoProcess(this);
-    m_shell->setProgram(path);
-    m_shell->enableDebugConsole(true);
-    m_shell->startDetached();
+    PROCESS_INFORMATION pi;
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+    std::wstring wstr = path.toStdWString();
+    if(!CreateProcessW(nullptr, (LPWSTR)wstr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi)) {
+        return;
+    }
+    WaitForSingleObject( pi.hProcess, INFINITE);
+
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
 }
