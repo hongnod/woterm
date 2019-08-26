@@ -22,6 +22,11 @@ void QWoWin32ShellWidget::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event);
 }
 
+BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)
+{
+    return FALSE;
+}
+
 void QWoWin32ShellWidget::init()
 {
     QString path = QWoSetting::shellProgramPath();
@@ -35,7 +40,8 @@ void QWoWin32ShellWidget::init()
         return;
     }
     WaitForSingleObject( pi.hProcess, INFINITE);
-
+    DWORD id = GetThreadId(pi.hThread);
+    EnumThreadWindows(id, EnumThreadWndProc, (LPARAM)0);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
 }
