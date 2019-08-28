@@ -1,6 +1,6 @@
 #pragma once
 
-#include "qwoshellwidget_win32.h"
+#include "qwowidget.h"
 
 #include <QPointer>
 #include <QDir>
@@ -11,7 +11,7 @@ class QWoShellWidgetImpl;
 class QWoEmbedCommand;
 
 
-class QWoShellWidget : public QWoWin32ShellWidget
+class QWoShellWidget : public QWoWidget
 {
     Q_OBJECT
 public:

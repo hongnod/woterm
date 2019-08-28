@@ -30,9 +30,9 @@ QWoShower::~QWoShower()
 
 bool QWoShower::openLocalShell()
 {
-    QWoShowerWidget *impl = new QWoShellWidgetImpl(this);
-    impl->setProperty(TAB_TYPE_NAME, ETShell);
-    createTab(impl, "local");
+//    QWoShowerWidget *impl = new QWoShellWidgetImpl(this);
+//    impl->setProperty(TAB_TYPE_NAME, ETShell);
+//    createTab(impl, "local");
     return true;
 }
 

@@ -15,7 +15,7 @@
 
 
 QWoShellWidget::QWoShellWidget(QWidget *parent)
-    :QWoWin32ShellWidget (parent)
+    :QWoWidget (parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 }
