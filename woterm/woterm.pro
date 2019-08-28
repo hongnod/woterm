@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     qwoaes.cpp \
     qwosessionlist.cpp \
     qwosessionmanage.cpp \
-    qwotermmask.cpp
+    qwotermmask.cpp \
+    qwousagewidget.cpp
 
 HEADERS += \
     ipchelper.h \
@@ -60,7 +61,8 @@ HEADERS += \
     qwoaes.h \
     qwosessionlist.h \
     qwosessionmanage.h \
-    qwotermmask.h
+    qwotermmask.h \
+    qwousagewidget.h
 
 FORMS += \
     qwohostlist.ui \
@@ -70,4 +72,5 @@ FORMS += \
     qwosessionproperty.ui \
     qwosessionmanage.ui \
     qwotermmask.ui \
-    qwotermmask.ui
+    qwotermmask.ui \
+    qwousagewidget.ui

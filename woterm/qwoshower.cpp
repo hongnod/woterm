@@ -20,7 +20,7 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
 
     setAutoFillBackground(true);
-    setBackgroundColor("black");
+    setBackgroundColor("red");
 }
 
 QWoShower::~QWoShower()
