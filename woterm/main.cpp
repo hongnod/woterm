@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     mainWindow->show();
 
     if(app.arguments().length() <= 1) {
-        QTimer::singleShot(0, mainWindow, SLOT(onOpenSessionList()));
+        QTimer::singleShot(0, mainWindow, SLOT(onAppStart()));
     }
 
     return app.exec();

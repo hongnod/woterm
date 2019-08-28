@@ -159,7 +159,7 @@ void QWoMainWindow::onProcessStartCheck()
     }
 }
 
-void QWoMainWindow::onOpenSessionList()
+void QWoMainWindow::onAppStart()
 {
     m_shower->openLocalShell();
 }

@@ -33,7 +33,7 @@ private slots:
     void onSessionReadyToConnect(const QString& target);
     void onSessionBatchToConnect(const QStringList& targets);
     void onProcessStartCheck();
-    void onOpenSessionList();
+    void onAppStart();
     void onShouldAppExit();
 
 private slots:
