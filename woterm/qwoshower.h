@@ -33,9 +33,13 @@ protected:
     virtual void resizeEvent(QResizeEvent *event);
     void syncGeometry(QWidget *widget);
 
+    void paintEvent(QPaintEvent *event);
+
+
 private:
     void closeSession(int idx);
     void createTab(QWoShowerWidget *widget, const QString& tabName);
+
 
 private slots:
     void onTabCloseRequested(int index);
@@ -44,5 +48,5 @@ private slots:
     void onTabbarDoubleClicked(int index);
 private:
     QPointer<QTabBar> m_tabs;
-    QPointer<QWoUsageWidget> m_usages;
+    QFont m_font;
 };

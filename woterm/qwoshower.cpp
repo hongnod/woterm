@@ -9,6 +9,7 @@
 #include <QtGlobal>
 #include <QSplitter>
 #include <QDebug>
+#include <QPainter>
 #include <QApplication>
 
 #define TAB_TYPE_NAME ("tabtype")
@@ -21,9 +22,6 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
 
-    m_usages = new QWoUsageWidget(this);
-    //setAutoFillBackground(true);
-    //setBackgroundColor("black");
 }
 
 QWoShower::~QWoShower()
@@ -77,7 +75,6 @@ void QWoShower::resizeEvent(QResizeEvent *event)
 {
     QSize newSize = event->size();
     QRect rt(0, 0, newSize.width(), newSize.height());
-    m_usages->setGeometry(rt);
 }
 
 void QWoShower::syncGeometry(QWidget *widget)
@@ -85,6 +82,25 @@ void QWoShower::syncGeometry(QWidget *widget)
     QRect rt = geometry();
     rt.moveTo(0, 0);
     widget->setGeometry(rt);
+}
+
+void QWoShower::paintEvent(QPaintEvent *event)
+{
+    QPainter p(this);
+    QRect rt(0, 0, width(), height());
+    p.fillRect(rt, QColor(Qt::black));
+    QFont ft = p.font();
+    ft.setPixelSize(190);
+    ft.setBold(true);
+    p.setFont(ft);
+    QPen pen = p.pen();
+    pen.setStyle(Qt::DotLine);
+    pen.setColor(Qt::lightGray);
+    QBrush brush = pen.brush();
+    brush.setStyle(Qt::Dense7Pattern);
+    pen.setBrush(brush);
+    p.setPen(pen);
+    p.drawText(rt, Qt::AlignCenter, "WoTerm");
 }
 
 void QWoShower::closeSession(int idx)

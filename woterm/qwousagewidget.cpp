@@ -6,6 +6,10 @@ QWoUsageWidget::QWoUsageWidget(QWidget *parent) :
     ui(new Ui::QWoUsageWidget)
 {
     ui->setupUi(this);
+    setAutoFillBackground(true);
+    QPalette pal;
+    pal.setColor(QPalette::Background, QColor("red"));
+    setPalette(pal);
 }
 
 QWoUsageWidget::~QWoUsageWidget()
