@@ -7,6 +7,7 @@ class QTabBar;
 class QWoTermWidget;
 class QWoTermWidgetImpl;
 class QWoShowerWidget;
+class QWoUsageWidget;
 
 class QWoShower : public QStackedWidget
 {
@@ -43,4 +44,5 @@ private slots:
     void onTabbarDoubleClicked(int index);
 private:
     QPointer<QTabBar> m_tabs;
+    QPointer<QWoUsageWidget> m_usages;
 };

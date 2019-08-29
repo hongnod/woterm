@@ -1,6 +1,7 @@
 #include "qwoshower.h"
 #include "qwotermwidgetimpl.h"
 #include "qwoshellwidgetimpl.h"
+#include "qwousagewidget.h"
 
 #include <QTabBar>
 #include <QResizeEvent>
@@ -11,6 +12,7 @@
 #include <QApplication>
 
 #define TAB_TYPE_NAME ("tabtype")
+
 QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     : QStackedWidget (parent)
     , m_tabs(tab)
@@ -19,8 +21,10 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
 
-    setAutoFillBackground(true);
-    setBackgroundColor("red");
+    QSize s = m_tabs->sizeHint();
+    m_usages = new QWoUsageWidget(this);
+    //setAutoFillBackground(true);
+    //setBackgroundColor("black");
 }
 
 QWoShower::~QWoShower()
@@ -74,6 +78,7 @@ void QWoShower::resizeEvent(QResizeEvent *event)
 {
     QSize newSize = event->size();
     QRect rt(0, 0, newSize.width(), newSize.height());
+    m_usages->setGeometry(rt);
 }
 
 void QWoShower::syncGeometry(QWidget *widget)
