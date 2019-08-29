@@ -67,6 +67,10 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tab->setTabsClosable(true);
     m_tab->setExpanding(false);
     m_tab->setUsesScrollButtons(true);
+    int idx = m_tab->addTab("abc");
+    QSize s = m_tab->sizeHint();
+    m_tab->setFixedHeight(s.height());
+    m_tab->removeTab(idx);
     m_shower = new QWoShower(m_tab, this);
 
     QObject::connect(m_shower, SIGNAL(tabEmpty()), this, SLOT(onShouldAppExit()));

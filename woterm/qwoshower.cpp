@@ -21,7 +21,6 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
 
-    QSize s = m_tabs->sizeHint();
     m_usages = new QWoUsageWidget(this);
     //setAutoFillBackground(true);
     //setBackgroundColor("black");
