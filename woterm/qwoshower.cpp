@@ -1,7 +1,6 @@
 #include "qwoshower.h"
 #include "qwotermwidgetimpl.h"
 #include "qwoshellwidgetimpl.h"
-#include "qwousagewidget.h"
 
 #include <QTabBar>
 #include <QResizeEvent>
