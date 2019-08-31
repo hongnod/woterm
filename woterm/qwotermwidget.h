@@ -36,6 +36,8 @@ slots:
     void onSessionReconnect();
 
 private:
+    Q_INVOKABLE void showPasswordInput(const QString& prompt, bool echo);
+private:
     void contextMenuEvent(QContextMenuEvent *event);
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);

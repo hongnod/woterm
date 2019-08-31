@@ -40,6 +40,7 @@ private slots:
 private:
     Q_INVOKABLE void updateTermSize();
     void updatePassword(const QString& pwd);
+    void requestPassword(const QString& prompt, bool echo);
 
 private:
     virtual bool eventFilter(QObject *obj, QEvent *ev);

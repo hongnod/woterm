@@ -175,6 +175,11 @@ void QWoTermWidget::onSessionReconnect()
     setFocus();
 }
 
+void QWoTermWidget::showPasswordInput(const QString &prompt, bool echo)
+{
+
+}
+
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
 {
     if(m_menu == nullptr) {

@@ -16,6 +16,7 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QMessageBox>
+#include <QMetaObject>
 
 
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
@@ -165,7 +166,11 @@ void QWoSshProcess::onClientReadyRead()
         }else if(funArgs[0] == "updatepassword") {
             updatePassword(funArgs[1]);
         }else if(funArgs[0] == "requestpassword") {
-            qDebug() << funArgs;
+            if(funArgs.count() == 3) {
+                QString prompt = funArgs.at(1);
+                bool echo = QVariant(funArgs.at(2)).toBool();
+                requestPassword(prompt, echo);
+            }
         }
     }
 }
@@ -285,6 +290,11 @@ void QWoSshProcess::updateTermSize()
 void QWoSshProcess::updatePassword(const QString &pwd)
 {
     QWoSshConf::instance()->updatePassword(m_target, pwd);
+}
+
+void QWoSshProcess::requestPassword(const QString &prompt, bool echo)
+{
+    QMetaObject::invokeMethod(m_term, "showPasswordInput", Qt::QueuedConnection, Q_ARG(QString, prompt), Q_ARG(bool, echo));
 }
 
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
