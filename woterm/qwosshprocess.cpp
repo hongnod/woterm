@@ -164,6 +164,8 @@ void QWoSshProcess::onClientReadyRead()
             updateTermSize();
         }else if(funArgs[0] == "updatepassword") {
             updatePassword(funArgs[1]);
+        }else if(funArgs[0] == "requestpassword") {
+            qDebug() << funArgs;
         }
     }
 }
