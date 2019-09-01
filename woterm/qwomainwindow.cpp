@@ -31,20 +31,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QByteArray geom = QWoSetting::value("woterm/geometry").toByteArray();
     restoreGeometry(geom);
 
-    QObject::connect(ui->actionDisconect, SIGNAL(triggered()), this, SLOT(onActionDisconnectTriggered()));
-    QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(onActionExitTriggered()));
-    QObject::connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
-    QObject::connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onActionImportTriggered()));
-    QObject::connect(ui->actionLog, SIGNAL(triggered()), this, SLOT(onActionLogTriggered()));
-    QObject::connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(onActionNewTriggered()));
-    QObject::connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(onActionOpenTriggered()));
-    QObject::connect(ui->actionReconnect, SIGNAL(triggered()), this, SLOT(onActionReconnectTriggered()));
-    QObject::connect(ui->actionReconnectAll, SIGNAL(triggered()), this, SLOT(onActionReconnectAllTriggered()));
-    QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(onActionSaveTriggered()));
-    QObject::connect(ui->actionTransfer, SIGNAL(triggered()), this, SLOT(onActionTransferTriggered()));
-    QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionDefaultTriggered()));
-    QObject::connect(ui->actionFind, SIGNAL(triggered()), this, SLOT(onActionFindTriggered()));
-
+    initMenu();
     //QMenu *actionsMenu = new QMenu("Actions", ui->menuBar);
     //ui->menuBar->addMenu(actionsMenu);
     //actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
@@ -67,10 +54,6 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     m_tab->setTabsClosable(true);
     m_tab->setExpanding(false);
     m_tab->setUsesScrollButtons(true);
-//    int idx = m_tab->addTab("abc");
-//    QSize s = m_tab->sizeHint();
-//    m_tab->setFixedHeight(s.height());
-//    m_tab->removeTab(idx);
     m_shower = new QWoShower(m_tab, this);
 
     QObject::connect(m_shower, SIGNAL(tabEmpty()), this, SLOT(onShouldAppExit()));
@@ -244,4 +227,22 @@ void QWoMainWindow::onActionDefaultTriggered()
 void QWoMainWindow::onActionFindTriggered()
 {
     m_shower->openFindDialog();
+}
+
+void QWoMainWindow::initMenu()
+{
+    QObject::connect(ui->actionDisconect, SIGNAL(triggered()), this, SLOT(onActionDisconnectTriggered()));
+    QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(onActionExitTriggered()));
+    QObject::connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
+    QObject::connect(ui->actionImport, SIGNAL(triggered()), this, SLOT(onActionImportTriggered()));
+    QObject::connect(ui->actionLog, SIGNAL(triggered()), this, SLOT(onActionLogTriggered()));
+    QObject::connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(onActionNewTriggered()));
+    QObject::connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(onActionOpenTriggered()));
+    QObject::connect(ui->actionReconnect, SIGNAL(triggered()), this, SLOT(onActionReconnectTriggered()));
+    QObject::connect(ui->actionReconnectAll, SIGNAL(triggered()), this, SLOT(onActionReconnectAllTriggered()));
+    QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(onActionSaveTriggered()));
+    QObject::connect(ui->actionTransfer, SIGNAL(triggered()), this, SLOT(onActionTransferTriggered()));
+    QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionDefaultTriggered()));
+    QObject::connect(ui->actionFind, SIGNAL(triggered()), this, SLOT(onActionFindTriggered()));
+    setMenuBar(nullptr);
 }

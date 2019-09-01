@@ -50,7 +50,8 @@ private slots:
     void onActionExitTriggered();
     void onActionDefaultTriggered();
     void onActionFindTriggered();
-
+private:
+    void initMenu();
 private:
     Ui::QWoMainWindow *ui;
     QPointer<QTabBar> m_tab;
