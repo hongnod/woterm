@@ -35,6 +35,7 @@ slots:
     void onCloseThisSession();
     void onForceToCloseThisSession();
     void onSessionReconnect();
+    void onPasswordInputResult(const QString& pass, bool isSave);
 
 private:
     Q_INVOKABLE void showPasswordInput(const QString& prompt, bool echo);

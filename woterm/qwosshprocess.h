@@ -39,7 +39,7 @@ private slots:
 
 private:
     Q_INVOKABLE void updateTermSize();
-    void updatePassword(const QString& pwd);
+    Q_INVOKABLE void updatePassword(const QString& pwd);
     void requestPassword(const QString& prompt, bool echo);
 
 private:

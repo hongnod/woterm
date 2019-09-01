@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QMessageBox>
 
-QWoPasswordInput::QWoPasswordInput(const QString &prompt, bool echo, QWidget *parent) :
+QWoPasswordInput::QWoPasswordInput(QWidget *parent) :
     QWoWidget(parent),
     ui(new Ui::QWoPasswordInput)
 {
@@ -12,13 +12,7 @@ QWoPasswordInput::QWoPasswordInput(const QString &prompt, bool echo, QWidget *pa
     setAttribute(Qt::WA_TranslucentBackground, true);
 
     ui->setupUi(this);
-    ui->tip->setText(prompt);
-    if(!echo) {
-        ui->visible->show();
-        ui->password->setEchoMode(QLineEdit::Password);
-    }else{
-        ui->visible->hide();
-    }
+
     QObject::connect(ui->visible, SIGNAL(clicked(bool)), this, SLOT(onPasswordVisible(bool)));
     QObject::connect(ui->btnFinish, SIGNAL(clicked()), this, SLOT(onClose()));
     QObject::connect(ui->password, SIGNAL(returnPressed()), this, SLOT(onClose()));
@@ -40,9 +34,15 @@ QWoPasswordInput::~QWoPasswordInput()
     delete ui;
 }
 
-QString QWoPasswordInput::result() const
+void QWoPasswordInput::reset(const QString &prompt, bool echo)
 {
-    return m_result;
+    ui->tip->setText(prompt);
+    if(!echo) {
+        ui->visible->show();
+        ui->password->setEchoMode(QLineEdit::Password);
+    }else{
+        ui->visible->hide();
+    }
 }
 
 void QWoPasswordInput::onPasswordVisible(bool checked)
@@ -52,14 +52,15 @@ void QWoPasswordInput::onPasswordVisible(bool checked)
 
 void QWoPasswordInput::onClose()
 {
-    m_result = ui->password->text();
-    if(m_result.isEmpty()) {
+    QString pass = ui->password->text();
+    if(pass.isEmpty()) {
         QMessageBox::StandardButton btn = QMessageBox::warning(this, tr("Tip"), tr("The Password is Empty, continue to finish?"), QMessageBox::Ok|QMessageBox::No);
         if(btn == QMessageBox::No) {
             return ;
         }
     }
-    close();
+    hide();
+    emit result(pass);
 }
 
 void QWoPasswordInput::paintEvent(QPaintEvent *paint)

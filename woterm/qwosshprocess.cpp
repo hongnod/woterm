@@ -163,8 +163,6 @@ void QWoSshProcess::onClientReadyRead()
 
         }else if(funArgs[0] == "getwinsize") {
             updateTermSize();
-        }else if(funArgs[0] == "updatepassword") {
-            updatePassword(funArgs[1]);
         }else if(funArgs[0] == "requestpassword") {
             if(funArgs.count() == 3) {
                 QString prompt = funArgs.at(1);

@@ -23,12 +23,6 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 {
     addToTermImpl();
 
-    m_mask = new QWoTermMask(this);
-    m_mask->hide();
-
-    QObject::connect(m_mask, SIGNAL(aboutToClose(QCloseEvent*)), this, SLOT(onForceToCloseThisSession()));
-    QObject::connect(m_mask, SIGNAL(reconnect()), this, SLOT(onSessionReconnect()));
-
     m_process->setTermWidget(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -59,12 +53,6 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
 QWoTermWidget::~QWoTermWidget()
 {
-    if(m_menu) {
-        delete m_menu;
-    }
-    if(m_mask) {
-        delete m_mask;
-    }
 }
 
 QWoProcess *QWoTermWidget::process()
@@ -113,6 +101,12 @@ void QWoTermWidget::onFinished(int code)
 {
     qDebug() << "exitcode" << code;
     if(code != 0) {
+        if(m_mask == nullptr) {
+            m_mask = new QWoTermMask(this);
+            QObject::connect(m_mask, SIGNAL(aboutToClose(QCloseEvent*)), this, SLOT(onForceToCloseThisSession()));
+            QObject::connect(m_mask, SIGNAL(reconnect()), this, SLOT(onSessionReconnect()));
+        }
+        m_mask->setGeometry(0, 0, width(), height());
         m_mask->show();
         return;
     }
@@ -171,17 +165,26 @@ void QWoTermWidget::onForceToCloseThisSession()
 
 void QWoTermWidget::onSessionReconnect()
 {
-    m_mask->hide();
     m_process->start();
     setFocus();
 }
 
+void QWoTermWidget::onPasswordInputResult(const QString &pass, bool isSave)
+{
+    if(isSave) {
+        QMetaObject::invokeMethod(m_process, "updatePassword", Qt::QueuedConnection, Q_ARG(QString, pass));
+    }
+    m_process->write(pass.toUtf8());
+    m_process->write("\r");
+}
+
 void QWoTermWidget::showPasswordInput(const QString &prompt, bool echo)
 {
-    if(m_passInput) {
-        return;
+    if(m_passInput == nullptr) {
+        m_passInput = new QWoPasswordInput(this);
+        QObject::connect(m_passInput, SIGNAL(result(const QString&,bool)), this, SLOT(onPasswordInputResult(const QString&,bool)));
     }
-    m_passInput = new QWoPasswordInput(prompt, echo, this);
+    m_passInput->reset(prompt, echo);
     m_passInput->setGeometry(0, 0, width(), height());
     m_passInput->show();
 }
@@ -189,7 +192,7 @@ void QWoTermWidget::showPasswordInput(const QString &prompt, bool echo)
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
 {
     if(m_menu == nullptr) {
-        m_menu = new QMenu();
+        m_menu = new QMenu(this);
         m_copy = m_menu->addAction(tr("Copy"));
         QObject::connect(m_copy, SIGNAL(triggered()), this, SLOT(onCopyToClipboard()));
         m_paste = m_menu->addAction(tr("Paste"));
