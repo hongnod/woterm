@@ -7,6 +7,7 @@
 #include "qwoglobal.h"
 #include "qwotermmask.h"
 #include "qwotermwidgetimpl.h"
+#include "qwopasswordinput.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -177,7 +178,12 @@ void QWoTermWidget::onSessionReconnect()
 
 void QWoTermWidget::showPasswordInput(const QString &prompt, bool echo)
 {
-
+    if(m_passInput) {
+        return;
+    }
+    m_passInput = new QWoPasswordInput(prompt, echo);
+    m_passInput->setGeometry(0, 0, width(), height());
+    m_passInput->show();
 }
 
 void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
@@ -219,7 +225,12 @@ void QWoTermWidget::closeEvent(QCloseEvent *event)
 void QWoTermWidget::resizeEvent(QResizeEvent *event)
 {
     QSize sz = event->size();
-    m_mask->setGeometry(0, 0, sz.width(), sz.height());
+    if(m_mask) {
+        m_mask->setGeometry(0, 0, sz.width(), sz.height());
+    }
+    if(m_passInput) {
+        m_passInput->setGeometry(0, 0, sz.width(), sz.height());
+    }
     QTermWidget::resizeEvent(event);
 }
 

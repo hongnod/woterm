@@ -7,6 +7,7 @@
 class QWoProcess;
 class QMenu;
 class QWoTermMask;
+class QWoPasswordInput;
 
 class QWoTermWidget : public QTermWidget
 {
@@ -56,5 +57,6 @@ private:
     QPointer<QAction> m_copy;
     QPointer<QAction> m_paste;
     QPointer<QWoTermMask> m_mask;
+    QPointer<QWoPasswordInput> m_passInput;
     bool m_bexit;
 };
