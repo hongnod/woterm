@@ -60,7 +60,7 @@ void QWoPasswordInput::onClose()
         }
     }
     hide();
-    emit result(pass);
+    emit result(pass, ui->save->isChecked());
 }
 
 void QWoPasswordInput::paintEvent(QPaintEvent *paint)
