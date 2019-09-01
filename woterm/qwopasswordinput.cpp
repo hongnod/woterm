@@ -37,12 +37,12 @@ QWoPasswordInput::~QWoPasswordInput()
 void QWoPasswordInput::reset(const QString &prompt, bool echo)
 {
     ui->tip->setText(prompt);
-    if(!echo) {
-        ui->visible->show();
-        ui->password->setEchoMode(QLineEdit::Password);
-    }else{
-        ui->visible->hide();
-    }
+    ui->save->setChecked(false);
+    ui->save->setVisible(!echo);
+    ui->visible->setVisible(!echo);
+    ui->visible->setChecked(echo);
+    ui->password->clear();
+    ui->password->setEchoMode(echo ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 void QWoPasswordInput::onPasswordVisible(bool checked)
