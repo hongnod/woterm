@@ -1,13 +1,13 @@
 #ifndef QWOPASSWORDINPUT_H
 #define QWOPASSWORDINPUT_H
 
-#include <QWidget>
+#include "qwowidget.h"
 
 namespace Ui {
 class QWoPasswordInput;
 }
 
-class QWoPasswordInput : public QWidget
+class QWoPasswordInput : public QWoWidget
 {
     Q_OBJECT
 
@@ -20,6 +20,8 @@ public:
 private slots:
     void onPasswordVisible(bool checked);
     void onClose();
+private:
+    void paintEvent(QPaintEvent* paint);
 private:
     Ui::QWoPasswordInput *ui;
     QString m_result;

@@ -181,7 +181,7 @@ void QWoTermWidget::showPasswordInput(const QString &prompt, bool echo)
     if(m_passInput) {
         return;
     }
-    m_passInput = new QWoPasswordInput(prompt, echo);
+    m_passInput = new QWoPasswordInput(prompt, echo, this);
     m_passInput->setGeometry(0, 0, width(), height());
     m_passInput->show();
 }

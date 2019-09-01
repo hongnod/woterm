@@ -1,10 +1,16 @@
 #include "qwopasswordinput.h"
 #include "ui_qwopasswordinput.h"
 
+#include <QPainter>
+#include <QMessageBox>
+
 QWoPasswordInput::QWoPasswordInput(const QString &prompt, bool echo, QWidget *parent) :
-    QWidget(parent),
+    QWoWidget(parent),
     ui(new Ui::QWoPasswordInput)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_TranslucentBackground, true);
+
     ui->setupUi(this);
     ui->tip->setText(prompt);
     if(!echo) {
@@ -13,21 +19,20 @@ QWoPasswordInput::QWoPasswordInput(const QString &prompt, bool echo, QWidget *pa
     }else{
         ui->visible->hide();
     }
-
     QObject::connect(ui->visible, SIGNAL(clicked(bool)), this, SLOT(onPasswordVisible(bool)));
-    QObject::connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(onClose()));
+    QObject::connect(ui->btnFinish, SIGNAL(clicked()), this, SLOT(onClose()));
+    QObject::connect(ui->password, SIGNAL(returnPressed()), this, SLOT(onClose()));
 
-    Qt::WindowFlags flags = windowFlags();
-    flags = flags &~Qt::WindowContextHelpButtonHint;
-    flags &= Qt::FramelessWindowHint;
-    setWindowFlags(flags);
-
+    ui->inputArea->setAutoFillBackground(true);
     QPalette pal;
-    pal.setColor(QPalette::Background, QColor(Qt::lightGray));
-    setPalette(pal);
-    setAutoFillBackground(true);
-
-    setAttribute(Qt::WA_DeleteOnClose);
+    pal.setColor(QPalette::Background, Qt::lightGray);
+    pal.setColor(QPalette::Window, Qt::lightGray);
+    ui->inputArea->setAutoFillBackground(true);
+    ui->inputArea->setPalette(pal);
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
+    ui->password->setFocusPolicy(Qt::StrongFocus);
+    ui->password->setFocus();
 }
 
 QWoPasswordInput::~QWoPasswordInput()
@@ -48,5 +53,18 @@ void QWoPasswordInput::onPasswordVisible(bool checked)
 void QWoPasswordInput::onClose()
 {
     m_result = ui->password->text();
+    if(m_result.isEmpty()) {
+        QMessageBox::StandardButton btn = QMessageBox::warning(this, tr("Tip"), tr("The Password is Empty, continue to finish?"), QMessageBox::Ok|QMessageBox::No);
+        if(btn == QMessageBox::No) {
+            return ;
+        }
+    }
     close();
+}
+
+void QWoPasswordInput::paintEvent(QPaintEvent *paint)
+{
+    QPainter p(this);
+    p.setBrush(QColor(128,128,128,128));
+    p.drawRect(0,0, width(), height());
 }
