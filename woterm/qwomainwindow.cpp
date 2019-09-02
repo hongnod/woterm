@@ -37,14 +37,14 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     //actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
     //actionsMenu->addAction("About Qt", this, SLOT(aboutQt()));
 
-    QDockWidget* dock = new QDockWidget("SessionManager", this);
-    addDockWidget(Qt::LeftDockWidgetArea, dock);
-    dock->setFloating(false);
-    dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetClosable);
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+    m_dock = new QDockWidget("SessionManager", this);
+    addDockWidget(Qt::LeftDockWidgetArea, m_dock);
+    m_dock->setFloating(false);
+    m_dock->setFeatures(QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetClosable);
+    m_dock->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 
-    m_sessions = new QWoSessionList(dock);
-    dock->setWidget(m_sessions);
+    m_sessions = new QWoSessionList(m_dock);
+    m_dock->setWidget(m_sessions);
 
     QWoWidget *central = new QWoWidget(this);
     setCentralWidget(central);
@@ -67,11 +67,14 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     layout->addWidget(m_shower);
 
     QToolBar *tool = ui->mainToolBar;
-    QAction *newTerm = tool->addAction("New");
+    QAction *newTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/add.png"), tr("New"));
     QObject::connect(newTerm, SIGNAL(triggered()), this, SLOT(onNewTerm()));
 
-    QAction *openTerm = tool->addAction("Open");
+    QAction *openTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/manage.png"), tr("Manage"));
     QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
+
+    QAction *lay = tool->addAction(QIcon(":/qwoterm/resource/skin/layout.png"), tr("Layout"));
+    QObject::connect(lay, SIGNAL(triggered()), this, SLOT(onLayout()));
 
     QObject::connect(m_sessions, SIGNAL(readyToConnect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     QObject::connect(m_sessions, SIGNAL(batchReadyToConnect(const QStringList&)), this, SLOT(onSessionBatchToConnect(const QStringList&)));
@@ -114,6 +117,11 @@ void QWoMainWindow::onOpenTerm()
     QWoSessionManage dlg(this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     dlg.exec();
+}
+
+void QWoMainWindow::onLayout()
+{
+    m_dock->setVisible(!m_dock->isVisible());
 }
 
 void QWoMainWindow::onEditConfig()

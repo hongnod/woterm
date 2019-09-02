@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/qwoterm">
+        <file>resource/skin/add.png</file>
+        <file>resource/skin/layout.png</file>
+        <file>resource/skin/manage.png</file>
+    </qresource>
+</RCC>

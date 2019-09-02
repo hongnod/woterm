@@ -29,6 +29,7 @@ protected:
 private slots:
     void onNewTerm();
     void onOpenTerm();
+    void onLayout();
     void onEditConfig();
     void onSessionReadyToConnect(const QString& target);
     void onSessionBatchToConnect(const QStringList& targets);
@@ -56,5 +57,6 @@ private:
     Ui::QWoMainWindow *ui;
     QPointer<QTabBar> m_tab;
     QPointer<QWoSessionList> m_sessions;
+    QPointer<QDockWidget> m_dock;
     QPointer<QWoShower> m_shower;
 };
