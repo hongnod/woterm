@@ -30,8 +30,11 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     ui->setupUi(this);
     QByteArray geom = QWoSetting::value("woterm/geometry").toByteArray();
     restoreGeometry(geom);
+    setContentsMargins(3,3,3,3);
 
-    initMenu();
+    initMenuBar();
+    initToolBar();
+    initStatusBar();
     //QMenu *actionsMenu = new QMenu("Actions", ui->menuBar);
     //ui->menuBar->addMenu(actionsMenu);
     //actionsMenu->addAction("Find...", this, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
@@ -65,16 +68,6 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
 
     layout->addWidget(m_tab);
     layout->addWidget(m_shower);
-
-    QToolBar *tool = ui->mainToolBar;
-    QAction *newTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/add.png"), tr("New"));
-    QObject::connect(newTerm, SIGNAL(triggered()), this, SLOT(onNewTerm()));
-
-    QAction *openTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/manage.png"), tr("Manage"));
-    QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
-
-    QAction *lay = tool->addAction(QIcon(":/qwoterm/resource/skin/layout.png"), tr("Layout"));
-    QObject::connect(lay, SIGNAL(triggered()), this, SLOT(onLayout()));
 
     QObject::connect(m_sessions, SIGNAL(readyToConnect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     QObject::connect(m_sessions, SIGNAL(batchReadyToConnect(const QStringList&)), this, SLOT(onSessionBatchToConnect(const QStringList&)));
@@ -237,7 +230,7 @@ void QWoMainWindow::onActionFindTriggered()
     m_shower->openFindDialog();
 }
 
-void QWoMainWindow::initMenu()
+void QWoMainWindow::initMenuBar()
 {
     QObject::connect(ui->actionDisconect, SIGNAL(triggered()), this, SLOT(onActionDisconnectTriggered()));
     QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(onActionExitTriggered()));
@@ -253,4 +246,23 @@ void QWoMainWindow::initMenu()
     QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionDefaultTriggered()));
     QObject::connect(ui->actionFind, SIGNAL(triggered()), this, SLOT(onActionFindTriggered()));
     setMenuBar(nullptr);
+}
+
+void QWoMainWindow::initToolBar()
+{
+    QToolBar *tool = ui->mainToolBar;
+    QAction *newTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/add.png"), tr("New"));
+    QObject::connect(newTerm, SIGNAL(triggered()), this, SLOT(onNewTerm()));
+
+    QAction *openTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/manage.png"), tr("Manage"));
+    QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
+
+    QAction *lay = tool->addAction(QIcon(":/qwoterm/resource/skin/layout.png"), tr("List"));
+    QObject::connect(lay, SIGNAL(triggered()), this, SLOT(onLayout()));
+}
+
+void QWoMainWindow::initStatusBar()
+{
+    //QStatusBar *bar = ui->statusBar;
+    setStatusBar(nullptr);
 }
