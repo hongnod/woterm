@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QApplication>
+#include <QIcon>
 
 #define TAB_TYPE_NAME ("tabtype")
 

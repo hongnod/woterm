@@ -257,8 +257,14 @@ void QWoMainWindow::initToolBar()
     QAction *openTerm = tool->addAction(QIcon(":/qwoterm/resource/skin/manage.png"), tr("Manage"));
     QObject::connect(openTerm, SIGNAL(triggered()), this, SLOT(onOpenTerm()));
 
-    QAction *lay = tool->addAction(QIcon(":/qwoterm/resource/skin/layout.png"), tr("List"));
+    QAction *lay = tool->addAction(QIcon(":/qwoterm/resource/skin/list.png"), tr("List"));
     QObject::connect(lay, SIGNAL(triggered()), this, SLOT(onLayout()));
+
+    QAction *import = tool->addAction(QIcon(":/qwoterm/resource/skin/import.png"), tr("Import"));
+    QObject::connect(import, SIGNAL(triggered()), this, SLOT(onActionImportTriggered()));
+
+    QAction *myexport = tool->addAction(QIcon(":/qwoterm/resource/skin/export.png"), tr("Export"));
+    QObject::connect(myexport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
 }
 
 void QWoMainWindow::initStatusBar()

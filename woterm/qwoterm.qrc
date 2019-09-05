@@ -1,7 +1,17 @@
 <RCC>
     <qresource prefix="/qwoterm">
         <file>resource/skin/add.png</file>
-        <file>resource/skin/layout.png</file>
+        <file>resource/skin/download.png</file>
+        <file>resource/skin/export.png</file>
+        <file>resource/skin/hsplit.png</file>
+        <file>resource/skin/import.png</file>
+        <file>resource/skin/list.png</file>
         <file>resource/skin/manage.png</file>
+        <file>resource/skin/reload.png</file>
+        <file>resource/skin/tabclose.png</file>
+        <file>resource/skin/upload.png</file>
+        <file>resource/skin/vsplit.png</file>
+        <file>resource/skin/woterm.png</file>
+        <file>resource/skin/woterm2.png</file>
     </qresource>
 </RCC>
