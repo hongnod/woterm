@@ -12,6 +12,7 @@
 #include "qwosshprocess.h"
 #include "qwosetting.h"
 #include "qwosshconf.h"
+#include "qwotermstyle.h"
 
 void test()
 {
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
     static QApplication app(argc, argv);
     QIcon::setThemeName("oxygen");
     qputenv("TERM", "xterm-256color");
-    QApplication::setStyle("Fusion");
+    QApplication::setStyle(new QWoTermStyle());
 
     test();
 
