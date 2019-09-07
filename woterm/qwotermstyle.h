@@ -2,6 +2,7 @@
 #define QWOTERMSTYLE_H
 
 #include <QProxyStyle>
+#include <QtWidgets>
 
 class QWoTermStyle : public QProxyStyle
 {
@@ -10,7 +11,9 @@ public:
     QWoTermStyle();
 
 protected:
-    virtual void drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+    QIcon standardIcon(QStyle::StandardPixmap standardIcon, const QStyleOption *option = nullptr, const QWidget *widget = nullptr) const;
+    void drawPrimitive(PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const override;
+    void drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
 private:
 
 };
