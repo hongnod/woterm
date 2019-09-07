@@ -49,7 +49,7 @@ private slots:
     void onActionTransferTriggered();
     void onActionLogTriggered();
     void onActionExitTriggered();
-    void onActionDefaultTriggered();
+    void onActionConfigDefaultTriggered();
     void onActionFindTriggered();
 private:
     void initMenuBar();

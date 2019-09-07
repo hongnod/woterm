@@ -31,6 +31,7 @@ QWoMainWindow::QWoMainWindow(QWidget *parent)
     QByteArray geom = QWoSetting::value("woterm/geometry").toByteArray();
     restoreGeometry(geom);
     setContentsMargins(3,3,3,3);
+    setWindowTitle("WoTerm");
 
     initMenuBar();
     initToolBar();
@@ -219,7 +220,7 @@ void QWoMainWindow::onActionExitTriggered()
 
 }
 
-void QWoMainWindow::onActionDefaultTriggered()
+void QWoMainWindow::onActionConfigDefaultTriggered()
 {
     QWoSessionProperty dlg(-2, this);
     dlg.exec();
@@ -243,7 +244,7 @@ void QWoMainWindow::initMenuBar()
     QObject::connect(ui->actionReconnectAll, SIGNAL(triggered()), this, SLOT(onActionReconnectAllTriggered()));
     QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(onActionSaveTriggered()));
     QObject::connect(ui->actionTransfer, SIGNAL(triggered()), this, SLOT(onActionTransferTriggered()));
-    QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionDefaultTriggered()));
+    QObject::connect(ui->actionDefault, SIGNAL(triggered()), this, SLOT(onActionConfigDefaultTriggered()));
     QObject::connect(ui->actionFind, SIGNAL(triggered()), this, SLOT(onActionFindTriggered()));
     setMenuBar(nullptr);
 }
@@ -265,6 +266,9 @@ void QWoMainWindow::initToolBar()
 
     QAction *myexport = tool->addAction(QIcon(":/qwoterm/resource/skin/export.png"), tr("Export"));
     QObject::connect(myexport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
+
+    QAction *cfgdef = tool->addAction(QIcon(":/qwoterm/resource/skin/cfgdef.png"), tr("Setting"));
+    QObject::connect(cfgdef, SIGNAL(triggered()), this, SLOT(onActionConfigDefaultTriggered()));
 }
 
 void QWoMainWindow::initStatusBar()

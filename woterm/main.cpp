@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     static QApplication app(argc, argv);
     qputenv("TERM", "xterm-256color");
     QApplication::setStyle(new QWoTermStyle());
+    QApplication::setWindowIcon(QIcon(":/qwoterm/resource/skin/woterm.png"));
 
     test();
 

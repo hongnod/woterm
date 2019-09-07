@@ -341,8 +341,6 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
     QWoProcess::setTermWidget(widget);
     widget->installEventFilter(this);
     QObject::connect(m_term, SIGNAL(titleChanged()), this, SLOT(onTermTitleChanged()));
-    QWidget *topLevel = m_term->topLevelWidget();
-    topLevel->setWindowTitle(m_target);
 }
 
 void QWoSshProcess::prepareContextMenu(QMenu *menu)

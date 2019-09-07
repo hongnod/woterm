@@ -13,5 +13,6 @@
         <file>resource/skin/vsplit.png</file>
         <file>resource/skin/woterm.png</file>
         <file>resource/skin/woterm2.png</file>
+        <file>resource/skin/cfgdef.png</file>
     </qresource>
 </RCC>
