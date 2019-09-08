@@ -34,7 +34,6 @@ private:
     void broadcastMessage(int type, QVariant msg);
     void addToList(QWoTermWidget *w);
     void removeFromList(QWoTermWidget *w);
-    void init(QWoProcess *process);
 private:
     friend class QWoTermWidget;
     const QString m_target;

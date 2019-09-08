@@ -13,8 +13,17 @@ QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
     , m_target(target)
     , m_termType(ESsh)
 {
+    m_root = new QSplitter(this);
+    m_root->setHandleWidth(1);
+    m_root->setOpaqueResize(false);
+    m_root->setAutoFillBackground(true);
+    QPalette pal(Qt::gray);
+    m_root->setPalette(pal);
     QWoSshProcess *process = new QWoSshProcess(target, m_root);
-    init(process);
+    QWoTermWidget *term = new QWoTermWidget(process, m_root);
+    m_root->addWidget(term);
+    process->start();
+    QObject::connect(m_root, SIGNAL(destroyed(QObject*)), this, SLOT(onRootSplitterDestroy()));
 }
 
 QWoTermWidgetImpl::~QWoTermWidgetImpl()
@@ -68,19 +77,4 @@ void QWoTermWidgetImpl::addToList(QWoTermWidget *w)
 void QWoTermWidgetImpl::removeFromList(QWoTermWidget *w)
 {
     m_terms.removeOne(w);
-}
-
-void QWoTermWidgetImpl::init(QWoProcess *process)
-{
-    m_root = new QSplitter(this);
-    m_root->setHandleWidth(1);
-    m_root->setOpaqueResize(false);
-    m_root->setAutoFillBackground(true);
-    QPalette pal(Qt::gray);
-    m_root->setPalette(pal);
-    QWoTermWidget *term = new QWoTermWidget(process, m_root);
-    m_root->addWidget(term);
-    process->start();
-
-    QObject::connect(m_root, SIGNAL(destroyed(QObject*)), this, SLOT(onRootSplitterDestroy()));
 }
