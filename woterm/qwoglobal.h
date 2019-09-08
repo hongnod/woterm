@@ -28,7 +28,14 @@ Q_DECLARE_METATYPE(HostInfo)
 #endif
 #define DEFAULT_FONT_SIZE (10)
 #define DEFAULT_COLOR_SCHEMA "Linux"
+
+#ifdef Q_OS_WIN
+#define DEFAULT_KEYBOARD_BINDING "windows"
+#elif defined(Q_OS_UNIX)
 #define DEFAULT_KEYBOARD_BINDING "linux"
+#elif defined(Q_OS_MACOS)
+#define DEFAULT_KEYBOARD_BINDING "macbook"
+#endif
 #define DEFAULT_HISTORY_LINE_LENGTH  (1000)
 
 const QString scrollbarSheetH =  \
