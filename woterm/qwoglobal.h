@@ -27,6 +27,7 @@ Q_DECLARE_METATYPE(HostInfo)
 #define DEFAULT_FONT_FAMILY "Monospace"
 #endif
 #define DEFAULT_FONT_SIZE (10)
+
 #define DEFAULT_COLOR_SCHEMA "Linux"
 
 #ifdef Q_OS_WIN
