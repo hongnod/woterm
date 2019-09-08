@@ -197,9 +197,9 @@ void QWoTermWidget::contextMenuEvent(QContextMenuEvent *e)
         QObject::connect(m_copy, SIGNAL(triggered()), this, SLOT(onCopyToClipboard()));
         m_paste = m_menu->addAction(tr("Paste"));
         QObject::connect(m_paste, SIGNAL(triggered()), this, SLOT(onPasteFromClipboard()));        
-        QAction *vsplit = m_menu->addAction(tr("Split Vertical"));
+        QAction *vsplit = m_menu->addAction(QIcon(":/qwoterm/resource/skin/vsplit.png"), tr("Split Vertical"));
         QObject::connect(vsplit, SIGNAL(triggered()), this, SLOT(onVerticalSplitView()));
-        QAction *hsplit = m_menu->addAction(tr("Split Horizontal"));
+        QAction *hsplit = m_menu->addAction(QIcon(":/qwoterm/resource/skin/hsplit.png"), tr("Split Horizontal"));
         QObject::connect(hsplit, SIGNAL(triggered()), this, SLOT(onHorizontalSplitView()));
         QAction *close = m_menu->addAction(tr("Close Session"));
         QObject::connect(close, SIGNAL(triggered()), this, SLOT(onCloseThisSession()));

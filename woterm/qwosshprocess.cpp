@@ -346,10 +346,10 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
 void QWoSshProcess::prepareContextMenu(QMenu *menu)
 {
     if(m_zmodemSend == nullptr) {
-        menu->addAction(tr("Find..."), m_term, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
+        menu->addAction(QIcon(":/qwoterm/resource/skin/find.png"), tr("Find..."), m_term, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
         m_zmodemDupl = menu->addAction(tr("Duplicate Session"), this, SLOT(onDuplicateSession()));
-        m_zmodemSend = menu->addAction(tr("Zmodem Upload"), this, SLOT(onZmodemSend()));
-        m_zmodemRecv = menu->addAction(tr("Zmodem Receive"), this, SLOT(onZmodemRecv()));
+        m_zmodemSend = menu->addAction(QIcon(":/qwoterm/resource/skin/upload.png"), tr("Zmodem Upload"), this, SLOT(onZmodemSend()));
+        m_zmodemRecv = menu->addAction(QIcon(":/qwoterm/resource/skin/download.png"), tr("Zmodem Receive"), this, SLOT(onZmodemRecv()));
         m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"), this, SLOT(onZmodemAbort()), QKeySequence(Qt::CTRL +  Qt::Key_C));
     }
 }

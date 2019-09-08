@@ -16,5 +16,6 @@
         <file>resource/skin/cfgdef.png</file>
         <file>resource/skin/woterm3.png</file>
         <file>resource/skin/woterm4.png</file>
+        <file>resource/skin/find.png</file>
     </qresource>
 </RCC>
