@@ -156,14 +156,14 @@ void QWoShower::onTermImplDestroy(QObject *it)
         }
     }
     qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
-    if(tabCount() <= 0) {
-        QMessageBox::StandardButton btn = QMessageBox::warning(this, tr("Info"), tr("The Last session had been close, do you want to exit?"), QMessageBox::Ok|QMessageBox::No);
-        if(btn == QMessageBox::No) {
-            openLocalShell();
-            return ;
-        }
-        QApplication::exit();
-    }
+//    if(tabCount() <= 0) {
+//        QMessageBox::StandardButton btn = QMessageBox::warning(this, tr("Info"), tr("The Last session had been close, do you want to exit?"), QMessageBox::Ok|QMessageBox::No);
+//        if(btn == QMessageBox::No) {
+//            openLocalShell();
+//            return ;
+//        }
+//        QApplication::exit();
+//    }
 }
 
 void QWoShower::onTabbarDoubleClicked(int index)

@@ -70,7 +70,6 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
 QWoSshProcess::~QWoSshProcess()
 {
     if(m_process->isOpen()) {
-        m_process->terminate();
         m_process->kill();
         m_process->waitForFinished();
     }
