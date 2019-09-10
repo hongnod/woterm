@@ -101,7 +101,7 @@ void QWoMainWindow::closeEvent(QCloseEvent *event)
 
 void QWoMainWindow::onNewTerm()
 {
-    QWoSessionProperty dlg(-1, this);
+    QWoSessionProperty dlg(NEW_SESSION, this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     dlg.exec();
 }
@@ -163,7 +163,7 @@ void QWoMainWindow::onShouldAppExit()
 
 void QWoMainWindow::onActionNewTriggered()
 {
-    QWoSessionProperty dlg(-1, this);
+    QWoSessionProperty dlg(NEW_SESSION, this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SLOT(onSessionReadyToConnect(const QString&)));
     dlg.exec();
 }
@@ -222,7 +222,7 @@ void QWoMainWindow::onActionExitTriggered()
 
 void QWoMainWindow::onActionConfigDefaultTriggered()
 {
-    QWoSessionProperty dlg(-2, this);
+    QWoSessionProperty dlg(DEFAULT_PROPERTY, this);
     dlg.exec();
 }
 

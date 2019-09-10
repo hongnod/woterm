@@ -15,6 +15,9 @@ class QTermWidget;
 class QStringListModel;
 
 
+#define NEW_SESSION         (-1)
+#define DEFAULT_PROPERTY    (-2)
+
 class QWoSessionProperty : public QDialog
 {
     Q_OBJECT

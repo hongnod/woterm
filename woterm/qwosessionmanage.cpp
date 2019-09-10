@@ -119,7 +119,7 @@ void QWoSessionManage::onModifyReady()
 
 void QWoSessionManage::onNewReady()
 {
-    QWoSessionProperty dlg(-1, this);
+    QWoSessionProperty dlg(NEW_SESSION, this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
     dlg.exec();
     refreshList();

@@ -35,6 +35,10 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
     QStringList binds = m_preview->availableKeyBindings();
+    if(idx == DEFAULT_PROPERTY) {
+        binds.clear();
+        binds << DEFAULT_KEYBOARD_BINDING;
+    }
     binds.sort();
     ui->keyBind->setModel(new QStringListModel(binds, this));
     QObject::connect(ui->keyBind, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onKeyBindCurrentIndexChanged(const QString &)));
