@@ -34,15 +34,6 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     ui->schema->setModel(new QStringListModel(schemas, this));
     QObject::connect(ui->schema, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onColorCurrentIndexChanged(const QString &)));
 
-    QStringList binds = m_preview->availableKeyBindings();
-    if(idx == DEFAULT_PROPERTY) {
-        binds.clear();
-        binds << DEFAULT_KEYBOARD_BINDING;
-    }
-    binds.sort();
-    ui->keyBind->setModel(new QStringListModel(binds, this));
-    QObject::connect(ui->keyBind, SIGNAL(currentIndexChanged(const QString &)),  this, SLOT(onKeyBindCurrentIndexChanged(const QString &)));
-
     ui->port->setValidator(new QIntValidator(1, 65535));
     ui->lineSize->setValidator(new QIntValidator(DEFAULT_HISTORY_LINE_LENGTH, 65535));
 
@@ -55,6 +46,7 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     ui->tree->setIndentation(10);
     if(m_idx < -1) {
         ui->connect->hide();
+        ui->connectWidget->hide();
     }else{
         QStandardItem *connect = new QStandardItem(tr("Connect"));
         m_model.appendRow(connect);
@@ -308,14 +300,16 @@ void QWoSessionProperty::resetProerty(QVariantMap mdata)
     QString rzPathDown = mdata.value("rzPath", QDir::toNativeSeparators(home.path())).toString();
     ui->szUpload->setText(szPathUpload);
     ui->rzDown->setText(rzPathDown);
+
     ui->port->setText("22");
+
     QString schema = mdata.value("colorSchema", DEFAULT_COLOR_SCHEMA).toString();
     ui->schema->setCurrentText(schema);
-    QString binding = mdata.value("keyBinding", DEFAULT_KEYBOARD_BINDING).toString();
-    ui->keyBind->setCurrentText(binding);
+
     QString fontName = mdata.value("fontName", DEFAULT_FONT_FAMILY).toString();
     int fontSize = mdata.value("fontSize", DEFAULT_FONT_SIZE).toInt();
     ui->fontSize->setValue(fontSize);
+
     QFont font(fontName, fontSize);
     ui->fontChooser->setCurrentFont(font);
 
@@ -338,7 +332,6 @@ bool QWoSessionProperty::saveConfig()
     mdata["szPath"] = ui->szUpload->text();
     mdata["rzPath"] = ui->rzDown->text();
     mdata["colorSchema"] = ui->schema->currentText();
-    mdata["keyBinding"] = ui->keyBind->currentText();
     mdata["fontName"] = ui->fontChooser->currentFont().family();
     mdata["fontSize"] = ui->fontSize->value();
     if(ui->blockCursor->isChecked()) {

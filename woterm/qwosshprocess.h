@@ -36,6 +36,7 @@ private slots:
     void onFileDialogFilesSelected(const QStringList& files);
     void onTermTitleChanged();
     void onDuplicateSession();
+    void onTimeout();
 
 private:
     Q_INVOKABLE void updateTermSize();
@@ -69,4 +70,6 @@ private:
     QString m_exeSend;
     QString m_exeRecv;
     QString m_target;
+
+    int m_idleCount;
 };

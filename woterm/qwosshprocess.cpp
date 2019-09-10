@@ -2,6 +2,7 @@
 #include "qwoevent.h"
 #include "qwosetting.h"
 #include "qwosshconf.h"
+#include "qwoutils.h"
 
 #include <qtermwidget.h>
 
@@ -21,7 +22,12 @@
 
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     : QWoProcess (parent)
+    , m_idleCount(0)
 {
+    HostInfo hi = QWoSshConf::instance()->findHostInfo(target);
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
+    mdata.value("");
+
     m_exeSend = QWoSetting::zmodemSZPath();
     if(m_exeSend.isEmpty()){
         QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
@@ -248,6 +254,11 @@ void QWoSshProcess::onDuplicateSession()
     QProcess::startDetached(path);
 }
 
+void QWoSshProcess::onTimeout()
+{
+
+}
+
 void QWoSshProcess::onZmodemFinished(int code)
 {
     Q_UNUSED(code);
@@ -303,13 +314,13 @@ bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
     }else if(t == QWoEvent::EventType) {
         QWoEvent *we = (QWoEvent*)ev;
         QWoEvent::WoEventType t = we->eventType();
+        m_idleCount = 0;
         if(t == QWoEvent::BeforeReadStdOut) {
             if(m_zmodem) {
                 QByteArray data = readAllStandardOutput();
                 m_zmodem->write(data);
                 we->setAccepted(true);
             }else{
-
                 we->setAccepted(false);
             }
         }else if(t == QWoEvent::BeforeReadStdErr) {
