@@ -47,6 +47,7 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     if(m_idx < -1) {
         ui->connect->hide();
         ui->connectWidget->hide();
+        ui->terminalWidget->show();
     }else{
         QStandardItem *connect = new QStandardItem(tr("Connect"));
         m_model.appendRow(connect);
@@ -59,7 +60,10 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     m_model.appendRow(appearance);
     QStandardItem *fileTransfre = new QStandardItem(tr("FileTransfer"));
     m_model.appendRow(fileTransfre);
-    QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
+
+    QModelIndex root = ui->tree->rootIndex();
+    QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));    
+    ui->tree->clicked(root.child(0, 0));
 
     QObject::connect(ui->blockCursor, SIGNAL(toggled(bool)), this, SLOT(onBlockCursorToggled()));
     QObject::connect(ui->underlineCursor, SIGNAL(toggled(bool)), this, SLOT(onUnderlineCursorToggled()));
