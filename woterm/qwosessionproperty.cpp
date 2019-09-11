@@ -318,6 +318,8 @@ void QWoSessionProperty::resetProerty(QVariantMap mdata)
     QFont font(fontName, fontSize);
     ui->fontChooser->setCurrentFont(font);
 
+    ui->liveCheck->setChecked(mdata.value("liveCheck", false).toBool());
+    ui->liveDuration->setValue(mdata.value("liveDuration", 60).toInt());
 
     QString cursorType = mdata.value("cursorType", "block").toString();
     if(cursorType.isEmpty() || cursorType == "block") {
@@ -347,6 +349,8 @@ bool QWoSessionProperty::saveConfig()
         mdata["cursorType"] = "beam";
     }
     mdata["historyLength"] = ui->lineSize->text();
+    mdata["liveCheck"] = ui->liveCheck->isChecked();
+    mdata["liveDuration"] = ui->liveDuration->value();
     QString property = QWoUtils::qVariantToBase64(mdata);
     if(m_idx < -1) {
         QWoSetting::setValue("property/default", property);

@@ -26,7 +26,12 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
 {
     HostInfo hi = QWoSshConf::instance()->findHostInfo(target);
     QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
-    mdata.value("");
+
+    if(mdata.value("liveCheck", false).toBool()) {
+        m_idleDuration = mdata.value("liveDuration", 60).toInt();
+    }else{
+        m_idleDuration = -1;
+    }
 
     m_exeSend = QWoSetting::zmodemSZPath();
     if(m_exeSend.isEmpty()){

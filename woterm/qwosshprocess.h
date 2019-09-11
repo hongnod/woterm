@@ -72,4 +72,5 @@ private:
     QString m_target;
 
     int m_idleCount;
+    int m_idleDuration;
 };
