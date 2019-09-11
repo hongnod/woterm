@@ -76,6 +76,10 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     setEnvironment(env);
 
     QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    timer->start(1000);
 }
 
 QWoSshProcess::~QWoSshProcess()
@@ -261,7 +265,13 @@ void QWoSshProcess::onDuplicateSession()
 
 void QWoSshProcess::onTimeout()
 {
-
+    if(m_idleDuration > 0) {
+        if(m_idleCount++ > m_idleDuration) {
+            qDebug() << m_target << "idle" << m_idleCount << "Duration" << m_idleDuration;
+            m_idleCount = 0;
+            write(" \b");
+        }
+    }
 }
 
 void QWoSshProcess::onZmodemFinished(int code)
