@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QPointer>
 #include <QStandardItemModel>
+#include <QItemSelection>
 
 namespace Ui {
 class QWoSessionProperty;

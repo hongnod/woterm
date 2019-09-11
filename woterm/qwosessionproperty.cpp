@@ -12,6 +12,7 @@
 #include <QIntValidator>
 #include <QStringListModel>
 #include <QMessageBox>
+#include <QModelIndex>
 
 QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     : QDialog(parent)
@@ -44,10 +45,10 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     ui->tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
+    ui->tree->setRootIsDecorated(true);
     if(m_idx < -1) {
         ui->connect->hide();
         ui->connectWidget->hide();
-        ui->terminalWidget->show();
     }else{
         QStandardItem *connect = new QStandardItem(tr("Connect"));
         m_model.appendRow(connect);
@@ -61,9 +62,9 @@ QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
     QStandardItem *fileTransfre = new QStandardItem(tr("FileTransfer"));
     m_model.appendRow(fileTransfre);
 
-    QModelIndex root = ui->tree->rootIndex();
-    QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));    
-    ui->tree->clicked(root.child(0, 0));
+    QObject::connect(ui->tree, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onTreeItemClicked(const QModelIndex&)));
+    QModelIndex index = m_model.index(0, 0);
+    ui->tree->clicked(index);
 
     QObject::connect(ui->blockCursor, SIGNAL(toggled(bool)), this, SLOT(onBlockCursorToggled()));
     QObject::connect(ui->underlineCursor, SIGNAL(toggled(bool)), this, SLOT(onUnderlineCursorToggled()));
