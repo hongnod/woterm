@@ -261,11 +261,11 @@ void QWoMainWindow::initToolBar()
     QAction *lay = tool->addAction(QIcon(":/qwoterm/resource/skin/list.png"), tr("List"));
     QObject::connect(lay, SIGNAL(triggered()), this, SLOT(onLayout()));
 
-    QAction *import = tool->addAction(QIcon(":/qwoterm/resource/skin/import.png"), tr("Import"));
-    QObject::connect(import, SIGNAL(triggered()), this, SLOT(onActionImportTriggered()));
+//    QAction *import = tool->addAction(QIcon(":/qwoterm/resource/skin/import.png"), tr("Import"));
+//    QObject::connect(import, SIGNAL(triggered()), this, SLOT(onActionImportTriggered()));
 
-    QAction *myexport = tool->addAction(QIcon(":/qwoterm/resource/skin/export.png"), tr("Export"));
-    QObject::connect(myexport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
+//    QAction *myexport = tool->addAction(QIcon(":/qwoterm/resource/skin/export.png"), tr("Export"));
+//    QObject::connect(myexport, SIGNAL(triggered()), this, SLOT(onActionExportTriggered()));
 
     QAction *cfgdef = tool->addAction(QIcon(":/qwoterm/resource/skin/cfgdef.png"), tr("Setting"));
     QObject::connect(cfgdef, SIGNAL(triggered()), this, SLOT(onActionConfigDefaultTriggered()));
