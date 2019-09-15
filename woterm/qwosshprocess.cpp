@@ -145,8 +145,18 @@ void QWoSshProcess::checkCommand(const QByteArray &out)
     if(!isApp) {
         if(out.lastIndexOf('\r') >= 0 || out.lastIndexOf('\n') >= 0) {
             QString command = m_term->lineTextAtCursor(1);
-            command = command.trimmed();
-            qDebug() << "command" << command << "appmode" << isApp;
+            command = command.simplified();
+            if(command.length() < 200) {
+                int idx = command.lastIndexOf(QChar::Space);
+                if(idx > 0) {
+                    QString cmd = command.mid(idx);
+                    if(cmd == "sz") {
+                        qDebug() << "command" << command;
+                    }else if(cmd == "rz") {
+                        qDebug() << "command" << command;
+                    }
+                }
+            }
         }
     }
 }
