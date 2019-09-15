@@ -232,7 +232,7 @@ bool QWoSessionList::handleListViewContextMenu(QContextMenuEvent *ev)
         m_menu->addAction(QIcon(":/qwoterm/resource/skin/reload.png"), tr("ReloadAll"), this, SLOT(onListViewItemReload()));
         m_menu->addAction(QIcon(":/qwoterm/resource/skin/linkcfg.png"), tr("Edit"), this, SLOT(onListViewItemModify()));
         m_menu->addAction(QIcon(":/qwoterm/resource/skin/add.png"), tr("Add"), this, SLOT(onListViewItemAdd()));
-        m_menu->addAction(QIcon(":/qwoterm/resource/skin/tabclose.png"), tr("Delete"), this, SLOT(onListViewItemDelete()));
+        m_menu->addAction(tr("Delete"), this, SLOT(onListViewItemDelete()));
     }    
     QVariant target = mi.data();
     m_itemOpen->setVisible(mi.isValid());
