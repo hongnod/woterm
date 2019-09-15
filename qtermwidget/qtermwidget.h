@@ -106,6 +106,8 @@ public:
     QString lineTextAtCursor(int cnt) const;
     QString lineText(int start, int end) const;
 
+    bool isAppMode() const;
+
     // Sets whether flow control is enabled
     void setFlowControlEnabled(bool enabled);
 

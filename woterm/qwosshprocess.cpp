@@ -141,9 +141,13 @@ bool QWoSshProcess::isRzCommand(const QByteArray &ba)
 
 void QWoSshProcess::checkCommand(const QByteArray &out)
 {
-    if(out.lastIndexOf('\r') >= 0 || out.lastIndexOf('\n') >= 0) {
-        QString command = m_term->lineTextAtCursor(1);
-        qDebug() << "command" << command;
+    bool isApp = m_term->isAppMode();
+    if(!isApp) {
+        if(out.lastIndexOf('\r') >= 0 || out.lastIndexOf('\n') >= 0) {
+            QString command = m_term->lineTextAtCursor(1);
+            command = command.trimmed();
+            qDebug() << "command" << command << "appmode" << isApp;
+        }
     }
 }
 
@@ -262,6 +266,8 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 void QWoSshProcess::onTermTitleChanged()
 {
     QString name = m_term->title();
+    m_prompt = name.toLocal8Bit();
+    qDebug() << "prompt changed:" << m_prompt;
 }
 
 void QWoSshProcess::onDuplicateSession()

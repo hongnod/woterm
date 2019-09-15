@@ -503,8 +503,9 @@ void Vt102Emulation::processWindowAttributeChange()
 
   QString newValue;
   newValue.reserve(tokenBufferPos-i-2);
-  for (int j = 0; j < tokenBufferPos-i-2; j++)
+  for (int j = 0; j < tokenBufferPos-i-2; j++){
     newValue[j] = tokenBuffer[i+1+j];
+  }
 
   _pendingTitleUpdates[attributeToChange] = newValue;
   _titleUpdateTimer->start(20);
@@ -1085,8 +1086,14 @@ void Vt102Emulation::focusLost(void)
  */
 void Vt102Emulation::focusGained(void)
 {
-    if (_reportFocusEvents)
+    if (_reportFocusEvents){
         sendString("\033[I");
+    }
+}
+
+bool Vt102Emulation::isAppMode()
+{
+    return getMode(MODE_AppScreen);
 }
 
 void Vt102Emulation::sendText( const QString& text )

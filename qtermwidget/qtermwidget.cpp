@@ -36,6 +36,8 @@
 #include "SearchBar.h"
 #include "qtermwidget.h"
 
+#include "Vt102Emulation.h"
+
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_FONT_FAMILY                   "Menlo"
@@ -421,6 +423,11 @@ QString QTermWidget::lineText(int start, int end) const
     return m_impl->m_terminalDisplay->lineText(start, end);
 }
 
+bool QTermWidget::isAppMode() const
+{
+    return m_impl->m_session->emulation()->isAppMode();
+}
+
 void QTermWidget::resizeEvent(QResizeEvent*)
 {
     m_impl->m_terminalDisplay->resize(this->size());
@@ -613,8 +620,9 @@ bool QTermWidget::isBidiEnabled()
 QString QTermWidget::title() const
 {
     QString title = m_impl->m_session->userTitle();
-    if (title.isEmpty())
+    if (title.isEmpty()){
         title = m_impl->m_session->title(Konsole::Session::NameRole);
+    }
     return title;
 }
 

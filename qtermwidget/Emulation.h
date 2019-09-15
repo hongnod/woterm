@@ -179,6 +179,9 @@ public:
   /** Clears the history scroll. */
   void clearHistory();
 
+  // returns true if 'mode' is set or false otherwise
+  virtual bool isAppMode() = 0;
+
   /**
    * Copies the output history from @p startLine to @p endLine
    * into @p stream, using @p decoder to convert the terminal
