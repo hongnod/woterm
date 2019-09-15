@@ -102,6 +102,9 @@ public:
     void scrollToEnd();
 
     void parseSequenceText(const QByteArray& data);
+    void parseWarningText(const QByteArray& msg);
+    QString lineTextAtCursor(int cnt) const;
+    QString lineText(int start, int end) const;
 
     // Sets whether flow control is enabled
     void setFlowControlEnabled(bool enabled);
@@ -198,6 +201,7 @@ public:
 
     /** Get the empty space outside the terminal */
     int getMargin() const;
+
 signals:
     void finished();
     void copyAvailable(bool);

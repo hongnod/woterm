@@ -436,6 +436,33 @@ TerminalDisplay::~TerminalDisplay()
   delete _filterChain;
 }
 
+QString TerminalDisplay::lineText(int start, int end) const
+{
+    if(end > _usedLines) {
+        end = _usedLines;
+    }
+    QString lineText;
+    QTextStream stream(&lineText);
+    PlainTextDecoder decoder;
+    decoder.begin(&stream);
+    for(int i = start; i < end; i++){
+        decoder.decodeLine(&_image[loc(0, i)], _columns, _lineProperties[i]);
+    }
+    decoder.end();
+    return lineText;
+}
+
+QString TerminalDisplay::lineTextAtCursor(int cnt) const
+{
+    const QPoint cursorPos = _screenWindow ? _screenWindow->cursorPosition() : QPoint(0,0);
+    int end = cursorPos.y() + 1;
+    int start = end - cnt;
+    if(start < 0) {
+        start = 0;
+    }
+    return lineText(start, end);
+}
+
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
 /*                             Display Operations                            */

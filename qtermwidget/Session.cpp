@@ -403,6 +403,11 @@ void Session::parseSequenceText(const QByteArray &buf) const
     _emulation->receiveData(buf.data(), buf.length());
 }
 
+void Session::receiveData(const char *text, int length)
+{
+    _emulation->receiveData(text, length);
+}
+
 Session::~Session()
 {
     delete _emulation;

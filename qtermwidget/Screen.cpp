@@ -651,8 +651,9 @@ void Screen::initTabStops()
 
 void Screen::newLine()
 {
-    if (getMode(MODE_NewLine))
+    if (getMode(MODE_NewLine)){
         toStartOfLine();
+    }
     index();
 }
 
@@ -762,7 +763,9 @@ void Screen::resetScrolledLines()
 void Screen::scrollUp(int n)
 {
     if (n == 0) n = 1; // Default
-    if (_topMargin == 0) addHistLine(); // history.history
+    if (_topMargin == 0) {
+        addHistLine(); // history.history
+    }
     scrollUp(_topMargin, n);
 }
 

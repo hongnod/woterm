@@ -53,6 +53,7 @@ private:
     void zmodemRecv();
     QWoProcess *createZmodem();
     bool isRzCommand(const QByteArray& data);
+    void checkCommand(const QByteArray& data);
 private:
     QPointer<QLocalServer> m_server;
 

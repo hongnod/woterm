@@ -256,6 +256,7 @@ public:
     void sendText(const QString & text) const;
 
     void parseSequenceText(const QByteArray& buf) const;
+    void receiveData(const char* text, int length);
 
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();

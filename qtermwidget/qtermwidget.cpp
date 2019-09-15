@@ -396,6 +396,31 @@ void QTermWidget::parseSequenceText(const QByteArray &data)
     m_impl->m_session->parseSequenceText(data);
 }
 
+void QTermWidget::parseWarningText(const QByteArray &msg)
+{
+    static const char redPenOn[] = "\033[1m\033[31m";
+    static const int onLength = sizeof(redPenOn);
+    static const char redPenOff[] = "\033[0m";
+    static const int offLength = sizeof(redPenOff);
+
+
+    m_impl->m_session->receiveData(redPenOn, onLength);
+    m_impl->m_session->receiveData("\n\r\n\r", 4);
+    m_impl->m_session->receiveData(msg.data(), msg.length());
+    m_impl->m_session->receiveData("\n\r\n\r", 4);
+    m_impl->m_session->receiveData(redPenOff, offLength);
+}
+
+QString QTermWidget::lineTextAtCursor(int cnt) const
+{
+    return m_impl->m_terminalDisplay->lineTextAtCursor(cnt);
+}
+
+QString QTermWidget::lineText(int start, int end) const
+{
+    return m_impl->m_terminalDisplay->lineText(start, end);
+}
+
 void QTermWidget::resizeEvent(QResizeEvent*)
 {
     m_impl->m_terminalDisplay->resize(this->size());

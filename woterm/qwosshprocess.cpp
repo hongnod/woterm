@@ -139,6 +139,14 @@ bool QWoSshProcess::isRzCommand(const QByteArray &ba)
     return false;
 }
 
+void QWoSshProcess::checkCommand(const QByteArray &out)
+{
+    if(out.lastIndexOf('\r') >= 0 || out.lastIndexOf('\n') >= 0) {
+        QString command = m_term->lineTextAtCursor(1);
+        qDebug() << "command" << command;
+    }
+}
+
 void QWoSshProcess::onNewConnection()
 {
     m_ipc = m_server->nextPendingConnection();
@@ -219,6 +227,7 @@ void QWoSshProcess::onZmodemRecv()
 
 void QWoSshProcess::onZmodemAbort()
 {
+    //sendData(QByteArrayLiteral("\030\030\030\030")); // Abort
     static char canistr[] = {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0};
     if(m_zmodem == nullptr) {
         return;
@@ -353,6 +362,9 @@ bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
             }else{
                 we->setAccepted(false);
             }
+        }else if(t == QWoEvent::BeforeWriteStdOut) {
+            QByteArray out = we->data().toByteArray();
+            checkCommand(out);
         }else if(t == QWoEvent::BeforeFinish) {
 
         }
