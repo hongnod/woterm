@@ -17,5 +17,8 @@
         <file>resource/skin/woterm3.png</file>
         <file>resource/skin/woterm4.png</file>
         <file>resource/skin/find.png</file>
+        <file>resource/skin/connect.png</file>
+        <file>resource/skin/linkcfg.png</file>
+        <file>resource/skin/save.png</file>
     </qresource>
 </RCC>
