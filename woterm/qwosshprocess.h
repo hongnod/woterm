@@ -74,6 +74,7 @@ private:
 
     int m_idleCount;
     int m_idleDuration;
+    QString m_rzReceivePath;
 
     QByteArray m_prompt;
 };

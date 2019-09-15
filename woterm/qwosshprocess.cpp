@@ -32,6 +32,7 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     }else{
         m_idleDuration = -1;
     }
+    m_rzReceivePath = QDir::toNativeSeparators(mdata.value("rzPath", QDir::homePath()).toString());
 
     m_exeSend = QWoSetting::zmodemSZPath();
     if(m_exeSend.isEmpty()){
@@ -147,13 +148,16 @@ void QWoSshProcess::checkCommand(const QByteArray &out)
             QString command = m_term->lineTextAtCursor(1);
             command = command.simplified();
             if(command.length() < 200) {
-                int idx = command.lastIndexOf(QChar::Space);
-                if(idx > 0) {
-                    QString cmd = command.mid(idx);
-                    if(cmd == "sz") {
+                int idx = command.lastIndexOf('$');
+                if(idx >= 0) {
+                    command = command.mid(idx+1).trimmed();
+                }
+                idx = command.lastIndexOf(QChar::Space);
+                if(idx < 0) {
+                    QString cmd = command;
+                    if(cmd == "rz") {
                         qDebug() << "command" << command;
-                    }else if(cmd == "rz") {
-                        qDebug() << "command" << command;
+                        QMetaObject::invokeMethod(this, "onZmodemSend", Qt::QueuedConnection);
                     }
                 }
             }
@@ -230,12 +234,23 @@ void QWoSshProcess::onZmodemRecv()
     if(m_zmodem) {
         return;
     }
+
+    QString path = QWoSetting::value("zmodem/lastPath").toString();
+    QString filePath = QFileDialog::getExistingDirectory(m_term, tr("Open Directory"), path,  QFileDialog::ShowDirsOnly);
+    qDebug() << "filePath" << filePath;
+    if(!filePath.isEmpty()) {
+        filePath = QDir::toNativeSeparators(filePath);
+        QWoSetting::setValue("zmodem/lastPath", filePath);
+    }else{
+        filePath = m_rzReceivePath;
+    }
+
     m_zmodem = createZmodem();
     m_zmodem->setProgram(m_exeRecv);
     QStringList args;
     args << "rz";
     m_zmodem->setArguments(args);
-    m_zmodem->setWorkingDirectory("d:\\zmodem");
+    m_zmodem->setWorkingDirectory(filePath);
     m_zmodem->start();
 }
 
