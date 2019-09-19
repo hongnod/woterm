@@ -21,7 +21,7 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
-    installEventFilter(tab);
+   // tab->installEventFilter(this);
 }
 
 QWoShower::~QWoShower()
@@ -103,7 +103,7 @@ void QWoShower::paintEvent(QPaintEvent *event)
     p.drawText(rt, Qt::AlignCenter, "WoTerm");
 }
 
-bool QWoShower::event(QEvent *ev)
+bool QWoShower::eventFilter(QObject *obj, QEvent *ev)
 {
     switch (ev->type()) {
     case QEvent::MouseButtonPress:

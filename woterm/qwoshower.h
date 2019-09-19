@@ -34,7 +34,7 @@ protected:
     void syncGeometry(QWidget *widget);
 
     void paintEvent(QPaintEvent *event);
-    bool event(QEvent* ev);
+    bool eventFilter(QObject *obj, QEvent *ev);
 
 
 private:
