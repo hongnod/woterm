@@ -21,7 +21,7 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
-
+    installEventFilter(tab);
 }
 
 QWoShower::~QWoShower()
@@ -103,6 +103,15 @@ void QWoShower::paintEvent(QPaintEvent *event)
     p.drawText(rt, Qt::AlignCenter, "WoTerm");
 }
 
+bool QWoShower::event(QEvent *ev)
+{
+    switch (ev->type()) {
+    case QEvent::MouseButtonPress:
+        return tabMouseButtonPress((QMouseEvent*)ev);
+    }
+    return false;
+}
+
 void QWoShower::closeSession(int idx)
 {
     if(idx >= m_tabs->count()) {
@@ -122,6 +131,17 @@ void QWoShower::createTab(QWoShowerWidget *impl, const QString& tabName)
     QObject::connect(impl, SIGNAL(destroyed(QObject*)), this, SLOT(onTermImplDestroy(QObject*)));
     setCurrentWidget(impl);
     qDebug() << "tabCount" << m_tabs->count() << ",implCount" << count();
+}
+
+bool QWoShower::tabMouseButtonPress(QMouseEvent *ev)
+{
+    QPoint pt = ev->pos();
+    int idx = m_tabs->tabAt(pt);
+    if(idx >= 0) {
+
+    }
+    qDebug() << "tab hit" << idx;
+    return true;
 }
 
 void QWoShower::onTabCloseRequested(int idx)

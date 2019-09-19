@@ -34,12 +34,13 @@ protected:
     void syncGeometry(QWidget *widget);
 
     void paintEvent(QPaintEvent *event);
+    bool event(QEvent* ev);
 
 
 private:
     void closeSession(int idx);
     void createTab(QWoShowerWidget *widget, const QString& tabName);
-
+    bool tabMouseButtonPress(QMouseEvent *ev);
 
 private slots:
     void onTabCloseRequested(int index);
