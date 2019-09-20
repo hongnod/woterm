@@ -111,7 +111,7 @@ void QWoSessionManage::onModifyReady()
     if(!target.isValid()) {
         return;
     }
-    QWoSessionProperty dlg(target.toInt(), this);
+    QWoSessionProperty dlg(QWoSessionProperty::Modify, target.toInt(), this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
     dlg.exec();
     refreshList();
@@ -119,7 +119,7 @@ void QWoSessionManage::onModifyReady()
 
 void QWoSessionManage::onNewReady()
 {
-    QWoSessionProperty dlg(NEW_SESSION, this);
+    QWoSessionProperty dlg(QWoSessionProperty::NewSession, 0, this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
     dlg.exec();
     refreshList();

@@ -47,7 +47,7 @@ QWoSessionProperty::QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
     ui->tree->setRootIsDecorated(true);
-    if(m_idx < -1) {
+    if(m_type == ModifyWithNoConnect) {
         ui->connect->hide();
         ui->connectWidget->hide();
     }else{
