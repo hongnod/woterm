@@ -14,8 +14,9 @@
 #include <QMessageBox>
 #include <QModelIndex>
 
-QWoSessionProperty::QWoSessionProperty(int idx, QWidget *parent)
+QWoSessionProperty::QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent)
     : QDialog(parent)
+    , m_type(ts)
     , m_idx(idx)
     , ui(new Ui::QWoSessionProperty)
 {

@@ -1,6 +1,7 @@
 #include "qwoshower.h"
 #include "qwotermwidgetimpl.h"
 #include "qwoshellwidgetimpl.h"
+#include "qwosessionproperty.h"
 
 #include <QTabBar>
 #include <QResizeEvent>
@@ -13,6 +14,7 @@
 #include <QIcon>
 
 #define TAB_TYPE_NAME ("tabtype")
+#define TAB_TARGET_NAME ("target")
 
 QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     : QStackedWidget (parent)
@@ -21,7 +23,7 @@ QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     QObject::connect(tab, SIGNAL(tabCloseRequested(int)), this, SLOT(onTabCloseRequested(int)));
     QObject::connect(tab, SIGNAL(currentChanged(int)), this, SLOT(onTabCurrentChanged(int)));
     QObject::connect(tab, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(onTabbarDoubleClicked(int)));
-   // tab->installEventFilter(this);
+    tab->installEventFilter(this);
 }
 
 QWoShower::~QWoShower()
@@ -41,6 +43,7 @@ bool QWoShower::openConnection(const QString &target)
 {
     QWoShowerWidget *impl = new QWoTermWidgetImpl(target, this);
     impl->setProperty(TAB_TYPE_NAME, ETSsh);
+    impl->setProperty(TAB_TARGET_NAME, target);
     createTab(impl, target);
     return true;
 }
@@ -60,7 +63,7 @@ void QWoShower::openFindDialog()
         return;
     }
     QVariant v = m_tabs->tabData(idx);
-    QSplitter *target = v.value<QSplitter*>();
+    QWoShowerWidget *target = v.value<QWoShowerWidget*>();
 //    QSplitter *take = m_terms.at(idx);
 //    Q_ASSERT(target == take);
     //    take->toggleShowSearchBar();
@@ -137,10 +140,17 @@ bool QWoShower::tabMouseButtonPress(QMouseEvent *ev)
 {
     QPoint pt = ev->pos();
     int idx = m_tabs->tabAt(pt);
-    if(idx >= 0) {
-
-    }
     qDebug() << "tab hit" << idx;
+    if(idx >= 0) {
+        QVariant v = m_tabs->tabData(idx);
+        QWoShowerWidget *impl = v.value<QWoShowerWidget*>();
+        QVariant target = impl->property(TAB_TARGET_NAME);
+        qDebug() << "target" << target;
+        QWoSessionProperty dlg(QWoSessionProperty::ModifyWithNoConnect, idx, this);
+        QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
+        dlg.exec();
+    }
+
     return true;
 }
 

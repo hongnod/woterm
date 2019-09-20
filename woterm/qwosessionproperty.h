@@ -16,15 +16,17 @@ class QTermWidget;
 class QStringListModel;
 
 
-#define NEW_SESSION         (-1)
-#define DEFAULT_PROPERTY    (-2)
-
 class QWoSessionProperty : public QDialog
 {
     Q_OBJECT
-
 public:
-    explicit QWoSessionProperty(int idx, QWidget *parent = nullptr);
+    enum ETypeSession{
+      NewSession = 0x1,
+      Modify = 0x2,
+      ModifyWithNoConnect = 0x3
+    };
+public:
+    explicit QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent = nullptr);
     ~QWoSessionProperty();
 
 signals:
@@ -63,6 +65,7 @@ private slots:
     void onTimeout();
 
 private:
+    const ETypeSession m_type;
     const int m_idx;
     Ui::QWoSessionProperty *ui;
     QStandardItemModel m_model;
