@@ -47,7 +47,7 @@ QWoSessionProperty::QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent
     ui->tree->setModel(&m_model);
     ui->tree->setIndentation(10);
     ui->tree->setRootIsDecorated(true);
-    if(m_type == ModifyWithNoConnect) {
+    if(m_type == ResetProperty) {
         ui->connect->hide();
         ui->connectWidget->hide();
     }else{
@@ -353,7 +353,7 @@ bool QWoSessionProperty::saveConfig()
     mdata["liveCheck"] = ui->liveCheck->isChecked();
     mdata["liveDuration"] = ui->liveDuration->value();
     QString property = QWoUtils::qVariantToBase64(mdata);
-    if(m_idx < -1) {
+    if(m_type == ResetProperty) {
         QWoSetting::setValue("property/default", property);
     }else {
         HostInfo hi;

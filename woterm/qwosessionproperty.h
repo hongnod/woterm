@@ -22,12 +22,12 @@ class QWoSessionProperty : public QDialog
 public:
     enum ETypeSession{
       NewSession = 0x1,
-      Modify = 0x2,
-      ModifyWithNoConnect = 0x3
+      ResetProperty = 0x2,
+      ModifySession = 0x3
     };
 public:
     explicit QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent = nullptr);
-    ~QWoSessionProperty();
+    virtual ~QWoSessionProperty();
 
 signals:
     void connect(const QString& host);

@@ -200,7 +200,7 @@ void QWoSessionList::onListViewItemModify()
         return;
     }
     int idx = target.toInt();
-    QWoSessionProperty dlg(QWoSessionProperty::Modify, idx, this);
+    QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
     QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
     dlg.exec();
     refreshList();

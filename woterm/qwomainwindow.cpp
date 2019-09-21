@@ -222,7 +222,7 @@ void QWoMainWindow::onActionExitTriggered()
 
 void QWoMainWindow::onActionConfigDefaultTriggered()
 {
-    QWoSessionProperty dlg(QWoSessionProperty::ModifyWithNoConnect, 0, this);
+    QWoSessionProperty dlg(QWoSessionProperty::ModifySession, 0, this);
     dlg.exec();
 }
 

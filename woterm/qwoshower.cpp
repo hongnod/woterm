@@ -146,7 +146,7 @@ bool QWoShower::tabMouseButtonPress(QMouseEvent *ev)
         QWoShowerWidget *impl = v.value<QWoShowerWidget*>();
         QVariant target = impl->property(TAB_TARGET_NAME);
         qDebug() << "target" << target;
-        QWoSessionProperty dlg(QWoSessionProperty::ModifyWithNoConnect, idx, this);
+        QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
         QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
         dlg.exec();
     }
