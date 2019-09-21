@@ -207,6 +207,7 @@ void QWoSessionProperty::onReadyToConnect()
         return;
     }
     close();
+    setResult()
     emit connect(ui->hostName->text());
 }
 

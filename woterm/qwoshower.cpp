@@ -141,14 +141,18 @@ bool QWoShower::tabMouseButtonPress(QMouseEvent *ev)
     QPoint pt = ev->pos();
     int idx = m_tabs->tabAt(pt);
     qDebug() << "tab hit" << idx;
-    if(idx >= 0) {
+    if(idx >= 0 && ev->buttons().testFlag(Qt::RightButton)) {
         QVariant v = m_tabs->tabData(idx);
         QWoShowerWidget *impl = v.value<QWoShowerWidget*>();
-        QVariant target = impl->property(TAB_TARGET_NAME);
-        qDebug() << "target" << target;
-        QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
-        QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
-        dlg.exec();
+        QVariant type = impl->property(TAB_TYPE_NAME);
+        if(type.toInt() == ETSsh) {
+            QVariant target = impl->property(TAB_TARGET_NAME);
+            qDebug() << "target" << target;
+            QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
+            QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
+            dlg.exec();
+        }
+
     }
 
     return true;

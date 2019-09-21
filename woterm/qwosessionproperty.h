@@ -25,6 +25,11 @@ public:
       ResetProperty = 0x2,
       ModifySession = 0x3
     };
+    enum EResult {
+        Connect = 0x1,
+        Save = 0x2,
+        Cancel = 0x3
+    };
 public:
     explicit QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent = nullptr);
     virtual ~QWoSessionProperty();
