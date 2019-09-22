@@ -206,9 +206,8 @@ void QWoSessionProperty::onReadyToConnect()
     if(!saveConfig()) {
         return;
     }
-    close();
-    setResult()
     emit connect(ui->hostName->text());
+    done(Connect);
 }
 
 void QWoSessionProperty::onReadyToSave()
@@ -216,7 +215,7 @@ void QWoSessionProperty::onReadyToSave()
     if(!saveConfig()) {
         return;
     }
-    close();
+    done(Save);
 }
 
 void QWoSessionProperty::onSzDirBrowser()

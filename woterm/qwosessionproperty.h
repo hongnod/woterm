@@ -25,10 +25,13 @@ public:
       ResetProperty = 0x2,
       ModifySession = 0x3
     };
+
     enum EResult {
-        Connect = 0x1,
-        Save = 0x2,
-        Cancel = 0x3
+        Rejected = QDialog::Rejected,
+        Accepted = QDialog::Accepted,
+        Connect,
+        Save,
+        Cancel
     };
 public:
     explicit QWoSessionProperty(ETypeSession ts, int idx, QWidget *parent = nullptr);
