@@ -7,6 +7,7 @@
 class QSplitter;
 class QWoTermWidget;
 class QWoProcess;
+class QMenu;
 
 class QWoTermWidgetImpl : public QWoShowerWidget
 {
@@ -31,6 +32,8 @@ private:
 
 private slots:
     void onRootSplitterDestroy();
+    void onModifyThisSession();
+    void onCloseThisSession();
 
 private:
     void broadcastMessage(int type, QVariant msg);
@@ -42,4 +45,5 @@ private:
     QPointer<QSplitter> m_root;
     QList<QPointer<QWoTermWidget>> m_terms;
     const ETermType m_termType;
+    QPointer<QMenu> m_menu;
 };

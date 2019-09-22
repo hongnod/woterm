@@ -11,6 +11,7 @@
 #include <QSplitter>
 #include <QApplication>
 #include <QMessageBox>
+#include <QMenu>
 
 
 QWoTermWidgetImpl::QWoTermWidgetImpl(QString target, QWidget *parent)
@@ -61,35 +62,52 @@ void QWoTermWidgetImpl::resizeEvent(QResizeEvent *event)
 void QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
 {
     if(ev->buttons().testFlag(Qt::RightButton)) {
-        QVariant target = property(TAB_TARGET_NAME);
-        qDebug() << "target" << target;
-        if(!target.isValid()) {
-            QMessageBox::warning(this, tr("alert"), tr("failed to find host infomation"));
-            return;
+        if(m_menu == nullptr) {
+            m_menu = new QMenu(this);
+            QAction *modify = m_menu->addAction(QIcon(":/qwoterm/resource/skin/linkcfg.png"), tr("Edit"));
+            QObject::connect(modify, SIGNAL(triggered()), this, SLOT(onModifyThisSession()));
+            QAction *close = m_menu->addAction(tr("Close Session"));
+            QObject::connect(close, SIGNAL(triggered()), this, SLOT(onCloseThisSession()));
         }
-        int idx = QWoSshConf::instance()->findHost(target.toString());
-        if(idx < 0) {
-            QMessageBox::warning(this, tr("alert"), tr("failed to find host infomation"));
-            return;
-        }
-        QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
-        QObject::connect(&dlg, SIGNAL(connect(const QString&)), QWoMainWindow::instance(), SLOT(onSessionReadyToConnec(const QString&)));
-        int ret = dlg.exec();
-        if(ret == QWoSessionProperty::Save) {
-            HostInfo hi = QWoSshConf::instance()->hostInfo(idx);
-            for(int i = 0; i < m_terms.length(); i++) {
-                QPointer<QWoTermWidget> term = m_terms.at(i);
-                if(!term.isNull()) {
-                    term->triggerPropertyCheck();
-                }
-            }
-        }
+        m_menu->exec(QCursor::pos());
     }
 }
 
 void QWoTermWidgetImpl::onRootSplitterDestroy()
 {
     close();
+    deleteLater();
+}
+
+void QWoTermWidgetImpl::onModifyThisSession()
+{
+    QVariant target = property(TAB_TARGET_NAME);
+    qDebug() << "target" << target;
+    if(!target.isValid()) {
+        QMessageBox::warning(this, tr("alert"), tr("failed to find host infomation"));
+        return;
+    }
+    int idx = QWoSshConf::instance()->findHost(target.toString());
+    if(idx < 0) {
+        QMessageBox::warning(this, tr("alert"), tr("failed to find host infomation"));
+        return;
+    }
+    QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), QWoMainWindow::instance(), SLOT(onSessionReadyToConnec(const QString&)));
+    int ret = dlg.exec();
+    if(ret == QWoSessionProperty::Save) {
+        HostInfo hi = QWoSshConf::instance()->hostInfo(idx);
+        for(int i = 0; i < m_terms.length(); i++) {
+            QPointer<QWoTermWidget> term = m_terms.at(i);
+            if(!term.isNull()) {
+                term->triggerPropertyCheck();
+            }
+        }
+    }
+}
+
+void QWoTermWidgetImpl::onCloseThisSession()
+{
     deleteLater();
 }
 
