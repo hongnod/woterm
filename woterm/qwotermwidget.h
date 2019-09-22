@@ -8,6 +8,7 @@ class QWoProcess;
 class QMenu;
 class QWoTermMask;
 class QWoPasswordInput;
+class QWoTermWidgetImpl;
 
 class QWoTermWidget : public QTermWidget
 {
@@ -18,6 +19,9 @@ public:
 
     QWoProcess *process();
     void closeAndDelete();
+
+    void triggerPropertyCheck();
+
 signals:
     void aboutToClose(QCloseEvent* event);
 
@@ -49,7 +53,10 @@ private:
     void resetProperty(QVariantMap data);
     void splitWidget(int sz, bool vertical);
 
+    QWoTermWidgetImpl *findTermImpl();
     void addToTermImpl();
+    void removeFromTermImpl();
+
     void onBroadcastMessage(int type, QVariant msg);
 private:
     friend class QWoTermWidgetImpl;

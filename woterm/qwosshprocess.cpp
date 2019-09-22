@@ -24,15 +24,12 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     : QWoProcess (parent)
     , m_idleCount(0)
 {
+    triggerKeepAliveCheck();
+
     HostInfo hi = QWoSshConf::instance()->findHostInfo(target);
     QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
-
-    if(mdata.value("liveCheck", false).toBool()) {
-        m_idleDuration = mdata.value("liveDuration", 60).toInt();
-    }else{
-        m_idleDuration = -1;
-    }
     m_rzReceivePath = QDir::toNativeSeparators(mdata.value("rzPath", QDir::homePath()).toString());
+
 
     m_exeSend = QWoSetting::zmodemSZPath();
     if(m_exeSend.isEmpty()){
@@ -94,6 +91,17 @@ QWoSshProcess::~QWoSshProcess()
 QString QWoSshProcess::target() const
 {
     return m_target;
+}
+
+void QWoSshProcess::triggerKeepAliveCheck()
+{
+    HostInfo hi = QWoSshConf::instance()->findHostInfo(m_target);
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
+    if(mdata.value("liveCheck", false).toBool()) {
+        m_idleDuration = mdata.value("liveDuration", 60).toInt();
+    }else{
+        m_idleDuration = -1;
+    }
 }
 
 void QWoSshProcess::zmodemSend(const QStringList &files)

@@ -53,6 +53,7 @@ QWoTermWidget::QWoTermWidget(QWoProcess *process, QWidget *parent)
 
 QWoTermWidget::~QWoTermWidget()
 {
+    removeFromTermImpl();
 }
 
 QWoProcess *QWoTermWidget::process()
@@ -71,6 +72,16 @@ void QWoTermWidget::closeAndDelete()
     int cnt = splitParent->count();
     if(cnt == 1) {
         splitParent->deleteLater();
+    }
+}
+
+void QWoTermWidget::triggerPropertyCheck()
+{
+    initDefault();
+    initCustom();
+    QWoSshProcess *sshproc = qobject_cast<QWoSshProcess*>(m_process);
+    if(sshproc) {
+        sshproc->triggerKeepAliveCheck();
     }
 }
 
@@ -318,18 +329,34 @@ void QWoTermWidget::splitWidget(int sz, bool vertical)
     splitter->setSizes(ls);
 }
 
-void QWoTermWidget::addToTermImpl()
+QWoTermWidgetImpl *QWoTermWidget::findTermImpl()
 {
     QWidget *widgetParent = parentWidget();
     QWoTermWidgetImpl *impl = qobject_cast<QWoTermWidgetImpl*>(widgetParent);
     while(impl == nullptr) {
         widgetParent = widgetParent->parentWidget();
         if(widgetParent == nullptr) {
-            return;
+            return nullptr;
         }
         impl = qobject_cast<QWoTermWidgetImpl*>(widgetParent);
     }
-    impl->addToList(this);
+    return impl;
+}
+
+void QWoTermWidget::addToTermImpl()
+{
+    QWoTermWidgetImpl *impl = findTermImpl();
+    if(impl) {
+        impl->addToList(this);
+    }
+}
+
+void QWoTermWidget::removeFromTermImpl()
+{
+    QWoTermWidgetImpl *impl = findTermImpl();
+    if(impl) {
+        impl->removeFromList(this);
+    }
 }
 
 void QWoTermWidget::onBroadcastMessage(int type, QVariant msg)

@@ -6,3 +6,8 @@ QWoShowerWidget::QWoShowerWidget(QWidget *parent)
 {
 
 }
+
+void QWoShowerWidget::handleTabMouseEvent(QMouseEvent *ev)
+{
+
+}

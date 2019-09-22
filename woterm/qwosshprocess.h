@@ -21,6 +21,7 @@ public:
     virtual ~QWoSshProcess();
 
     QString target() const;
+    void triggerKeepAliveCheck();
 
 private slots:
     void onNewConnection();

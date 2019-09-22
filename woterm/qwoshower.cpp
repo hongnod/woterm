@@ -2,6 +2,7 @@
 #include "qwotermwidgetimpl.h"
 #include "qwoshellwidgetimpl.h"
 #include "qwosessionproperty.h"
+#include "qwomainwindow.h"
 
 #include <QTabBar>
 #include <QResizeEvent>
@@ -12,9 +13,6 @@
 #include <QPainter>
 #include <QApplication>
 #include <QIcon>
-
-#define TAB_TYPE_NAME ("tabtype")
-#define TAB_TARGET_NAME ("target")
 
 QWoShower::QWoShower(QTabBar *tab, QWidget *parent)
     : QStackedWidget (parent)
@@ -141,20 +139,9 @@ bool QWoShower::tabMouseButtonPress(QMouseEvent *ev)
     QPoint pt = ev->pos();
     int idx = m_tabs->tabAt(pt);
     qDebug() << "tab hit" << idx;
-    if(idx >= 0 && ev->buttons().testFlag(Qt::RightButton)) {
-        QVariant v = m_tabs->tabData(idx);
-        QWoShowerWidget *impl = v.value<QWoShowerWidget*>();
-        QVariant type = impl->property(TAB_TYPE_NAME);
-        if(type.toInt() == ETSsh) {
-            QVariant target = impl->property(TAB_TARGET_NAME);
-            qDebug() << "target" << target;
-            QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
-            QObject::connect(&dlg, SIGNAL(connect(const QString&)), this, SIGNAL(readyToConnect(const QString&)));
-            dlg.exec();
-        }
-
-    }
-
+    QVariant v = m_tabs->tabData(idx);
+    QWoShowerWidget *impl = v.value<QWoShowerWidget*>();
+    impl->handleTabMouseEvent(ev);
     return true;
 }
 

@@ -9,6 +9,9 @@ class QWoTermWidgetImpl;
 class QWoShowerWidget;
 class QWoUsageWidget;
 
+#define TAB_TYPE_NAME ("tabtype")
+#define TAB_TARGET_NAME ("target")
+
 class QWoShower : public QStackedWidget
 {
     Q_OBJECT

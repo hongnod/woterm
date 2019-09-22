@@ -27,6 +27,8 @@ private:
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
+    void handleTabMouseEvent(QMouseEvent* ev);
+
 private slots:
     void onRootSplitterDestroy();
 
