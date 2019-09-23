@@ -375,7 +375,7 @@ bool QWoSessionProperty::saveConfig()
             QMessageBox::warning(this, tr("Info"), tr("The host can't be empty"));
             return false;
         }
-        if(hi.port < 10 | hi.port > 65535) {
+        if(hi.port < 10 || hi.port > 65535) {
             QMessageBox::warning(this, tr("Info"), tr("The port should be at [10,65535]"));
             return false;
         }

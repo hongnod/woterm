@@ -142,7 +142,7 @@ bool QWoShower::tabMouseButtonPress(QMouseEvent *ev)
     QVariant v = m_tabs->tabData(idx);
     QWoShowerWidget *impl = v.value<QWoShowerWidget*>();
     impl->handleTabMouseEvent(ev);
-    return true;
+    return false;
 }
 
 void QWoShower::onTabCloseRequested(int idx)

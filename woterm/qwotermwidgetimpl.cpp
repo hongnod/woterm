@@ -59,7 +59,7 @@ void QWoTermWidgetImpl::resizeEvent(QResizeEvent *event)
     m_root->setGeometry(rt);
 }
 
-void QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
+bool QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
 {
     if(ev->buttons().testFlag(Qt::RightButton)) {
         if(m_menu == nullptr) {
@@ -70,7 +70,9 @@ void QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
             QObject::connect(close, SIGNAL(triggered()), this, SLOT(onCloseThisSession()));
         }
         m_menu->exec(QCursor::pos());
+        return true;
     }
+    return false;
 }
 
 void QWoTermWidgetImpl::onRootSplitterDestroy()
