@@ -34,6 +34,7 @@ private slots:
     void onRootSplitterDestroy();
     void onModifyThisSession();
     void onCloseThisSession();
+    void onDuplicateInNewWindow();
 
 private:
     void broadcastMessage(int type, QVariant msg);

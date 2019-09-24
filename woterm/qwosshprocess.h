@@ -36,7 +36,7 @@ private slots:
     void onZmodemReadyReadStandardError();
     void onFileDialogFilesSelected(const QStringList& files);
     void onTermTitleChanged();
-    void onDuplicateSession();
+    void onDuplicateInNewWindow();
     void onTimeout();
 
 private:
