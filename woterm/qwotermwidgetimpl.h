@@ -28,12 +28,13 @@ private:
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
-    void handleTabMouseEvent(QMouseEvent* ev);
+    bool handleTabMouseEvent(QMouseEvent* ev);
 
 private slots:
     void onRootSplitterDestroy();
     void onModifyThisSession();
     void onCloseThisSession();
+    void onDuplicateInNewWindow();
 
 private:
     void broadcastMessage(int type, QVariant msg);

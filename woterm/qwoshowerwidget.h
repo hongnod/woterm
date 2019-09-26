@@ -11,7 +11,7 @@ public:
     explicit QWoShowerWidget(QWidget *parent=nullptr);
 
 protected:
-    virtual void handleTabMouseEvent(QMouseEvent *ev);
+    virtual bool handleTabMouseEvent(QMouseEvent *ev);
 
 private:
     friend class QWoShower;

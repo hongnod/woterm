@@ -59,7 +59,7 @@ void QWoTermWidgetImpl::resizeEvent(QResizeEvent *event)
     m_root->setGeometry(rt);
 }
 
-void QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
+bool QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
 {
     if(ev->buttons().testFlag(Qt::RightButton)) {
         if(m_menu == nullptr) {
@@ -68,9 +68,13 @@ void QWoTermWidgetImpl::handleTabMouseEvent(QMouseEvent *ev)
             QObject::connect(modify, SIGNAL(triggered()), this, SLOT(onModifyThisSession()));
             QAction *close = m_menu->addAction(tr("Close Session"));
             QObject::connect(close, SIGNAL(triggered()), this, SLOT(onCloseThisSession()));
+            QAction *dup = m_menu->addAction(tr("Duplicate In New Window"));
+            QObject::connect(dup, SIGNAL(triggered()), this, SLOT(onDuplicateInNewWindow()));
         }
         m_menu->exec(QCursor::pos());
+        return true;
     }
+    return false;
 }
 
 void QWoTermWidgetImpl::onRootSplitterDestroy()
@@ -93,7 +97,7 @@ void QWoTermWidgetImpl::onModifyThisSession()
         return;
     }
     QWoSessionProperty dlg(QWoSessionProperty::ModifySession, idx, this);
-    QObject::connect(&dlg, SIGNAL(connect(const QString&)), QWoMainWindow::instance(), SLOT(onSessionReadyToConnec(const QString&)));
+    QObject::connect(&dlg, SIGNAL(connect(const QString&)), QWoMainWindow::instance(), SLOT(onSessionReadyToConnect(const QString&)));
     int ret = dlg.exec();
     if(ret == QWoSessionProperty::Save) {
         HostInfo hi = QWoSshConf::instance()->hostInfo(idx);
@@ -109,6 +113,14 @@ void QWoTermWidgetImpl::onModifyThisSession()
 void QWoTermWidgetImpl::onCloseThisSession()
 {
     deleteLater();
+}
+
+void QWoTermWidgetImpl::onDuplicateInNewWindow()
+{
+    QString path = QApplication::applicationFilePath();
+    path.append(" ");
+    path.append(m_target);
+    QProcess::startDetached(path);
 }
 
 void QWoTermWidgetImpl::broadcastMessage(int type, QVariant msg)

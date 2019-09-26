@@ -303,7 +303,7 @@ void QWoSshProcess::onTermTitleChanged()
     qDebug() << "prompt changed:" << m_prompt;
 }
 
-void QWoSshProcess::onDuplicateSession()
+void QWoSshProcess::onDuplicateInNewWindow()
 {
     QString path = QApplication::applicationFilePath();
     path.append(" ");
@@ -424,7 +424,7 @@ void QWoSshProcess::prepareContextMenu(QMenu *menu)
 {
     if(m_zmodemSend == nullptr) {
         menu->addAction(QIcon(":/qwoterm/resource/skin/find.png"), tr("Find..."), m_term, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
-        m_zmodemDupl = menu->addAction(tr("Duplicate Session"), this, SLOT(onDuplicateSession()));
+        m_zmodemDupl = menu->addAction(tr("Duplicate In New Window"), this, SLOT(onDuplicateInNewWindow()));
         m_zmodemSend = menu->addAction(QIcon(":/qwoterm/resource/skin/upload.png"), tr("Zmodem Upload"), this, SLOT(onZmodemSend()));
         m_zmodemRecv = menu->addAction(QIcon(":/qwoterm/resource/skin/download.png"), tr("Zmodem Receive"), this, SLOT(onZmodemRecv()));
         m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"), this, SLOT(onZmodemAbort()), QKeySequence(Qt::CTRL +  Qt::Key_C));
