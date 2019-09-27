@@ -21,7 +21,8 @@
 
 
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
-    : QWoProcess (parent)
+    : QWoProcess (parent)    
+    , m_target(target)
     , m_idleCount(0)
 {
     triggerKeepAliveCheck();
@@ -29,7 +30,6 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     HostInfo hi = QWoSshConf::instance()->findHostInfo(target);
     QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
     m_rzReceivePath = QDir::toNativeSeparators(mdata.value("rzPath", QDir::homePath()).toString());
-
 
     m_exeSend = QWoSetting::zmodemSZPath();
     if(m_exeSend.isEmpty()){
@@ -57,7 +57,6 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
         QApplication::exit(0);
         return;
     }
-    m_target = target;
     setProgram(program);
     QStringList args;
     args.append(target);
