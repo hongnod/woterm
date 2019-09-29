@@ -14,21 +14,12 @@
 #include "qwosshconf.h"
 #include "qwotermstyle.h"
 
-void test()
-{
-    freopen("c:\\slyar.txt", "w", stdout);
-    int len = system("dir");
-    qDebug() << "len" << len;
-}
-
 int main(int argc, char *argv[])
 {
     static QApplication app(argc, argv);
     qputenv("TERM", "xterm-256color");
     QApplication::setStyle(new QWoTermStyle());
     QApplication::setWindowIcon(QIcon(":/qwoterm/resource/skin/woterm4.png"));
-
-    test();
 
     QWoMainWindow *mainWindow = QWoMainWindow::instance();
     mainWindow->show();
