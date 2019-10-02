@@ -88,7 +88,11 @@ void QWoSocket::onReadyRead()
         for(int i = 0; i < data.count(); i++) {
             std::string v = data.at(i).toStdString();
             argv[i] = reinterpret_cast<char*>(malloc(v.length()+20));
+#if defined (Q_OS_WIN)
             strcpy_s(argv[i], v.length()+1, v.c_str());
+#else
+            strcpy(argv[i], v.c_str());
+#endif
         }
         m_cb(m_id, 0, argv, data.count());
         for(int i = 0; i < data.count(); i++) {

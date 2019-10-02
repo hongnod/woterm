@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef Q_OS_WIN
+#include <unistd.h>
+#endif
+
 #include <QCoreApplication>
 #include <QMutex>
 #include <QDebug>
@@ -77,12 +81,18 @@ static QCoreApplication *myApp = nullptr;
 void QWoApp::run()
 {
 #if defined(Q_OS_WIN)
-    char*** argv = __p___argv();
-    int* argc = __p___argc();
+    char*** arg_v = __p___argv();
+    int* arg_c = __p___argc();
+    char **argv = *arg_v;
+    int argc = *argc;
 #else
-
+    char path[256];
+    int cnt = readlink("/proc/self/exe", path, 256);
+    path[cnt] = '\0';
+    char *argv[] = {path};
+    int argc = 1;
 #endif
-    myApp = new QCoreApplication(*argc, *argv);
+    myApp = new QCoreApplication(argc, argv);
     qDebug() << "start app thread";
     m_cond.wakeOne();
     myApp->exec();
