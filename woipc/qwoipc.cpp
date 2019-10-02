@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <Windows.h>
-#include <process.h>
 
 #include <QCoreApplication>
 #include <QMutex>
@@ -78,8 +76,12 @@ void QWoApp::start()
 static QCoreApplication *myApp = nullptr;
 void QWoApp::run()
 {
+#if defined(Q_OS_WIN)
     char*** argv = __p___argv();
     int* argc = __p___argc();
+#else
+
+#endif
     myApp = new QCoreApplication(*argc, *argv);
     qDebug() << "start app thread";
     m_cond.wakeOne();
