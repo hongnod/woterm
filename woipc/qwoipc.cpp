@@ -84,7 +84,7 @@ void QWoApp::run()
     char*** arg_v = __p___argv();
     int* arg_c = __p___argc();
     char **argv = *arg_v;
-    int argc = *argc;
+    int argc = *arg_c;
 #else
     char path[256];
     int cnt = readlink("/proc/self/exe", path, 256);
