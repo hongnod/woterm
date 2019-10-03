@@ -20,7 +20,7 @@
  */
 
 
-bool lessThan(HostInfo& a, HostInfo& b) {
+bool lessThan(const HostInfo& a, const HostInfo& b) {
     return a.name < b.name;
 }
 

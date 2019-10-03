@@ -1,8 +1,5 @@
 #include <stdio.h>
-
-#if defined (Q_OS_WIN)
 #include <Windows.h>
-#endif
 
 typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 typedef int (*FunIpcConnect)(const char* name, FunIpcCallBack cb);
