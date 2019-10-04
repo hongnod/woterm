@@ -68,6 +68,7 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     m_server = new QLocalServer(this);
     m_server->listen(name);
     QStringList env = environment();
+    env << "TERM=xterm-256color";
     env << "TERM_MSG_IPC_NAME="+name;
     env << "TERM_MSG_IPC_PROGRAM="+ipc;
     setEnvironment(env);
