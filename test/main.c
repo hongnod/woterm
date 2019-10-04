@@ -1,5 +1,11 @@
 #include <stdio.h>
+
+#ifdef WINDOWN
 #include <Windows.h>
+#define STRCAT_S(dst, size, src)  strcat_s(dst, size, src)
+#else
+#define STRCAT_S(dst, size, src)  strcat(dst, src)
+#endif
 
 typedef void (*FunIpcCallBack)(int hdl, char *argv[], int argc);
 typedef int (*FunIpcConnect)(const char* name, FunIpcCallBack cb);
@@ -15,11 +21,12 @@ static FunIpcClose IpcClose;
 static FunIpcExit IpcExit;
 
 void MyIpcCallBack(int hdl, char *funArgv[], int argc) {
+    int i = 0;
     char buf[512] = {0};
-    strcat_s(buf, 512, funArgv[0]);
-    for(int i = 1; i < argc; i++) {
-        strcat_s(buf, 512, ",");
-        strcat_s(buf, 512, funArgv[i]);
+    STRCAT_S(buf, 512, funArgv[0]);
+    for(i = 1; i < argc; i++) {
+        STRCAT_S(buf, 512, ",");
+        STRCAT_S(buf, 512, funArgv[i]);
     }
     static int idx = 0;
     idx++;
@@ -28,6 +35,7 @@ void MyIpcCallBack(int hdl, char *funArgv[], int argc) {
     printf("\r\n%s", buf);
 }
 
+#ifdef WINDOW
 int main()
 {
     printf("Hello World!\n");
@@ -61,3 +69,11 @@ int main()
     printf("exit now.");
     return 0;
 }
+#else
+
+int main()
+{
+    return  0;
+}
+
+#endif

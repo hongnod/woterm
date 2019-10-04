@@ -1,7 +1,8 @@
-TEMPLATE = app
-CONFIG += console
+TARGET = test
+QT -= gui
+
+CONFIG += c++11 console
 CONFIG -= app_bundle
-CONFIG -= qt
 
 DESTDIR = $$PWD/../bin
 
