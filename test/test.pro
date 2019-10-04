@@ -8,5 +8,9 @@ DESTDIR = $$PWD/../bin
 
 LIBS += -L"$$DESTDIR" -l"woipc"
 
+unix: {
+  LIBS +=-ldl
+}
+
 SOURCES += \
         main.c
