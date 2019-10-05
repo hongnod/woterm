@@ -18,6 +18,7 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 #include <QMetaObject>
+#include <QTime>
 
 
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
@@ -65,12 +66,13 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     setArguments(args);
 
     QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
+    qDebug() << "woipc server name:" << name;
     m_server = new QLocalServer(this);
     m_server->listen(name);
     QStringList env = environment();
     env << "TERM=xterm-256color";
     env << "TERM_MSG_IPC_NAME="+name;
-    env << "TERM_MSG_IPC_PROGRAM="+ipc;
+    env << "TERM_MSG_IPC_PROGRAM="+ipc;    
     setEnvironment(env);
 
     QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
@@ -186,6 +188,7 @@ void QWoSshProcess::onNewConnection()
 void QWoSshProcess::onClientError(QLocalSocket::LocalSocketError socketError)
 {
     QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
+    qDebug() << "onClientError" << local;
     if(local) {
         local->deleteLater();
     }
@@ -209,7 +212,7 @@ void QWoSshProcess::onClientReadyRead()
         }
         qDebug() << funArgs;
         if(funArgs[0] == "ping") {
-
+            echoPong();
         }else if(funArgs[0] == "getwinsize") {
             updateTermSize();
         }else if(funArgs[0] == "requestpassword") {
@@ -319,6 +322,18 @@ void QWoSshProcess::onTimeout()
             m_idleCount = 0;
             write(" \b");
         }
+    }
+}
+
+void QWoSshProcess::echoPong()
+{
+    QTime t = QTime::currentTime();
+    QStringList funArgs;
+
+    funArgs << "pong" << QString("%1").arg(t.elapsed());
+    if(m_ipc) {
+        qDebug() << funArgs;
+        m_writer->write(funArgs);
     }
 }
 

@@ -25,18 +25,13 @@ static FunIpcExit IpcExit;
 void MyIpcCallBack(int hdl, int err, char *funArgv[], int argc) {
     int i = 0;
     char buf[512] = {0};
-    if( err < 0 || argc <= 0) {
+    if( err < 0) {
         return;
     }
-    STRCAT_S(buf, 512, funArgv[0]);
-    for(i = 1; i < argc; i++) {
+    for(i = 0; i < argc; i++) {
         STRCAT_S(buf, 512, ",");
         STRCAT_S(buf, 512, funArgv[i]);
     }
-    static int idx = 0;
-    idx++;
-    sprintf(funArgv[argc-1], "%d", idx);
-    IpcCall(hdl, funArgv, argc);
     printf("\r\n%s", buf);
 }
 
@@ -87,18 +82,14 @@ int main()
     IpcExit = (FunIpcExit)dlsym(handle, "IpcExit");
 
     IpcInit();
-    int id = IpcConnect("IpcServer", MyIpcCallBack);
-    for(i = 0; i < 1; i++) {
-        char name[10];
-        sprintf(name, "%d", i);
-        char *argv[] = {"sendMessage", "a", "c", name};
-        int argc = sizeof(argv) / sizeof(argv[0]);
-        sleep(1);
-        IpcCall(id, argv, argc);
-    }
+    int id = IpcConnect("WoTerm50863_35782496", MyIpcCallBack);
     printf("press c to continue.");
     while(getchar() != 'c') {
-        printf("press c to continue.");
+        char name[10];
+        sprintf(name, "%d", i);
+        char *argv[] = {"ping", "a", "c", name};
+        int argc = sizeof(argv) / sizeof(argv[0]);
+        IpcCall(id, argv, argc);
     }
 
     dlclose(handle);
