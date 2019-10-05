@@ -79,7 +79,7 @@ int main()
 int main()
 {
     int i = 0;
-    void *handle = dlopen("", RTLD_LAZY);
+    void *handle = dlopen("/home/abc/working/woterm/woterm/bin/libwoipc.so", RTLD_LAZY);
     IpcInit = (FunIpcInit)dlsym(handle, "IpcInit");
     IpcConnect = (FunIpcConnect)dlsym(handle, "IpcConnect");
     IpcCall = (FunIpcCall)dlsym(handle, "IpcCall");
