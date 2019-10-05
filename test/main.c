@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include <QtGlobal>
 
-#ifdef WINDOWN
+#ifdef Q_OS_WIN
 #include <Windows.h>
 #define STRCAT_S(dst, size, src)  strcat_s(dst, size, src)
 #else
@@ -39,7 +40,7 @@ void MyIpcCallBack(int hdl, int err, char *funArgv[], int argc) {
     printf("\r\n%s", buf);
 }
 
-#ifdef WINDOW
+#ifdef Q_OS_WIN
 int main()
 {
     printf("Hello World!\n");
