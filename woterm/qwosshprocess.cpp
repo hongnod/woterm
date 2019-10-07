@@ -60,7 +60,7 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     setArguments(args);
 
     QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
-    qDebug() << "woipc server name:" << name;
+    qDebug() << "ipc server name:" << name;
     m_server = new QLocalServer(this);
     m_server->listen(name);
     QStringList env = environment();
