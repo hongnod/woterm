@@ -8,6 +8,7 @@ class QLocalSocket;
 
 class FunArgReader : public QObject
 {
+    Q_OBJECT
 public:
     explicit FunArgReader(QLocalSocket *local, QObject *parent=nullptr);
     void readAll();
@@ -20,6 +21,7 @@ private:
 
 class FunArgWriter : public QObject
 {
+    Q_OBJECT
 public:
     explicit FunArgWriter(QLocalSocket *local, QObject *parent=nullptr);
     void write(const QStringList& funArgs);
