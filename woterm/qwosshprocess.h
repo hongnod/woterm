@@ -40,6 +40,7 @@ private slots:
     void onTimeout();
 
 private:
+    Q_INVOKABLE void echoPong();
     Q_INVOKABLE void updateTermSize();
     Q_INVOKABLE void updatePassword(const QString& pwd);
     void requestPassword(const QString& prompt, bool echo);
