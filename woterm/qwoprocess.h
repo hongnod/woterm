@@ -24,11 +24,12 @@ public:
 
     void setWorkingDirectory(const QString &dir);
 
-    void start();
-    QByteArray readAllStandardOutput();
-    QByteArray readAllStandardError();
-    void write(const QByteArray& data);
-    void writeError(const QByteArray& data);
+    virtual void start();
+    virtual bool startDetached(qint64 *pid = nullptr);
+    virtual QByteArray readAllStandardOutput();
+    virtual QByteArray readAllStandardError();
+    virtual void write(const QByteArray& data);
+    virtual void writeError(const QByteArray& data);
 
     void closeReadChannel(QProcess::ProcessChannel channel);
     void closeWriteChannel();

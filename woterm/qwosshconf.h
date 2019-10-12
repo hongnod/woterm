@@ -19,12 +19,17 @@ public:
     void remove(const QString& name);
     void append(const HostInfo& hi);
     void modify(int idx, const HostInfo& hi);
+    QList<int> exists(const QString& name);
+    void updatePassword(const QString& name, const QString& password);
 
     QList<HostInfo> hostList() const;
     QStringList hostNameList() const;
 
     int findHost(const QString& name);
     HostInfo hostInfo(int i);
+    HostInfo findHostInfo(const QString&name) {
+        return hostInfo(findHost(name));
+    }
 private:
     QList<HostInfo> parse(const QByteArray& buf);
 private:

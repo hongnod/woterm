@@ -15,6 +15,7 @@ public:
         BeforeWriteStdOut,
         BeforeWriteStdErr,
         BeforeFinish,
+
     };
 public:
     QWoEvent(WoEventType t, const QVariant& data = QVariant());

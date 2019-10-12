@@ -36,6 +36,8 @@
 #include "SearchBar.h"
 #include "qtermwidget.h"
 
+#include "Vt102Emulation.h"
+
 
 #ifdef Q_OS_MACOS
 #define DEFAULT_FONT_FAMILY                   "Menlo"
@@ -396,6 +398,36 @@ void QTermWidget::parseSequenceText(const QByteArray &data)
     m_impl->m_session->parseSequenceText(data);
 }
 
+void QTermWidget::parseWarningText(const QByteArray &msg)
+{
+    static const char redPenOn[] = "\033[1m\033[31m";
+    static const int onLength = sizeof(redPenOn);
+    static const char redPenOff[] = "\033[0m";
+    static const int offLength = sizeof(redPenOff);
+
+
+    m_impl->m_session->receiveData(redPenOn, onLength);
+    m_impl->m_session->receiveData("\n\r\n\r", 4);
+    m_impl->m_session->receiveData(msg.data(), msg.length());
+    m_impl->m_session->receiveData("\n\r\n\r", 4);
+    m_impl->m_session->receiveData(redPenOff, offLength);
+}
+
+QString QTermWidget::lineTextAtCursor(int cnt) const
+{
+    return m_impl->m_terminalDisplay->lineTextAtCursor(cnt);
+}
+
+QString QTermWidget::lineText(int start, int end) const
+{
+    return m_impl->m_terminalDisplay->lineText(start, end);
+}
+
+bool QTermWidget::isAppMode() const
+{
+    return m_impl->m_session->emulation()->isAppMode();
+}
+
 void QTermWidget::resizeEvent(QResizeEvent*)
 {
     m_impl->m_terminalDisplay->resize(this->size());
@@ -588,8 +620,9 @@ bool QTermWidget::isBidiEnabled()
 QString QTermWidget::title() const
 {
     QString title = m_impl->m_session->userTitle();
-    if (title.isEmpty())
+    if (title.isEmpty()){
         title = m_impl->m_session->title(Konsole::Session::NameRole);
+    }
     return title;
 }
 

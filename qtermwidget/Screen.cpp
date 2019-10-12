@@ -32,6 +32,7 @@
 // Qt
 #include <QTextStream>
 #include <QDate>
+#include <QDebug>
 
 // KDE
 //#include <kdebug.h>
@@ -406,7 +407,26 @@ void Screen::reverseRendition(Character& p) const
     p.backgroundColor = f; //p->r &= ~RE_TRANSPARENT;
 }
 
+
 void Screen::updateEffectiveRendition()
+{
+    effectiveRendition = currentRendition;
+    if (currentRendition & RE_REVERSE)
+    {
+        effectiveForeground = currentBackground;
+        effectiveBackground = currentForeground;
+    }
+    else
+    {
+        effectiveForeground = currentForeground;
+        effectiveBackground = currentBackground;
+    }
+
+    if (currentRendition & RE_BOLD)
+        effectiveForeground.setIntensive();
+}
+
+void Screen::updateEffectiveRendition2()
 {
     effectiveRendition = currentRendition;
     if (currentRendition & RE_REVERSE)
@@ -631,8 +651,9 @@ void Screen::initTabStops()
 
 void Screen::newLine()
 {
-    if (getMode(MODE_NewLine))
+    if (getMode(MODE_NewLine)){
         toStartOfLine();
+    }
     index();
 }
 
@@ -742,7 +763,9 @@ void Screen::resetScrolledLines()
 void Screen::scrollUp(int n)
 {
     if (n == 0) n = 1; // Default
-    if (_topMargin == 0) addHistLine(); // history.history
+    if (_topMargin == 0) {
+        addHistLine(); // history.history
+    }
     scrollUp(_topMargin, n);
 }
 
@@ -1026,6 +1049,10 @@ void Screen::setForeColor(int space, int color)
 void Screen::setBackColor(int space, int color)
 {
     currentBackground = CharacterColor(space, color);
+
+    if (currentForeground == currentBackground) {
+        qDebug() << "setBackColor";
+    }
 
     if ( currentBackground.isValid() )
         updateEffectiveRendition();

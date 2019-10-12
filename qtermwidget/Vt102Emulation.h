@@ -100,6 +100,7 @@ public slots:
 
 protected:
   // reimplemented from Emulation
+  virtual bool isAppMode();
   virtual void setMode(int mode);
   virtual void resetMode(int mode);
   virtual void receiveChar(wchar_t cc);

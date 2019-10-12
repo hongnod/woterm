@@ -196,6 +196,16 @@ public:
     }
   }
 
+  bool isMono() const
+  {
+      return _colorSpace == COLOR_SPACE_DEFAULT;
+  }
+
+  bool isColorful() const
+  {
+      return _colorSpace >= COLOR_SPACE_SYSTEM;
+  }
+
   /**
    * Returns true if this character color entry is valid.
    */

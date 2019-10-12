@@ -465,20 +465,20 @@ bool Vt102Emulation::translateKey(QKeyEvent *e)
 bool Vt102Emulation::eventFilter(QObject *obj, QEvent *ev)
 {
     QEvent::Type t = ev->type();
-    if (t == QEvent::KeyPress) {
-        QKeyEvent* e = (QKeyEvent*)ev;
-        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
+//    if (t == QEvent::KeyPress) {
+//        QKeyEvent* e = (QKeyEvent*)ev;
+//        qDebug() << "key:" << e->key() << e->nativeVirtualKey() << e->nativeScanCode() << e->text();
 
-        if(translateKey(e)) {
-            return true;
-        }
-        QString keyTxt = e->text();
-        if(!keyTxt.isEmpty()) {
-            QByteArray data = keyTxt.toUtf8();
-            emit sendData(data);
-        }
-        return true;
-    }
+//        if(translateKey(e)) {
+//            return true;
+//        }
+//        QString keyTxt = e->text();
+//        if(!keyTxt.isEmpty()) {
+//            QByteArray data = keyTxt.toUtf8();
+//            emit sendData(data);
+//        }
+//        return true;
+//    }
     return false;
 }
 
@@ -503,8 +503,9 @@ void Vt102Emulation::processWindowAttributeChange()
 
   QString newValue;
   newValue.reserve(tokenBufferPos-i-2);
-  for (int j = 0; j < tokenBufferPos-i-2; j++)
+  for (int j = 0; j < tokenBufferPos-i-2; j++){
     newValue[j] = tokenBuffer[i+1+j];
+  }
 
   _pendingTitleUpdates[attributeToChange] = newValue;
   _titleUpdateTimer->start(20);
@@ -1085,8 +1086,14 @@ void Vt102Emulation::focusLost(void)
  */
 void Vt102Emulation::focusGained(void)
 {
-    if (_reportFocusEvents)
+    if (_reportFocusEvents){
         sendString("\033[I");
+    }
+}
+
+bool Vt102Emulation::isAppMode()
+{
+    return getMode(MODE_AppScreen);
 }
 
 void Vt102Emulation::sendText( const QString& text )
@@ -1185,11 +1192,10 @@ void Vt102Emulation::sendKeyEvent( QKeyEvent* event )
         else {
             textToSend += _codec->fromUnicode(event->text());
         }
-
-        sendData(textToSend);
-    }
-    else
-    {
+        if(!textToSend.isEmpty()) {
+            sendData(textToSend);
+        }
+    } else {
         // print an error message to the terminal if no key translator has been
         // set
         QString translatorError =  tr("No keyboard translator available.  "

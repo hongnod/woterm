@@ -20,6 +20,8 @@ QWoProcess::QWoProcess(QObject *parent)
 
 QWoProcess::~QWoProcess()
 {
+    m_process->terminate();
+    m_process->kill();
     delete m_process;
 }
 
@@ -60,7 +62,13 @@ void QWoProcess::setWorkingDirectory(const QString &dir)
 
 void QWoProcess::start()
 {
+    m_process->reset();
     m_process->start();
+}
+
+bool QWoProcess::startDetached(qint64 *pid)
+{
+    return m_process->startDetached(pid);
 }
 
 QByteArray QWoProcess::readAllStandardOutput()
@@ -91,6 +99,9 @@ QByteArray QWoProcess::readAllStandardError()
 
 void QWoProcess::write(const QByteArray &data)
 {
+    if(data.isEmpty()) {
+        return;
+    }
     QWoEvent ev(QWoEvent::BeforeWriteStdOut, data);
     QApplication::sendEvent(this, &ev);
     m_process->setCurrentWriteChannel(QProcess::StandardOutput);
@@ -158,11 +169,11 @@ QTermWidget *QWoProcess::termWidget()
 #include <Windows.h>
 void QWoProcess::enableDebugConsole(bool on)
 {
-//    m_process->setCreateProcessArgumentsModifier([on] (QProcess::CreateProcessArguments *cpa){
-//        cpa->flags = CREATE_NEW_CONSOLE;
-//        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-//        cpa->startupInfo->wShowWindow = on ? SW_SHOW : SW_HIDE;
-//    });
+    m_process->setCreateProcessArgumentsModifier([on] (QProcess::CreateProcessArguments *cpa){
+        cpa->flags = CREATE_NEW_CONSOLE;
+        cpa->startupInfo->dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+        cpa->startupInfo->wShowWindow = on ? SW_SHOW : SW_HIDE;
+    });
 }
 
 #else

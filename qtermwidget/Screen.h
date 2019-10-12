@@ -592,6 +592,7 @@ private:
     void initTabStops();
 
     void updateEffectiveRendition();
+    void updateEffectiveRendition2();
     void reverseRendition(Character& p) const;
 
     bool isSelectionValid() const;

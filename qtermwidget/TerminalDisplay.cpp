@@ -436,6 +436,33 @@ TerminalDisplay::~TerminalDisplay()
   delete _filterChain;
 }
 
+QString TerminalDisplay::lineText(int start, int end) const
+{
+    if(end > _usedLines) {
+        end = _usedLines;
+    }
+    QString lineText;
+    QTextStream stream(&lineText);
+    PlainTextDecoder decoder;
+    decoder.begin(&stream);
+    for(int i = start; i < end; i++){
+        decoder.decodeLine(&_image[loc(0, i)], _columns, _lineProperties[i]);
+    }
+    decoder.end();
+    return lineText;
+}
+
+QString TerminalDisplay::lineTextAtCursor(int cnt) const
+{
+    const QPoint cursorPos = _screenWindow ? _screenWindow->cursorPosition() : QPoint(0,0);
+    int end = cursorPos.y() + 1;
+    int start = end - cnt;
+    if(start < 0) {
+        start = 0;
+    }
+    return lineText(start, end);
+}
+
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
 /*                             Display Operations                            */
@@ -831,8 +858,8 @@ void TerminalDisplay::drawCharacters(QPainter& painter,
     }
 
     // setup pen
-    const CharacterColor& textColor = ( invertCharacterColor ? style->backgroundColor : style->foregroundColor );
-    const QColor color = textColor.color(_colorTable);
+    const CharacterColor& textColor = (invertCharacterColor ? style->backgroundColor : style->foregroundColor);
+    const QColor color = prettyForBackgroundColor(style, textColor);
     QPen pen = painter.pen();
     if ( pen.color() != color )
     {
@@ -875,15 +902,16 @@ void TerminalDisplay::drawTextFragment(QPainter& painter ,
     const QColor backgroundColor = style->backgroundColor.color(_colorTable);
 
     // draw background if different from the display's background color
-    if ( backgroundColor != palette().background().color() )
-        drawBackground(painter,rect,backgroundColor,
-                       false /* do not use transparency */);
+    if ( backgroundColor != palette().background().color() ){
+        drawBackground(painter,rect,backgroundColor, false /* do not use transparency */);
+    }
 
     // draw cursor shape if the current character is the cursor
     // this may alter the foreground and background colors
     bool invertCharacterColor = false;
-    if ( style->rendition & RE_CURSOR )
+    if ( style->rendition & RE_CURSOR ){
         drawCursor(painter,rect,foregroundColor,backgroundColor,invertCharacterColor);
+    }
 
     // draw text
     drawCharacters(painter,rect,text,style,invertCharacterColor);
@@ -2530,7 +2558,32 @@ void TerminalDisplay::wheelEvent( QWheelEvent* ev )
 
 void TerminalDisplay::tripleClickTimeout()
 {
-  _possibleTripleClick=false;
+    _possibleTripleClick=false;
+}
+
+QColor TerminalDisplay::prettyForBackgroundColor(const Character *style, const CharacterColor &fgclr)
+{
+    const CharacterColor& bgclr = style->backgroundColor;
+    if(!bgclr.isColorful()) {
+        return fgclr.color(_colorTable);
+    }
+
+    QColor bg = bgclr.color(_colorTable);
+    QColor fg = _bgclr2fgclr.value(bg.rgba());
+    if(fg.isValid()) {
+        return fg;
+    }
+    int r, g, b;
+    bg.getRgb(&r, &g, &b);
+    int gray = (r*299 + g*587 + b*114 + 500) / 1000;
+    if(255 - gray < gray) {
+        fg = QColor(0, 0, 0);
+    }else{
+        fg = QColor(255, 255, 255);
+    }
+    _bgclr2fgclr[bg.rgba()] = fg;
+    return fg;
+
 }
 
 void TerminalDisplay::mouseTripleClickEvent(QMouseEvent* ev)
@@ -2728,12 +2781,12 @@ int TerminalDisplay::motionAfterPasting()
     return mMotionAfterPasting;
 }
 
-void TerminalDisplay::keyPressEvent( QKeyEvent* e )
+void TerminalDisplay::keyPressEvent2( QKeyEvent* e )
 {
     emit keyPressedSignal(e);
 }
 
-void TerminalDisplay::keyPressEvent2( QKeyEvent* event )
+void TerminalDisplay::keyPressEvent( QKeyEvent* event )
 {
     bool emitKeyPressSignal = true;
 
@@ -2825,7 +2878,7 @@ void TerminalDisplay::keyPressEvent2( QKeyEvent* event )
 void TerminalDisplay::inputMethodEvent( QInputMethodEvent* e )
 {
     QKeyEvent keyEvent(QEvent::KeyPress, 0, Qt::NoModifier,e->commitString());
-    //emit keyPressedSignal(&keyEvent);
+    emit keyPressedSignal(&keyEvent);
     _inputMethodData.preeditString = e->preeditString().toStdWString();
     update(preeditRect() | _inputMethodData.previousPreeditRect);
 

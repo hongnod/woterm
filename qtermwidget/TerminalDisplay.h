@@ -85,6 +85,9 @@ public:
     TerminalDisplay(QWidget *parent=0);
     virtual ~TerminalDisplay();
 
+    QString lineText(int start, int end) const;
+    QString lineTextAtCursor(int cnt) const;
+
     /** Returns the terminal color palette used by the display. */
     const ColorEntry* colorTable() const;
     /** Sets the terminal color palette used by the display. */
@@ -624,6 +627,8 @@ private slots:
 private:
 
     // -- Drawing helpers --
+    QColor prettyForBackgroundColor(const Character* style, const CharacterColor& color);
+
 
     // determine the width of this text
     int textWidth(int startColumn, int length, int line) const;
@@ -809,6 +814,8 @@ private:
     // custom cursor color.  if this is invalid then the foreground
     // color of the character under the cursor is used
     QColor _cursorColor;
+
+    QMap<QRgb, QColor> _bgclr2fgclr;
 
 
     MotionAfterPasting mMotionAfterPasting;

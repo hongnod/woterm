@@ -1,6 +1,8 @@
 #include "qwosshprocess.h"
 #include "qwoevent.h"
 #include "qwosetting.h"
+#include "qwosshconf.h"
+#include "qwoutils.h"
 
 #include <qtermwidget.h>
 
@@ -15,10 +17,21 @@
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QMessageBox>
+#include <QMetaObject>
+#include <QTime>
+
 
 QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
-    : QWoProcess (parent)
+    : QWoProcess (parent)    
+    , m_target(target)
+    , m_idleCount(0)
 {
+    triggerKeepAliveCheck();
+
+    HostInfo hi = QWoSshConf::instance()->findHostInfo(target);
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
+    m_rzReceivePath = QDir::toNativeSeparators(mdata.value("rzPath", QDir::homePath()).toString());
+
     m_exeSend = QWoSetting::zmodemSZPath();
     if(m_exeSend.isEmpty()){
         QMessageBox::warning(m_term, "zmodem", "can't find sz program.");
@@ -39,7 +52,6 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
         QApplication::exit(0);
         return;
     }
-    m_target = target;
     setProgram(program);
     QStringList args;
     args.append(target);
@@ -48,17 +60,43 @@ QWoSshProcess::QWoSshProcess(const QString& target, QObject *parent)
     setArguments(args);
 
     QString name = QString("WoTerm%1_%2").arg(QApplication::applicationPid()).arg(quint64(this));
+    qDebug() << "ipc server name:" << name;
     m_server = new QLocalServer(this);
     m_server->listen(name);
     QStringList env = environment();
-    env << "TERM_MSG_CHANNEL="+name;
+    env << "TERM=xterm-256color";
+    env << "TERM_MSG_IPC_NAME="+name;
     setEnvironment(env);
 
-    QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));    
+    QObject::connect(m_server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+
+    QTimer *timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    timer->start(1000);
 }
 
 QWoSshProcess::~QWoSshProcess()
 {
+    if(m_process->isOpen()) {
+        m_process->kill();
+        m_process->waitForFinished();
+    }
+}
+
+QString QWoSshProcess::target() const
+{
+    return m_target;
+}
+
+void QWoSshProcess::triggerKeepAliveCheck()
+{
+    HostInfo hi = QWoSshConf::instance()->findHostInfo(m_target);
+    QVariantMap mdata = QWoUtils::qBase64ToVariant(hi.property).toMap();
+    if(mdata.value("liveCheck", false).toBool()) {
+        m_idleDuration = mdata.value("liveDuration", 60).toInt();
+    }else{
+        m_idleDuration = -1;
+    }
 }
 
 void QWoSshProcess::zmodemSend(const QStringList &files)
@@ -105,13 +143,39 @@ bool QWoSshProcess::isRzCommand(const QByteArray &ba)
     return false;
 }
 
+void QWoSshProcess::checkCommand(const QByteArray &out)
+{
+    bool isApp = m_term->isAppMode();
+    if(!isApp) {
+        if(out.lastIndexOf('\r') >= 0 || out.lastIndexOf('\n') >= 0) {
+            QString command = m_term->lineTextAtCursor(1);
+            command = command.simplified();
+            if(command.length() < 200) {
+                int idx = command.lastIndexOf('$');
+                if(idx >= 0) {
+                    command = command.mid(idx+1).trimmed();
+                }
+                idx = command.lastIndexOf(QChar::Space);
+                if(idx < 0) {
+                    QString cmd = command;
+                    if(cmd == "rz") {
+                        qDebug() << "command" << command;
+                        QMetaObject::invokeMethod(this, "onZmodemSend", Qt::QueuedConnection);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void QWoSshProcess::onNewConnection()
 {
-    QLocalSocket* local = m_server->nextPendingConnection();
-    local->setTextModeEnabled(true);
-    QObject::connect(local, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
-    QObject::connect(local, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
-    QObject::connect(local, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
+    m_ipc = m_server->nextPendingConnection();
+    m_reader = new FunArgReader(m_ipc, this);
+    m_writer = new FunArgWriter(m_ipc, this);
+    QObject::connect(m_ipc, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
+    QObject::connect(m_ipc, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(onClientError(QLocalSocket::LocalSocketError)));
+    QObject::connect(m_ipc, SIGNAL(readyRead()), this, SLOT(onClientReadyRead()));
 }
 
 void QWoSshProcess::onClientError(QLocalSocket::LocalSocketError socketError)
@@ -132,23 +196,24 @@ void QWoSshProcess::onClientDisconnected()
 
 void QWoSshProcess::onClientReadyRead()
 {
-    QLocalSocket *local = qobject_cast<QLocalSocket*>(sender());
-    char buf[512];
-    buf[3] = '\0';
-    local->read(buf, 3);
-    int len = QString(buf).toInt();
-    buf[len] = '\0';
-    local->read(buf, len);
-    QString data(buf);
-    if(data.startsWith("isread")) {
-        local->setObjectName("reader");
-        m_reader = local;
-    }else if (data.startsWith("iswrite")) {
-        local->setObjectName("writer");
-        m_writer = local;
-        updateTermSize();
-    }else if (data.startsWith("getwinsize")) {
-        updateTermSize();
+    m_reader->readAll();
+    while(1) {
+        QStringList funArgs = m_reader->next();
+        if(funArgs.length() <= 0) {
+            return;
+        }
+        qDebug() << funArgs;
+        if(funArgs[0] == "ping") {
+            echoPong();
+        }else if(funArgs[0] == "getwinsize") {
+            updateTermSize();
+        }else if(funArgs[0] == "requestpassword") {
+            if(funArgs.count() == 3) {
+                QString prompt = funArgs.at(1);
+                bool echo = QVariant(funArgs.at(2)).toBool();
+                requestPassword(prompt, echo);
+            }
+        }
     }
 }
 
@@ -172,17 +237,29 @@ void QWoSshProcess::onZmodemRecv()
     if(m_zmodem) {
         return;
     }
+
+    QString path = QWoSetting::value("zmodem/lastPath").toString();
+    QString filePath = QFileDialog::getExistingDirectory(m_term, tr("Open Directory"), path,  QFileDialog::ShowDirsOnly);
+    qDebug() << "filePath" << filePath;
+    if(!filePath.isEmpty()) {
+        filePath = QDir::toNativeSeparators(filePath);
+        QWoSetting::setValue("zmodem/lastPath", filePath);
+    }else{
+        filePath = m_rzReceivePath;
+    }
+
     m_zmodem = createZmodem();
     m_zmodem->setProgram(m_exeRecv);
     QStringList args;
     args << "rz";
     m_zmodem->setArguments(args);
-    m_zmodem->setWorkingDirectory("d:\\zmodem");
+    m_zmodem->setWorkingDirectory(filePath);
     m_zmodem->start();
 }
 
 void QWoSshProcess::onZmodemAbort()
 {
+    //sendData(QByteArrayLiteral("\030\030\030\030")); // Abort
     static char canistr[] = {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 0};
     if(m_zmodem == nullptr) {
         return;
@@ -217,14 +294,39 @@ void QWoSshProcess::onFileDialogFilesSelected(const QStringList &files)
 void QWoSshProcess::onTermTitleChanged()
 {
     QString name = m_term->title();
+    m_prompt = name.toLocal8Bit();
+    qDebug() << "prompt changed:" << m_prompt;
 }
 
-void QWoSshProcess::onDuplicateSession()
+void QWoSshProcess::onDuplicateInNewWindow()
 {
     QString path = QApplication::applicationFilePath();
     path.append(" ");
     path.append(m_target);
     QProcess::startDetached(path);
+}
+
+void QWoSshProcess::onTimeout()
+{
+    if(m_idleDuration > 0) {
+        if(m_idleCount++ > m_idleDuration) {
+            qDebug() << m_target << "idle" << m_idleCount << "Duration" << m_idleDuration;
+            m_idleCount = 0;
+            write(" \b");
+        }
+    }
+}
+
+void QWoSshProcess::echoPong()
+{
+    static int count = 0;
+    QStringList funArgs;
+
+    funArgs << "pong" << QString("%1").arg(count++);
+    if(m_ipc) {
+        qDebug() << funArgs;
+        m_writer->write(funArgs);
+    }
 }
 
 void QWoSshProcess::onZmodemFinished(int code)
@@ -254,15 +356,24 @@ void QWoSshProcess::onZmodemReadyReadStandardError()
 
 void QWoSshProcess::updateTermSize()
 {
-    if(m_writer == nullptr) {
-        return;
-    }
     int linecnt = m_term->screenLinesCount();
     int column = m_term->screenColumnsCount();
-    QString fun = QString("setwinsize(%1,%2)").arg(column).arg(linecnt);
-    QByteArray cmd = QString("%1%2").arg(fun.size(), 3, 10, QChar('0')).arg(fun).toUtf8();
-    //qDebug() << "length:" << cmd.length() << "cmd:" << cmd.data();
-    m_writer->write(cmd);
+    QStringList funArgs;
+    funArgs << "setwinsize" << QString("%1").arg(column) << QString("%1").arg(linecnt);
+    if(m_ipc) {
+        qDebug() << funArgs;
+        m_writer->write(funArgs);
+    }
+}
+
+void QWoSshProcess::updatePassword(const QString &pwd)
+{
+    QWoSshConf::instance()->updatePassword(m_target, pwd);
+}
+
+void QWoSshProcess::requestPassword(const QString &prompt, bool echo)
+{
+    QMetaObject::invokeMethod(m_term, "showPasswordInput", Qt::QueuedConnection, Q_ARG(QString, prompt), Q_ARG(bool, echo));
 }
 
 bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
@@ -273,13 +384,13 @@ bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
     }else if(t == QWoEvent::EventType) {
         QWoEvent *we = (QWoEvent*)ev;
         QWoEvent::WoEventType t = we->eventType();
+        m_idleCount = 0;
         if(t == QWoEvent::BeforeReadStdOut) {
             if(m_zmodem) {
                 QByteArray data = readAllStandardOutput();
                 m_zmodem->write(data);
                 we->setAccepted(true);
             }else{
-
                 we->setAccepted(false);
             }
         }else if(t == QWoEvent::BeforeReadStdErr) {
@@ -297,6 +408,9 @@ bool QWoSshProcess::eventFilter(QObject *obj, QEvent *ev)
             }else{
                 we->setAccepted(false);
             }
+        }else if(t == QWoEvent::BeforeWriteStdOut) {
+            QByteArray out = we->data().toByteArray();
+            checkCommand(out);
         }else if(t == QWoEvent::BeforeFinish) {
 
         }
@@ -311,17 +425,15 @@ void QWoSshProcess::setTermWidget(QTermWidget *widget)
     QWoProcess::setTermWidget(widget);
     widget->installEventFilter(this);
     QObject::connect(m_term, SIGNAL(titleChanged()), this, SLOT(onTermTitleChanged()));
-    QWidget *topLevel = m_term->topLevelWidget();
-    topLevel->setWindowTitle(m_target);
 }
 
 void QWoSshProcess::prepareContextMenu(QMenu *menu)
 {
     if(m_zmodemSend == nullptr) {
-        menu->addAction(tr("Find..."), m_term, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
-        m_zmodemDupl = menu->addAction(tr("Duplicate Session"), this, SLOT(onDuplicateSession()));
-        m_zmodemSend = menu->addAction(tr("Zmodem Upload"), this, SLOT(onZmodemSend()));
-        m_zmodemRecv = menu->addAction(tr("Zmodem Receive"), this, SLOT(onZmodemRecv()));
+        menu->addAction(QIcon(":/qwoterm/resource/skin/find.png"), tr("Find..."), m_term, SLOT(toggleShowSearchBar()), QKeySequence(Qt::CTRL +  Qt::Key_F));
+        m_zmodemDupl = menu->addAction(tr("Duplicate In New Window"), this, SLOT(onDuplicateInNewWindow()));
+        m_zmodemSend = menu->addAction(QIcon(":/qwoterm/resource/skin/upload.png"), tr("Zmodem Upload"), this, SLOT(onZmodemSend()));
+        m_zmodemRecv = menu->addAction(QIcon(":/qwoterm/resource/skin/download.png"), tr("Zmodem Receive"), this, SLOT(onZmodemRecv()));
         m_zmodemAbort = menu->addAction(tr("Zmoddem Abort"), this, SLOT(onZmodemAbort()), QKeySequence(Qt::CTRL +  Qt::Key_C));
     }
 }

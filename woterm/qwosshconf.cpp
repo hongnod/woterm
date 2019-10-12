@@ -20,7 +20,7 @@
  */
 
 
-bool lessThan(HostInfo& a, HostInfo& b) {
+bool lessThan(const HostInfo& a, const HostInfo& b) {
     return a.name < b.name;
 }
 
@@ -121,6 +121,8 @@ QList<HostInfo> QWoSshConf::parse(const QByteArray& buf)
                 hi.password = item.mid(9).trimmed();
             }else if(item.startsWith("ProxyJump")) {
                 hi.proxyJump = item.mid(9).trimmed();
+            }else if(item.startsWith("Property")) {
+                hi.property = item.mid(8).trimmed();
             }else if(item.startsWith("#")) {
                 memos.push_back(item.mid(1));
             }
@@ -227,6 +229,10 @@ bool QWoSshConf::exportTo(const QString &path)
             QString line(QString("  ProxyJump %1\n").arg(hi.proxyJump));
             file.write(line.toUtf8());
         }
+        if(!hi.property.isEmpty()) {
+            QString line(QString("  Property %1\n").arg(hi.property));
+            file.write(line.toUtf8());
+        }
     }
     return true;
 }
@@ -260,6 +266,27 @@ void QWoSshConf::modify(int idx, const HostInfo &hi)
     m_hosts[idx] = hi;
     std::sort(m_hosts.begin(), m_hosts.end(), lessThan);
     save();
+}
+
+QList<int> QWoSshConf::exists(const QString &name)
+{
+    QList<int> idxs;
+    for(int i = 0; i < m_hosts.length(); i++) {
+        if(m_hosts[i].name == name) {
+            idxs.append(i);
+        }
+    }
+    return idxs;
+}
+
+void QWoSshConf::updatePassword(const QString &name, const QString &password)
+{
+    int idx = findHost(name);
+    if(idx >= 0) {
+        HostInfo &hi = m_hosts[idx];
+        hi.password = password;
+        save();
+    }
 }
 
 QList<HostInfo> QWoSshConf::hostList() const
